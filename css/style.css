@@ -648,15 +648,23 @@
       position:sticky; top:0;
       height:100vh; height:100dvh;
       display:flex; flex-direction:column; align-items:center; justify-content:center;
-      padding:clamp(5rem,9vw,7.5rem) 0;
+      /* Trimmed from clamp(5rem,9vw,7.5rem) so the pinned screen isn't mostly
+         top/bottom padding — vh-based (not vw-based) since this is vertical
+         spacing that should track viewport height, keeping the card centered
+         with no large empty margin above/below (spec point 4). */
+      padding:clamp(2rem,6vh,3.25rem) 0;
       overflow:hidden;
     }
 
-    .showcase-wrap{ overflow:hidden; padding:0 clamp(1.25rem, 6vw, 3rem); display:flex; justify-content:center; }
+    /* Wrap now stretches to fill whatever vertical space is left after the
+       h2 + inner padding above, so the card is vertically centered in the
+       actual remaining room on any iPhone/Android screen instead of being
+       sized off a fixed clamp() that could leave slack above or below it. */
+    .showcase-wrap{ overflow:hidden; padding:0 clamp(1.25rem, 6vw, 3rem); display:flex; align-items:center; justify-content:center; flex:1 1 auto; min-height:0; width:100%; }
     .showcase-row{
       position:relative; flex-wrap:wrap; gap:0;
       width:100%; max-width:460px;
-      min-height:clamp(300px, 56vh, 440px);
+      height:100%; min-height:0;
       overflow:hidden; /* clips cards mid-slide to a clean carousel "stage" */
     }
     /* Every service sits absolutely in the same spot; js/script.js sets each
@@ -667,6 +675,11 @@
     .showcase-item{
       position:absolute; inset:0; margin:0; max-width:none;
       opacity:0; pointer-events:none;
+      /* Center content within the card's full-height stage instead of
+         flex-start, so any leftover vertical room is split evenly above/below
+         the icon+title+text instead of collecting as one large empty block
+         underneath (spec point 4). */
+      justify-content:center;
       transition:transform .6s cubic-bezier(.22,1,.36,1), opacity .45s var(--ease-soft);
       will-change:transform;
     }

@@ -642,7 +642,16 @@
       // dvh (not vh) so the spacer's height tracks the browser's actual
       // visible viewport as mobile address/toolbar chrome shows/hides —
       // matches the dvh unit already used for .services-sticky-inner below.
-      outer.style.height = (items.length * 100) + 'dvh';
+      // Each extra card used to cost a full 100dvh of scroll (400dvh total
+      // for 4 items), which made the whole section feel much longer than a
+      // single screen. PER_STEP_VH is trimmed to keep the section close to
+      // one iPhone screen's worth of scrolling while still giving the
+      // update()/getBoundingClientRect() math below a real (non-zero) pin
+      // range to step through — the stepping algorithm itself, the
+      // one-card-at-a-time advance, and the CSS transition timing are all
+      // unchanged.
+      var PER_STEP_VH = 50;
+      outer.style.height = Math.max(items.length * PER_STEP_VH, 160) + 'dvh';
       currentIndex = 0;
       layout(true);
       window.addEventListener('scroll', onScroll, { passive:true });
