@@ -431,14 +431,19 @@
   .pf-acc-item:first-child{ border-top:1px solid var(--line); }
 
   .pf-acc-head{
-    width:100%; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    width:100%; display:flex; align-items:center; gap:.85rem;
     padding:1.35rem .1rem; background:none; border:none; cursor:pointer;
     text-align:start; color:var(--ink); -webkit-tap-highlight-color:transparent;
   }
-  .pf-acc-name{ font-weight:600; font-size:1.02rem; }
+  .pf-acc-name{ flex:1 1 auto; font-weight:700; font-size:1.02rem; }
+  .pf-acc-icon{
+    flex:none; width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+    color:var(--accent);
+  }
+  .pf-acc-icon svg{ width:100%; height:100%; }
   .pf-acc-arrow{
     flex:none; width:20px; height:20px; display:flex; align-items:center; justify-content:center;
-    color:var(--ink-faint); transition:transform .45s var(--ease-soft), color .35s ease;
+    margin-inline-start:auto; color:var(--ink-faint); transition:transform .45s var(--ease-soft), color .35s ease;
   }
   .pf-acc-arrow svg{ width:100%; height:100%; }
   .pf-acc-item.is-open .pf-acc-head{ color:var(--ink); }
@@ -518,8 +523,13 @@
     }
     .pf-desktop-left .pf-row:first-child{ border-top:1px solid var(--line); }
     .pf-row-num{ flex:none; font-size:.76rem; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+    .pf-row-icon{
+      flex:none; width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+      color:var(--accent);
+    }
+    .pf-row-icon svg{ width:100%; height:100%; }
     .pf-row-name{
-      flex:1 1 auto; font-weight:600; font-size:1.1rem; color:var(--ink-soft);
+      flex:1 1 auto; font-weight:700; font-size:1.1rem; color:var(--ink-soft);
       transition:color .35s var(--ease-soft);
     }
     .pf-row-mark{
