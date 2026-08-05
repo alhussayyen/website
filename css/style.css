@@ -657,6 +657,23 @@
      the section unpins on its own and the page continues normally — same
      for scrolling back up past the first service. ---- */
   @media (max-width:760px){
+    /* Nav link ("الخدمات" in the mobile fullscreen menu, href="#services")
+       jumps straight to #services's own top with no offset, so the fixed
+       header (header.site-nav, position:fixed, ~88px tall on mobile) ends
+       up covering the "أبرز خدماتنا الإعلامية" heading underneath it —
+       confirmed by simulating the real click (through the real Lenis
+       instance this page loads, not just a native-scroll assumption):
+       h2 landed at top:51.7/bottom:105.5 against a header bottom edge of
+       87.8, i.e. only ~18px of the heading peeked out below the header.
+       scroll-margin-top tells the browser's native fragment-navigation
+       (what actually runs here — Lenis only smooths wheel/touch input, it
+       doesn't intercept anchor-link clicks or hash navigation, confirmed by
+       inspecting its source) to stop short by this much, landing the
+       section right under the header instead of at the literal viewport
+       top. No layout/positions change — this property only affects where
+       scroll-to-anchor stops. Scoped to mobile only; desktop's header and
+       section rhythm are untouched. */
+    #services{ scroll-margin-top:96px; }
     /* ROOT CAUSE of the large empty gaps before/after the card on mobile:
        .services-sticky-inner's `position:sticky` was being anchored to the
        wrong ancestor instead of the real viewport, so it never actually
@@ -749,7 +766,12 @@
          the icon+title+text instead of collecting as one large empty block
          underneath (spec point 4). */
       justify-content:center;
-      transition:transform .6s cubic-bezier(.22,1,.36,1), opacity .45s var(--ease-soft);
+      /* Slide-motion duration only (700ms, within the requested 600-800ms
+         range) — the per-card reading dwell time (5-7s) is a separate,
+         independent gate in js/script.js's update()/tryAdvance(), not a CSS
+         duration; this transition just governs how long each transform
+         move takes once a step is actually allowed to happen. */
+      transition:transform .7s cubic-bezier(.22,1,.36,1), opacity .5s var(--ease-soft);
       will-change:transform;
     }
     .showcase-item.is-active{

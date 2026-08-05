@@ -595,6 +595,19 @@
     let active = false;
     let currentIndex = 0;
     let raf = null;
+    // Minimum time each card must stay on screen before the NEXT step is
+    // allowed to happen, regardless of how far/fast the user has already
+    // scrolled — without this, scroll position alone decided the index, so
+    // a normal-speed scroll could blow through all 4 cards in well under a
+    // second, leaving no time to actually read one. This does not change
+    // scroll as the only input, nor the one-card-at-a-time advance, nor the
+    // CSS transition itself (still driven by the same `.showcase-item`
+    // transition in style.css) — it only gates *when* update() is allowed
+    // to commit the next step. 6000ms sits in the middle of the requested
+    // 5-7s reading window.
+    var MIN_DWELL_MS = 6000;
+    let lastStepAt = 0;
+    let dwellTimer = null;
 
     // Positions every card via inline transform, purely as a function of
     // (card index − currentIndex). `instant`, used only on first activation,
@@ -624,11 +637,22 @@
       let progress = scrollable > 0 ? (-rect.top) / scrollable : 0;
       progress = Math.min(1, Math.max(0, progress));
       const target = Math.min(items.length - 1, Math.max(0, Math.round(progress * (items.length - 1))));
-      if (target !== currentIndex){
-        currentIndex += target > currentIndex ? 1 : -1; // one card per step, always
-        layout(false);
-        if (currentIndex !== target) raf = requestAnimationFrame(update); // keep advancing toward the target, one step at a time
+      if (target === currentIndex) return;
+
+      const elapsed = Date.now() - lastStepAt;
+      if (elapsed < MIN_DWELL_MS){
+        // Current card hasn't been on screen long enough yet — hold this
+        // step and re-check exactly when its dwell time runs out, so the
+        // advance still lands on wherever the user has scrolled to by then
+        // without requiring another scroll event to wake it up.
+        if (!dwellTimer) dwellTimer = setTimeout(function(){ dwellTimer = null; update(); }, MIN_DWELL_MS - elapsed);
+        return;
       }
+
+      currentIndex += target > currentIndex ? 1 : -1; // one card per step, always
+      lastStepAt = Date.now();
+      layout(false);
+      if (currentIndex !== target) raf = requestAnimationFrame(update); // keep advancing toward the target, one step at a time (each further step is still dwell-gated above)
     }
 
     function onScroll(){
@@ -661,6 +685,7 @@
       var PIN_BUDGET_VH = 160;
       outer.style.height = PIN_BUDGET_VH + 'dvh';
       currentIndex = 0;
+      lastStepAt = Date.now(); // first card's dwell window starts now too
       layout(true);
       window.addEventListener('scroll', onScroll, { passive:true });
       window.addEventListener('orientationchange', onScroll);
@@ -670,6 +695,7 @@
     function disable(){
       if (!active) return;
       active = false;
+      if (dwellTimer){ clearTimeout(dwellTimer); dwellTimer = null; }
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('orientationchange', onScroll);
       outer.style.height = '';
