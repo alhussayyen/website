@@ -754,10 +754,19 @@
       overflow:hidden; /* clips cards mid-slide to a clean carousel "stage" */
     }
     /* Every service sits absolutely in the same spot; js/script.js sets each
-       one's `transform:translateX(±100%·offset)` and toggles .is-active, so
-       only the active card is on-stage/visible/interactive while the rest
-       wait just off to one side — switching is a professional slide (never a
-       jump-cut, never more than one card moving into place at a time). */
+       one's `transform:translateX()` AND `opacity` on every scroll-driven
+       animation frame, both as plain linear functions of that card's
+       distance from the current (fractional) scroll position — so the
+       whole slide is continuously scroll-scrubbed, never a discrete
+       jump-cut and never separately timed. No CSS transition on
+       transform/opacity here on purpose: this is deliberately re-set every
+       frame while scrolling, and a CSS transition would fight those
+       constant updates (each new inline value re-starting its own
+       transition from wherever the previous one had interpolated to),
+       producing laggy, rubber-banded motion instead of tight 1:1 scroll
+       tracking. opacity:0 below is just the pre-JS/no-JS fallback; the
+       moment the mobile controller activates it's overridden inline every
+       frame. */
     .showcase-item{
       position:absolute; inset:0; margin:0; max-width:none;
       opacity:0; pointer-events:none;
@@ -766,16 +775,10 @@
          the icon+title+text instead of collecting as one large empty block
          underneath (spec point 4). */
       justify-content:center;
-      /* Slide-motion duration only (700ms, within the requested 600-800ms
-         range) — the per-card reading dwell time (5-7s) is a separate,
-         independent gate in js/script.js's update()/tryAdvance(), not a CSS
-         duration; this transition just governs how long each transform
-         move takes once a step is actually allowed to happen. */
-      transition:transform .7s cubic-bezier(.22,1,.36,1), opacity .5s var(--ease-soft);
-      will-change:transform;
+      will-change:transform, opacity;
     }
     .showcase-item.is-active{
-      opacity:1; pointer-events:auto;
+      pointer-events:auto;
     }
     /* mobile only: match the desktop-only frameless-card / bare-icon look
        below instead of the bordered glass card + icon circle used as the

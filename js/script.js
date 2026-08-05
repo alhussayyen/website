@@ -211,6 +211,42 @@
     window.addEventListener('resize', () => { if (window.innerWidth > 1024) closeNav(); });
   })();
 
+  // ---- "الخدمات" nav link: manual scroll offset so the fixed header never
+  // covers "أبرز خدماتنا الإعلامية" (mobile only) ----
+  // Native fragment navigation + CSS scroll-margin-top were tried first,
+  // but this page also runs Lenis for smooth scrolling (see above), which
+  // keeps its own internal scroll-position state independent of the
+  // browser's native scrollY. Clicking this link inside the open mobile nav
+  // overlay also fires closeNav() (registered just above), which resumes
+  // Lenis (it's stopped while the overlay is open) — that resume can then
+  // re-assert Lenis's own tracked target on the next frame and fight the
+  // native jump/scroll-margin-top result. Computing the offset ourselves
+  // and driving the scroll through Lenis's own scrollTo() (falling back to
+  // a plain window.scrollTo if Lenis isn't running) avoids that fight
+  // entirely, since only one thing is ever driving the scroll.
+  (function(){
+    const servicesLink = document.querySelector('#siteNav a[href="#services"]');
+    const servicesSection = document.getElementById('services');
+    const header = document.querySelector('header.site-nav');
+    if (!servicesLink || !servicesSection || !header) return;
+
+    servicesLink.addEventListener('click', function(e){
+      if (!mqServicesMobile.matches) return; // desktop: untouched, native jump as before
+      e.preventDefault();
+      // Measure the header fresh on every click (not cached) since its
+      // height can vary slightly with content/viewport; small buffer so
+      // the heading isn't flush against the header's bottom edge.
+      const offset = -(header.getBoundingClientRect().height + 8);
+      if (__lenis){
+        __lenis.scrollTo(servicesSection, { offset, force:true });
+      } else {
+        const targetY = servicesSection.getBoundingClientRect().top + window.scrollY + offset;
+        window.scrollTo({ top: targetY, behavior:'smooth' });
+      }
+      if (history.pushState) history.pushState(null, '', '#services');
+    });
+  })();
+
   // ---- nav logo theme (invert over dark sections) ----
   const navLogo = document.getElementById('navLogo');
   function updateNavTheme(){
@@ -567,97 +603,62 @@
     io.observe(section);
   })();
 
-  // ---- mobile-only: services section as a sticky, scroll-stepped HORIZONTAL
-  // SLIDE showcase ----
-  // No buttons, no arrows, no touch-drag/swipe — the ONLY input is the
-  // page's normal vertical scroll (the same finger-scroll used everywhere
-  // else on the site). Every item's horizontal position is a pure function
-  // of (its own index − the active index): the active item sits at
-  // translateX(0), items ahead of it sit one "stage width" to the right
-  // (+100%), items behind it sit one stage width to the left (−100%). So
-  // stepping the active index by exactly +1 (scrolling down) animates the
-  // outgoing card from 0 → −100% (slides out to the left) at the exact same
-  // moment the incoming card animates from +100% → 0 (slides in from the
-  // right) — a single CSS `transition:transform` on every card drives both
-  // halves of that motion at once. Stepping by −1 (scrolling up) is the
-  // exact mirror: outgoing card 0 → +100% (exits right), incoming card
-  // −100% → 0 (enters from the left). Never more than one index-step is
-  // committed per update, so a fast fling still advances one service at a
-  // time instead of jump-cutting past any of them. Once the user scrolls
-  // past the last service the section unpins on its own and the page
-  // continues normally — same in reverse past the first service. Fully
-  // inert on desktop widths.
+  // ---- mobile-only: services section as a sticky, SCROLL-DRIVEN (not
+  // timer-driven) HORIZONTAL SLIDE showcase ----
+  // No buttons, no arrows, no touch-drag/swipe on the row itself, no
+  // autoplay/timer of any kind — the ONLY input is the page's normal
+  // vertical scroll (the same finger-scroll used everywhere else on the
+  // site), and every visual frame is a pure, continuous function of the
+  // current scroll position: nothing here is ever scheduled with
+  // setTimeout/setInterval, so the instant the user stops scrolling the
+  // motion stops exactly where it is — it never keeps moving on its own.
+  // continuousIndex is a fractional position (e.g. 1.35 = 35% of the way
+  // from card 1 to card 2), recomputed from scroll progress on every
+  // scroll-driven animation frame; each card's translateX and opacity are
+  // both plain linear functions of *its own distance* from that fractional
+  // value, so scrolling by a small amount visibly nudges the cards by a
+  // proportionally small amount — a real scroll-scrubbed drag feel, not a
+  // "cross a threshold, then a timed animation plays" step. Once the user
+  // scrolls past the last service the section unpins on its own and the
+  // page continues normally — same in reverse past the first service.
+  // Fully inert on desktop widths.
   (function(){
     const outer = document.getElementById('svcStickyOuter');
     const items = Array.from(document.querySelectorAll('.services-showcase .showcase-item'));
     if (!outer || !items.length) return;
 
     let active = false;
-    let currentIndex = 0;
     let raf = null;
-    // Minimum time each card must stay on screen before the NEXT step is
-    // allowed to happen, regardless of how far/fast the user has already
-    // scrolled — without this, scroll position alone decided the index, so
-    // a normal-speed scroll could blow through all 4 cards in well under a
-    // second, leaving no time to actually read one. This does not change
-    // scroll as the only input, nor the one-card-at-a-time advance, nor the
-    // CSS transition itself (still driven by the same `.showcase-item`
-    // transition in style.css) — it only gates *when* update() is allowed
-    // to commit the next step. 6000ms sits in the middle of the requested
-    // 5-7s reading window.
-    var MIN_DWELL_MS = 6000;
-    let lastStepAt = 0;
-    let dwellTimer = null;
 
-    // Positions every card via inline transform, purely as a function of
-    // (card index − currentIndex). `instant`, used only on first activation,
-    // applies that starting layout with transitions switched off so nothing
-    // visibly slides in on arrival — every index change after that goes
-    // through the normal CSS transition declared in style.css.
-    function layout(instant){
-      items.forEach((el, idx) => {
-        if (instant) el.style.transitionProperty = 'none';
-        el.style.transform = 'translateX(' + ((idx - currentIndex) * 100) + '%)';
-        const on = idx === currentIndex;
-        el.classList.toggle('is-active', on);
-        el.setAttribute('aria-hidden', on ? 'false' : 'true');
-      });
-      if (instant){
-        void outer.offsetWidth; // force the "no transition" frame to actually paint
-        items.forEach(el => { el.style.transitionProperty = ''; });
-      }
-    }
-
-    function update(){
-      raf = null;
-      if (!active) return;
+    // Pure function of scroll: no stored "current index", no timers, no
+    // memory of previous frames — every call derives everything fresh from
+    // outer's position relative to the viewport right now, so the visuals
+    // can never drift out of sync with, or continue moving independently
+    // of, the actual scroll position.
+    function layout(){
       const rect = outer.getBoundingClientRect();
       const vh = window.innerHeight || document.documentElement.clientHeight;
       const scrollable = rect.height - vh;
       let progress = scrollable > 0 ? (-rect.top) / scrollable : 0;
       progress = Math.min(1, Math.max(0, progress));
-      const target = Math.min(items.length - 1, Math.max(0, Math.round(progress * (items.length - 1))));
-      if (target === currentIndex) return;
-
-      const elapsed = Date.now() - lastStepAt;
-      if (elapsed < MIN_DWELL_MS){
-        // Current card hasn't been on screen long enough yet — hold this
-        // step and re-check exactly when its dwell time runs out, so the
-        // advance still lands on wherever the user has scrolled to by then
-        // without requiring another scroll event to wake it up.
-        if (!dwellTimer) dwellTimer = setTimeout(function(){ dwellTimer = null; update(); }, MIN_DWELL_MS - elapsed);
-        return;
-      }
-
-      currentIndex += target > currentIndex ? 1 : -1; // one card per step, always
-      lastStepAt = Date.now();
-      layout(false);
-      if (currentIndex !== target) raf = requestAnimationFrame(update); // keep advancing toward the target, one step at a time (each further step is still dwell-gated above)
+      const continuousIndex = progress * (items.length - 1);
+      const nearest = Math.round(continuousIndex);
+      items.forEach((el, idx) => {
+        const delta = idx - continuousIndex; // signed distance from centered, in "card widths"
+        el.style.transform = 'translateX(' + (delta * 100) + '%)';
+        // Linear cross-fade tied to the same distance, so the outgoing card
+        // fades out and the incoming one fades in at exactly the rate the
+        // user is scrolling — never a separate timed fade.
+        el.style.opacity = Math.max(0, 1 - Math.abs(delta));
+        const on = idx === nearest;
+        el.classList.toggle('is-active', on);
+        el.setAttribute('aria-hidden', on ? 'false' : 'true');
+      });
     }
 
     function onScroll(){
       if (raf) return;
-      raf = requestAnimationFrame(update);
+      raf = requestAnimationFrame(function(){ raf = null; if (active) layout(); });
     }
 
     function enable(){
@@ -666,36 +667,22 @@
       // dvh (not vh) so the spacer's height tracks the browser's actual
       // visible viewport as mobile address/toolbar chrome shows/hides —
       // matches the dvh unit already used for .services-sticky-inner below.
-      // ROOT CAUSE of the section reserving far more vertical space than a
-      // horizontal slider needs: this used to be `items.length * PER_STEP_VH`
-      // (previously 100dvh/item, then 50dvh/item) — i.e. the spacer's height
-      // scaled with the NUMBER of services, exactly as if each one still
-      // needed its own vertical slot in a stacked layout. But the services
-      // never stack — they only ever move sideways via `translateX` — so a
-      // discrete-step slider only needs one small, CONSTANT scroll budget to
-      // resolve which step the user is on, no matter how many cards exist.
-      // PIN_BUDGET_VH is that fixed budget (the same 160dvh floor this code
-      // already trusted as "a real, non-zero pin range" for small item
-      // counts) applied uniformly instead of letting it grow with content —
-      // so the section's scroll footprint no longer increases every time a
-      // service is added, and stays as close to a single screen as the
-      // scroll->index stepping algorithm below can resolve. That algorithm,
-      // the one-card-at-a-time advance, and the CSS transition timing are
-      // all unchanged.
+      // PIN_BUDGET_VH is a fixed scroll budget (not scaled per item — see
+      // git history) that just needs to be tall enough to give this
+      // continuous scroll-to-position mapping a real, non-zero range to
+      // read from; it plays no other role now that stepping is continuous
+      // rather than threshold-based.
       var PIN_BUDGET_VH = 160;
       outer.style.height = PIN_BUDGET_VH + 'dvh';
-      currentIndex = 0;
-      lastStepAt = Date.now(); // first card's dwell window starts now too
-      layout(true);
+      layout();
       window.addEventListener('scroll', onScroll, { passive:true });
       window.addEventListener('orientationchange', onScroll);
-      update();
     }
 
     function disable(){
       if (!active) return;
       active = false;
-      if (dwellTimer){ clearTimeout(dwellTimer); dwellTimer = null; }
+      if (raf){ cancelAnimationFrame(raf); raf = null; }
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('orientationchange', onScroll);
       outer.style.height = '';
@@ -703,9 +690,8 @@
         el.classList.remove('is-active');
         el.removeAttribute('aria-hidden');
         el.style.transform = '';
-        el.style.transitionProperty = '';
+        el.style.opacity = '';
       });
-      currentIndex = 0;
     }
 
     function sync(){ mqServicesMobile.matches ? enable() : disable(); }
