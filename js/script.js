@@ -642,16 +642,24 @@
       // dvh (not vh) so the spacer's height tracks the browser's actual
       // visible viewport as mobile address/toolbar chrome shows/hides —
       // matches the dvh unit already used for .services-sticky-inner below.
-      // Each extra card used to cost a full 100dvh of scroll (400dvh total
-      // for 4 items), which made the whole section feel much longer than a
-      // single screen. PER_STEP_VH is trimmed to keep the section close to
-      // one iPhone screen's worth of scrolling while still giving the
-      // update()/getBoundingClientRect() math below a real (non-zero) pin
-      // range to step through — the stepping algorithm itself, the
-      // one-card-at-a-time advance, and the CSS transition timing are all
-      // unchanged.
-      var PER_STEP_VH = 50;
-      outer.style.height = Math.max(items.length * PER_STEP_VH, 160) + 'dvh';
+      // ROOT CAUSE of the section reserving far more vertical space than a
+      // horizontal slider needs: this used to be `items.length * PER_STEP_VH`
+      // (previously 100dvh/item, then 50dvh/item) — i.e. the spacer's height
+      // scaled with the NUMBER of services, exactly as if each one still
+      // needed its own vertical slot in a stacked layout. But the services
+      // never stack — they only ever move sideways via `translateX` — so a
+      // discrete-step slider only needs one small, CONSTANT scroll budget to
+      // resolve which step the user is on, no matter how many cards exist.
+      // PIN_BUDGET_VH is that fixed budget (the same 160dvh floor this code
+      // already trusted as "a real, non-zero pin range" for small item
+      // counts) applied uniformly instead of letting it grow with content —
+      // so the section's scroll footprint no longer increases every time a
+      // service is added, and stays as close to a single screen as the
+      // scroll->index stepping algorithm below can resolve. That algorithm,
+      // the one-card-at-a-time advance, and the CSS transition timing are
+      // all unchanged.
+      var PIN_BUDGET_VH = 160;
+      outer.style.height = PIN_BUDGET_VH + 'dvh';
       currentIndex = 0;
       layout(true);
       window.addEventListener('scroll', onScroll, { passive:true });
