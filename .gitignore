@@ -1,0 +1,12 @@
+# OS junk files
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Local env files (none used by this static site, kept as a safety net)
+.env
+.env.*

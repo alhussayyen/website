@@ -65,7 +65,16 @@
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
     text-rendering:optimizeLegibility;
-    overflow-x:hidden;
+    /* overflow-x/y:visible (not hidden) is intentional, not an oversight —
+       see the "shared sticky-pin base" comment further down this file for
+       why: html's own overflow-x:hidden (below) already fully propagates to
+       the viewport and blocks horizontal scroll on its own, so body doesn't
+       need to repeat it — and body independently keeping any non-visible
+       overflow here breaks position:sticky for the pinned sections further
+       down the page. Consolidated here (previously duplicated as a second,
+       later `body{}` rule) to avoid two rules fighting over the same
+       property. */
+    overflow-x:visible; overflow-y:visible;
     cursor:none;
   }
   @media (max-width: 860px), (hover:none){
@@ -391,89 +400,99 @@
     .stat:nth-child(n+3){ border-top:1px solid var(--line); }
   }
 
-  /* ---------- 04 work ---------- */
+  /* ---------- 04 work: photography story gallery ---------- */
   .work-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:2rem; flex-wrap:wrap; margin-bottom:3.5rem; }
-  .work-head h2{}
-  /* uniform grid: every card is exactly the same width and height (same
-     aspect-ratio below), so the grid lines up into clean, evenly-spaced
-     rows and columns — no size variation at all. */
-  .work-grid{
-    display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem;
+
+  /* Sticky spacer (see js/script.js — height set inline to
+     100dvh + (photoCount-1)*65dvh) + the pinned stage/caption inside it.
+     Active at EVERY breakpoint (mobile and desktop both in scope), unlike
+     the services showcase's mobile-only pin — relies on the shared
+     sticky-pin base declared earlier in this file (body's overflow fix),
+     so no extra plumbing is needed here. Purely position:sticky + native
+     scroll; nothing here intercepts or forces scroll position. */
+  .story-sticky-outer{ position:relative; width:100%; }
+  .story-sticky-inner{
+    position:sticky; top:0;
+    height:100vh; height:100dvh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    overflow:hidden;
+    padding:clamp(1.5rem,4vh,3rem) 0;
   }
-  /* mobile only: with an odd number of cards, the last one is alone in its
-     row — by default CSS grid leaves it pinned to the first column instead
-     of centered. Span it across both tracks and cap its own width back down
-     to a single column's width (same math as the grid gap above) so it's
-     perfectly centered with zero size change and no shift of anything else. */
-  @media (max-width:640px){
-    .work-grid .proj:last-child:nth-child(odd){
-      grid-column:1 / -1;
-      width:calc(50% - .5rem);
-      justify-self:center;
-    }
-  }
-  @media (min-width:641px){
-    .work-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.1rem; }
-  }
-  @media (min-width:1024px){
-    .work-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:1.25rem; }
-  }
-  .proj{
-    position:relative; overflow:hidden; background:#111; border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-sm);
+
+  /* Fixed-height, aspect-ratio-locked frame (height-driven rather than
+     width-driven) so it reliably fits inside the 100dvh pinned box above
+     alongside the caption block below it, on any phone or laptop viewport,
+     without ever needing to know the caption's exact height in advance. */
+  .story-stage{
+    position:relative; flex:0 0 auto;
+    height:clamp(280px, 50dvh, 560px);
+    width:auto; max-width:92vw;
     aspect-ratio:4/5;
-    transition:box-shadow .7s var(--ease-premium), transform .7s var(--ease-premium);
+    border-radius:var(--radius-lg);
+    overflow:hidden;
+    background:#111;
+    box-shadow:var(--shadow-lg);
   }
-  .proj:hover{ box-shadow:var(--shadow-lg); transform:translateY(-6px); }
-  .proj img{
-    /* absolutely positioned + inset:0 (rather than relying on percentage
-       width/height alone) guarantees the image's own box always exactly
-       fills .proj (its nearest positioned ancestor), regardless of the
-       <picture> wrapper or any percentage-height edge cases — the fix for
-       the reported gaps around some images. object-fit:cover + the parent's
-       overflow:hidden keep it fully cropped to the frame. */
+  @media (min-width:761px){
+    .story-stage{ height:clamp(360px, 56dvh, 620px); }
+  }
+  /* Every photo stacks in the same spot; js/script.js drives opacity
+     (crossfade) and a small translateY (light parallax) per frame from the
+     smoothed scroll position — continuously scroll-scrubbed, so no CSS
+     transition here (it would fight the constant inline updates, same
+     reasoning as the services showcase's card slide). */
+  .story-slide{
+    position:absolute; inset:0; margin:0;
+    opacity:0; pointer-events:none;
+    will-change:transform, opacity;
+  }
+  .story-slide.is-active{ pointer-events:auto; }
+  .story-slide picture{ position:absolute; inset:0; display:block; width:100%; height:100%; }
+  .story-slide img{
     position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
-    filter:contrast(1.08) saturate(1.03);
-    /* resting scale (1.06) plus the softened hover/scroll ranges set below
-       (in js/script.js) are tuned so the overscan margin always exceeds the
-       largest possible drift/reveal offset — the image can never dip to a
-       scale of 1.0 or below at any point in any animation, so the frame's
-       dark background is never exposed. Also noticeably gentler than
-       before, per the "soften this effect" request. */
-    transform:scale(1.06); transition:transform var(--dur-hover) var(--ease-scale), filter .7s ease;
-  }
-  .proj:hover img{ transform:scale(1.1); filter:contrast(1.12) saturate(1.08); }
-  .proj .cap{
-    position:absolute; inset:auto 0 0 0; padding:2rem 1.9rem 1.7rem;
-    background:linear-gradient(to top, rgba(0,0,0,.82) 5%, rgba(0,0,0,.32) 60%, transparent);
-    color:#fff; display:flex; justify-content:space-between; align-items:flex-end;
-    transform:translateY(10px); opacity:.96; transition:transform .6s var(--ease-premium);
-  }
-  .proj:hover .cap{ transform:translateY(0); }
-  .proj .cap .t{ font-family:'SFMada'; font-weight:700; font-size:1.08rem; letter-spacing:-0.01em; }
-  .proj .cap .n{ font-size:.72rem; opacity:.66; letter-spacing:.08em; }
-
-  /* ---- mobile only: the overlay caption text was too large and covered too
-     much of the photo — shrink it and force a single line (ellipsis instead
-     of wrapping to a 2nd line) so it never eats into the image. Desktop
-     keeps the original larger caption styling above untouched. ---- */
-  @media (max-width:640px){
-    .proj .cap{ padding:.95rem .85rem .8rem; gap:.4rem; }
-    .proj .cap .t-row{ min-width:0; flex:1 1 auto; overflow:hidden; }
-    .proj .cap .t{
-      font-size:.78rem;
-      display:block; min-width:0; max-width:100%;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .proj .cap .n{
-      font-size:.6rem; flex:0 0 auto; max-width:38%;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
+    filter:contrast(1.06) saturate(1.03);
   }
 
-  /* (the two typographic "statement" quote cards that used to sit in this
-     grid have been removed — the gallery is now photos only, per spec —
-     so the .proj-quote rules that styled them have been removed too.) */
+  /* Caption sits below the frame (not overlaid on the photo, per spec):
+     service name, description, counter. Text swaps discretely the instant
+     scroll settles on a new nearest photo (see js/script.js's
+     swapCaption()); the brief opacity dip during that swap is the only
+     transition here, everything else is scroll-scrubbed above. */
+  .story-caption{
+    margin-top:clamp(1.4rem,3vh,2.2rem);
+    max-width:46ch; text-align:center;
+    transition:opacity .3s ease;
+  }
+  .story-caption.is-swap{ opacity:0; }
+  .story-count{
+    display:block; margin-bottom:.6rem;
+    font-size:.78rem; letter-spacing:.16em;
+    color:var(--ink-faint); font-variant-numeric:tabular-nums;
+  }
+  .story-caption h3{ font-family:'SFMada'; font-weight:700; font-size:clamp(1.15rem,2.2vw,1.6rem); letter-spacing:-0.01em; color:var(--ink); }
+  .story-caption p{ margin-top:.55rem; font-size:.95rem; line-height:1.75; color:var(--ink-soft); font-weight:300; }
+
+  /* Inert leftovers, same as .svc-snap-point in the services section:
+     scroll-snap-align only has an effect when an ancestor sets
+     scroll-snap-type, and that's been removed sitewide (see the "shared
+     sticky-pin base" comment near the top of this file — it was fighting
+     the Lenis smooth-scroll library and breaking normal page scroll). Kept
+     in the markup/CSS rather than torn out to keep that fix minimal; the
+     fade/parallax crossfade itself (js/script.js) is untouched and still
+     tracks scroll continuously — there's just no forced hard stop anymore. */
+  .story-snap-point{
+    display:block;
+    position:absolute; left:0; width:100%; height:100dvh;
+    pointer-events:none;
+    scroll-snap-align:start;
+  }
+  .story-snap-point[data-snap-step="0"]{ top:0; }
+  .story-snap-point[data-snap-step="1"]{ top:65dvh; }
+  .story-snap-point[data-snap-step="2"]{ top:130dvh; }
+  .story-snap-point[data-snap-step="3"]{ top:195dvh; }
+  .story-snap-point[data-snap-step="4"]{ top:260dvh; }
+  .story-snap-point[data-snap-step="5"]{ top:325dvh; }
+  .story-snap-point[data-snap-step="6"]{ top:390dvh; }
 
   /* ---------- statement bands (photography / video production) ---------- */
   .statement{ padding:clamp(4.5rem,9vw,6.5rem) 0; text-align:center; }
@@ -596,7 +615,42 @@
       width:auto; height:auto; aspect-ratio:1/1; padding:.35rem; margin:0;
     }
     .client img{ max-height:30px; }
+    /* Audit fix: .clients{padding:clamp(3rem,6vw,5rem) 0} (above) overrides
+       .sec-pad's own padding (same specificity, .clients declared later),
+       so #clients only got ~48px of top padding on phone widths — less than
+       the fixed mobile header's ~87.8px height (see the services section's
+       header-height math further down this file). Reachable directly via
+       the "العملاء" nav link, so a click landed with "عملاؤنا" partly
+       covered. padding-bottom is left exactly as authored (untouched, still
+       clamp(3rem,6vw,5rem)); only padding-top is raised here, mobile-only,
+       enough to clear the header with a small comfortable gap. */
+    .clients{ padding-top:calc(2.8rem + 43px + 1rem); }
   }
+
+  /* ---------- shared sticky-pin base ----------
+     Needed at EVERY breakpoint (not just mobile) now that two sections use
+     the sticky-spacer technique: the services showcase (mobile-only pin)
+     and the photography story gallery (#work, all breakpoints — see its
+     dedicated block further down). position:sticky itself is plain native
+     CSS — it never blocks, intercepts, or slows native scrolling; the user
+     scrolls the real page the whole time, this only pins one element in
+     place while its spacer scrolls past. body's overflow-x/y:visible (set
+     on the base `body{}` rule near the top of this file) is what makes
+     that pinning actually work — see the comment there, and the longer
+     explanation further down, for why body independently keeping any
+     non-visible overflow breaks position:sticky.
+     NOTE: this file previously also set `html{ scroll-snap-type:y
+     mandatory }` here, forcing scroll to always rest on one of the
+     .svc-snap-point/.story-snap-point targets below. Removed per explicit
+     request — combined with the Lenis smooth-scroll library already running
+     site-wide, that forced snapping was fighting native scroll (page not
+     starting at the top, sections becoming hard to reach). Scrolling through
+     both sections is now 100% native/free: the crossfade animations still
+     track scroll position continuously, there's just no more hard stop or
+     forced full traversal before moving on — .svc-snap-point/.story-snap-point
+     are harmless no-ops now (scroll-snap-align only has an effect when an
+     ancestor sets scroll-snap-type), left in place rather than torn out to
+     keep this fix minimal. */
 
   /* ---------- services showcase (full width, single row, scroll-linked drift) ---------- */
   .services-showcase{
@@ -613,6 +667,10 @@
      pixel-identical to before they were introduced. */
   .services-sticky-outer{ width:100%; }
   .services-sticky-inner{ width:100%; }
+  /* Scroll-snap stop points (see markup in index.html) — inert on desktop,
+     exactly like the two wrappers above; only positioned/activated inside
+     the max-width:760px query below. */
+  .svc-snap-point{ display:none; }
   .services-showcase h2{
     width:100%; text-align:center; font-weight:900;
     color:#fff; margin-bottom:clamp(3rem,6vw,5rem);
@@ -655,25 +713,18 @@
      right / in from the left), entirely through normal CSS transitions on
      `transform`/`opacity`. Once the user scrolls past the spacer's height
      the section unpins on its own and the page continues normally — same
-     for scrolling back up past the first service. ---- */
+     for scrolling back up past the first service.
+     .svc-snap-point elements (see markup) are inert leftovers from an
+     earlier native-scroll-snap "pause" — `html{scroll-snap-type:y
+     mandatory}` has been removed sitewide (it was fighting the Lenis
+     smooth-scroll library and breaking normal scrolling: the page not
+     starting at the top, sections becoming hard to reach), so nothing
+     forces a hard stop on any of these four points anymore. The crossfade
+     itself is untouched and still tracks scroll continuously — this is now
+     100% native, un-hijacked scroll from top to bottom of the page; the
+     only thing lost with the snap removal is the brief forced settle on
+     each service and the "can't skip ahead" behavior. ---- */
   @media (max-width:760px){
-    /* Nav link ("الخدمات" in the mobile fullscreen menu, href="#services")
-       jumps straight to #services's own top with no offset, so the fixed
-       header (header.site-nav, position:fixed, ~88px tall on mobile) ends
-       up covering the "أبرز خدماتنا الإعلامية" heading underneath it —
-       confirmed by simulating the real click (through the real Lenis
-       instance this page loads, not just a native-scroll assumption):
-       h2 landed at top:51.7/bottom:105.5 against a header bottom edge of
-       87.8, i.e. only ~18px of the heading peeked out below the header.
-       scroll-margin-top tells the browser's native fragment-navigation
-       (what actually runs here — Lenis only smooths wheel/touch input, it
-       doesn't intercept anchor-link clicks or hash navigation, confirmed by
-       inspecting its source) to stop short by this much, landing the
-       section right under the header instead of at the literal viewport
-       top. No layout/positions change — this property only affects where
-       scroll-to-anchor stops. Scoped to mobile only; desktop's header and
-       section rhythm are untouched. */
-    #services{ scroll-margin-top:96px; }
     /* ROOT CAUSE of the large empty gaps before/after the card on mobile:
        .services-sticky-inner's `position:sticky` was being anchored to the
        wrong ancestor instead of the real viewport, so it never actually
@@ -709,11 +760,10 @@
        html's overflow-x:hidden is left completely untouched (still
        propagates to the viewport, still fully prevents horizontal
        scroll/scrollbars), so this has zero effect on horizontal clipping.
-       Scoped to this mobile-only query specifically because
-       position:sticky is used nowhere else in this stylesheet (grep
-       confirms it's the only occurrence), so this has zero effect above
-       760px — desktop/tablet CSS is untouched. */
-    body{ overflow-x:visible; overflow-y:visible; }
+       This fix now lives unconditionally on the base `body{}` rule near
+       the top of this file, since the photography story gallery further
+       down needs the same fix at every breakpoint, not just mobile — kept
+       here only as the historical record of why it exists. */
     /* .services-showcase itself (base rule above, line 592) also sets its own
        overflow:hidden unconditionally — a second, closer ancestor between
        .services-sticky-inner and the (now-fixed) html/body that independently
@@ -729,16 +779,84 @@
        .showcase-row's own overflow:hidden a few rules down, so nothing
        becomes visibly scrollable sideways. */
     .services-showcase{ padding:0; min-height:auto; overflow:visible; }
+    /* Mobile-only nudge: push the section title ("أبرز خدماتنا الإعلامية")
+       down by ~20-30px (about one line) without moving anything else.
+       Deliberately done with position:relative + top (not margin/padding)
+       so the h2's box keeps its original size/place in the flex flow —
+       .services-sticky-inner's padding-top clearance (untouched, still
+       clears the fixed header on its own), the h2's own margin-bottom, and
+       therefore .showcase-wrap's height/position (and every icon/card
+       inside it) are completely unaffected; only the rendered text itself
+       shifts down. This is the ONLY property changed for this fix — no
+       padding/margin added anywhere else in the section, no scroll/offset/
+       anchor touched. Scoped strictly to this max-width:760px query, so
+       desktop is untouched. */
+    .services-showcase h2{ position:relative; top:clamp(20px, 3vh, 30px); }
     .services-sticky-outer{ position:relative; }
+    /* Four stop points, one per service, positioned (not stacked in normal
+       flow — position:absolute) at the exact scroll offsets js/script.js's
+       targetIndex() already treats as "service N fully centered": with
+       PIN_BUDGET_VH=280 and 4 services, that's raw scroll progress
+       0 / 60 / 120 / 180dvh into .services-sticky-outer (three equal 60dvh
+       steps across its 180dvh of actual scrollable travel — the remaining
+       100dvh is .services-sticky-inner's own pinned viewport-height box).
+       Sized to a full 100dvh (rather than a 0/1px sliver) purely so every
+       engine reliably registers them as real, in-scope snap areas; they're
+       fully transparent and pointer-events:none, so nothing is ever visibly
+       or interactively affected by their presence — see markup comment in
+       index.html. If the number of services or PIN_BUDGET_VH ever changes,
+       these four offsets (and the number of .svc-snap-point elements) need
+       to be recalculated to match. scroll-snap-stop is deliberately left
+       at its default (not "always") — see the comment above this query —
+       so each service gets a short natural settle rather than a forced,
+       one-by-one hard stop. */
+    .svc-snap-point{
+      display:block;
+      position:absolute; left:0; width:100%; height:100dvh;
+      pointer-events:none;
+      scroll-snap-align:start;
+    }
+    .svc-snap-point[data-snap-step="0"]{ top:0; }
+    .svc-snap-point[data-snap-step="1"]{ top:60dvh; }
+    .svc-snap-point[data-snap-step="2"]{ top:120dvh; }
+    .svc-snap-point[data-snap-step="3"]{ top:180dvh; }
     .services-sticky-inner{
       position:sticky; top:0;
       height:100vh; height:100dvh;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      /* Trimmed from clamp(5rem,9vw,7.5rem) so the pinned screen isn't mostly
-         top/bottom padding — vh-based (not vw-based) since this is vertical
-         spacing that should track viewport height, keeping the card centered
-         with no large empty margin above/below (spec point 4). */
-      padding:clamp(2rem,6vh,3.25rem) 0;
+      display:flex; flex-direction:column; align-items:center;
+      /* ---- h2/header clearance, as real section layout (not scroll offset) ----
+         .services-sticky-inner is what's actually pinned flush to the
+         viewport top (top:0, above) for the whole time this section is
+         being browsed — whether the user got here by clicking the
+         "الخدمات" nav link or by plain manual scrolling, since both paths
+         land on the exact same pinned state the moment #services reaches
+         the top of the viewport (a native anchor jump to #services simply
+         scrolls its top to y:0, which is precisely the position at which
+         .services-sticky-inner's sticky top:0 engages). So giving *this*
+         box a fixed padding-top big enough to clear the fixed mobile header
+         is a single, permanent fix for both entry paths — unlike the old
+         approach here (removed), which only patched the nav-link click via
+         a JS-computed scroll offset (and a scroll-margin-top fallback) and
+         still left manual scrolling with no clearance at all.
+         header.site-nav is position:fixed with 1.4rem top/bottom padding
+         around the 42px #navToggle button (the tallest thing in the bar
+         at this breakpoint, shown <=1024px — comfortably covers every
+         mobile width) plus its 1px bottom border, i.e. a constant
+         2*1.4rem + 42px + 1px tall, regardless of viewport width. Adding a
+         comfortable extra gap on top of that guarantees the heading never
+         touches the header and always renders fully on screen. Gap widened
+         to ~40-60px (clamp(2.5rem,6vh,3.75rem), was clamp(1.25rem,4vh,2rem))
+         per follow-up review — the smaller gap still occasionally read as
+         too tight against the header on some phone heights. */
+      padding-top:calc(2.8rem + 43px + clamp(2.5rem, 6vh, 3.75rem));
+      /* justify-content:flex-start (not center) so the padding-top above is
+         real reserved space at the very top of the pinned box, rather than
+         being folded back into a vertical centering calculation — the card
+         area right below (.showcase-wrap, flex:1 1 auto) still centers
+         itself within whatever room is left underneath, so the cards keep
+         reading as vertically centered on screen exactly as before. */
+      justify-content:flex-start;
+      padding-bottom:clamp(1.5rem, 4vh, 2.5rem);
       overflow:hidden;
     }
 
@@ -767,6 +885,10 @@
        tracking. opacity:0 below is just the pre-JS/no-JS fallback; the
        moment the mobile controller activates it's overridden inline every
        frame. */
+    /* mobile only: matches the desktop-only frameless-card / bare-icon look
+       (see the min-width:761px query below) instead of the bordered glass
+       card + icon circle used as the base (touch) styling above — merged
+       into one rule (was previously split into two identical selectors). */
     .showcase-item{
       position:absolute; inset:0; margin:0; max-width:none;
       opacity:0; pointer-events:none;
@@ -776,18 +898,13 @@
          underneath (spec point 4). */
       justify-content:center;
       will-change:transform, opacity;
-    }
-    .showcase-item.is-active{
-      pointer-events:auto;
-    }
-    /* mobile only: match the desktop-only frameless-card / bare-icon look
-       below instead of the bordered glass card + icon circle used as the
-       base (touch) styling above */
-    .showcase-item{
       border:none; background:none; box-shadow:none;
       -webkit-backdrop-filter:none; backdrop-filter:none;
       border-radius:0;
       padding:clamp(1rem,1.6vw,1.5rem) clamp(1.25rem,2vw,2rem);
+    }
+    .showcase-item.is-active{
+      pointer-events:auto;
     }
     .ring-icon{
       width:auto; height:auto; border-radius:0;
@@ -876,7 +993,11 @@
   .contact-list a:last-child, .contact-list .contact-row:last-child{ border-bottom:none; }
   .contact-list a:hover{ padding-inline-start:.7rem; color:#fff; border-color:var(--accent-line); }
   .contact-list .k{ color:rgba(255,255,255,.5); font-size:.85rem; word-break:break-word; overflow-wrap:break-word; }
-  .contact-list a{ gap:.9rem; }
+  /* .contact-list a's `gap` is set once, later in this file (see the
+     "---- icons ----" section) — a duplicate `gap:.9rem` rule used to sit
+     here too; same selector, same property, so the later `gap:1rem` rule
+     always won the cascade and the .9rem value never actually rendered.
+     Removed to avoid two rules quietly fighting over the same property. */
   .contact-list .ic{ display:flex; align-items:center; justify-content:center; flex:none; }
   .contact-list .ic svg{ width:26px; height:26px; stroke:rgba(255,255,255,.75); transition:stroke .3s ease; }
   .contact-list a:hover .ic svg{ stroke:#fff; }
@@ -945,11 +1066,6 @@
     .icon-btn-download:active{ transform:scale(.9) rotate(3deg); }
   }
 
-  .icon-arrow{ width:15px; height:15px; stroke:currentColor; flex:none; opacity:0; transform:translate(-4px,4px); transition:opacity .35s ease, transform .35s var(--ease); }
-  .proj .cap .t-row{ display:flex; align-items:center; gap:.5rem; }
-  .proj:hover .icon-arrow{ opacity:1; transform:translate(0,0); }
-  .client .icon-arrow{ stroke:var(--ink); }
-  .client:hover .icon-arrow{ opacity:.55; }
   .socials{ display:flex; flex-direction:column; gap:.2rem; }
   .socials a{ padding:1.1rem 0; display:flex; justify-content:space-between; }
   .socials a span:last-child{ color:rgba(255,255,255,.45); font-size:.85rem; }
@@ -1094,6 +1210,15 @@
      every other section pair keeps its normal spacing untouched. */
   #profile{ padding-bottom:clamp(3rem, 6vw, 5rem); }
   #team{ padding-top:clamp(3rem, 6vw, 5rem); }
+  /* Audit fix, mobile only: #team's own padding-top above (~48px on phone
+     widths) is less than the fixed mobile header's ~87.8px height — same
+     underlying issue as #clients further up this file. #team isn't a nav
+     link, but it's still a real anchor id (direct URL / back-forward), so
+     "من خلف سيرة؟!" could otherwise land partly covered. padding-bottom
+     elsewhere on this section is untouched. */
+  @media (max-width:760px){
+    #team{ padding-top:calc(2.8rem + 43px + 1rem); }
+  }
   .profile p{ max-width:52ch; margin:0 auto; color:var(--ink-soft); font-weight:300; font-size:1.08rem; line-height:1.95; }
   .profile-btn{
     margin-top:2.6rem; display:inline-flex; align-items:center; gap:.9rem;
@@ -1128,55 +1253,8 @@
      will-change is scoped narrowly, only on elements actually transformed
      while scrolling, so it doesn't create unnecessary compositing layers
      elsewhere on the page. */
-  .proj img,
+  .story-slide img,
   #heroVideo,
   .video-grid,
   .stats-grid,
   .coming-soon{ will-change: transform; }
-
-  /* ---- lightbox (portfolio image viewer) ---- */
-  .work-grid a.proj{ cursor:pointer; }
-  .lightbox{
-    position:fixed; inset:0; z-index:500;
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(5,5,5,.92);
-    -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
-    padding:clamp(1rem,4vw,3rem);
-    opacity:0; visibility:hidden;
-    transition:opacity .35s ease, visibility 0s linear .35s;
-  }
-  .lightbox.lb-open{
-    opacity:1; visibility:visible;
-    transition:opacity .35s ease, visibility 0s;
-  }
-  .lb-figure{ position:relative; max-width:min(1100px,92vw); max-height:86vh; margin:0; text-align:center; }
-  .lb-figure img{
-    max-width:100%; max-height:78vh; width:auto; height:auto; margin:0 auto;
-    border-radius:var(--radius-md); box-shadow:var(--shadow-lg);
-    opacity:0; transform:scale(.97); transition:opacity .35s var(--ease-soft), transform .35s var(--ease-soft);
-  }
-  .lightbox.lb-open .lb-figure img{ opacity:1; transform:scale(1); }
-  .lb-figure figcaption{ margin-top:1.1rem; color:rgba(255,255,255,.75); font-size:.9rem; letter-spacing:.03em; }
-  .lb-close, .lb-nav{
-    position:fixed; z-index:501;
-    width:48px; height:48px; border-radius:50%;
-    border:1px solid var(--glass-border); background:var(--glass-bg);
-    -webkit-backdrop-filter:var(--glass-blur); backdrop-filter:var(--glass-blur);
-    color:#fff; display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition:background .3s ease, border-color .3s ease, transform var(--dur-hover) var(--ease-scale);
-  }
-  .lb-close svg, .lb-nav svg{ width:20px; height:20px; }
-  .lb-close:hover, .lb-nav:hover{ background:var(--glass-bg-hover); border-color:var(--accent-line); }
-  .lb-close{ top:clamp(1rem,3vw,2rem); left:clamp(1rem,3vw,2rem); transform:scale(1); }
-  .lb-close:hover{ transform:scale(1.06); }
-  .lb-close:active{ transform:scale(.96); }
-  .lb-prev{ top:50%; right:clamp(1rem,3vw,2rem); transform:translateY(-50%) scale(1); }
-  .lb-next{ top:50%; left:clamp(1rem,3vw,2rem); transform:translateY(-50%) scale(1); }
-  .lb-prev:hover, .lb-next:hover{ transform:translateY(-50%) scale(1.06); }
-  .lb-prev:active, .lb-next:active{ transform:translateY(-50%) scale(.96); }
-  @media (max-width:700px){
-    .lb-close{ top:1rem; left:1rem; width:42px; height:42px; }
-    .lb-prev, .lb-next{ width:42px; height:42px; }
-    .lb-prev{ right:.6rem; }
-    .lb-next{ left:.6rem; }
-  }

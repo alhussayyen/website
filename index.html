@@ -260,6 +260,16 @@
         </div>
       </div>
     </div>
+    <!-- Inert markers left over from a removed native-scroll-snap "pause"
+         (see css/style.css — `scroll-snap-type` was fighting the Lenis
+         smooth-scroll library and breaking normal page scroll, so it's been
+         removed sitewide). Scrolling through this section is now 100%
+         native/free; the crossfade in js/script.js still tracks scroll
+         continuously regardless. Desktop-inert either way. -->
+    <div class="svc-snap-point" data-snap-step="0" aria-hidden="true"></div>
+    <div class="svc-snap-point" data-snap-step="1" aria-hidden="true"></div>
+    <div class="svc-snap-point" data-snap-step="2" aria-hidden="true"></div>
+    <div class="svc-snap-point" data-snap-step="3" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -283,126 +293,83 @@
       <p style="max-width:44ch; color:var(--ink-soft); font-weight:300" data-anim="fade">نحوّل اللحظات إلى صور تنبض بالحياة، بعدسات احترافية ولمسات إبداعية تُبرز التفاصيل بدقة، لتعكس هوية علامتك وتترك أثرًا بصريًا لا يُنسى.</p>
     </div>
 
-    <div class="work-grid">
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-01-fares-academy.webp" type="image/webp">
-          <img src="assets/images/work-01-fares-academy.jpg" alt="Fares Academy" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">Fares Academy</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير استديو</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-13-car-exterior.webp" type="image/webp">
-          <img src="assets/images/work-13-car-exterior.jpg" alt="تصوير سيارات" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">تصوير سيارات</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير خارجي</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-11-portrait-session-studio.webp" type="image/webp">
-          <img src="assets/images/work-11-portrait-session-studio.jpg" alt="جلسة بورتريه" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">جلسة بورتريه</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير استديو</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-15-al-hilal-club.webp" type="image/webp">
-          <img src="assets/images/work-15-al-hilal-club.jpg" alt="رابطة الدوري السعودي للمحترفين" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">رابطة الدوري السعودي للمحترفين</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">نادي الهلال</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-02-rk-aroma-perfumes.webp" type="image/webp">
-          <img src="assets/images/work-02-rk-aroma-perfumes.jpg" alt="RK Aroma Perfumes" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">RK Aroma Perfumes</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير منتجات</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-16-fashion-coat.webp" type="image/webp">
-          <img src="assets/images/work-16-fashion-coat.jpg" alt="تصوير أزياء" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">تصوير أزياء</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير خارجي</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-06-al-hazm-club.webp" type="image/webp">
-          <img src="assets/images/work-06-al-hazm-club.jpg" alt="رابطة الدوري السعودي للمحترفين" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">رابطة الدوري السعودي للمحترفين</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">نادي الحزم</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-18-formal-gathering.webp" type="image/webp">
-          <img src="assets/images/work-18-formal-gathering.jpg" alt="صورة جماعية" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">صورة جماعية</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير مناسبات</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-14-car-product.webp" type="image/webp">
-          <img src="assets/images/work-14-car-product.jpg" alt="تصوير سيارات" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">تصوير سيارات</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير منتجات</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-05-graduation-ceremony.webp" type="image/webp">
-          <img src="assets/images/work-05-graduation-ceremony.jpg" alt="حفل تخرج" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">حفل تخرج</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير تخرج</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-19-business-meeting.webp" type="image/webp">
-          <img src="assets/images/work-19-business-meeting.jpg" alt="فعالية أعمال" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">فعالية أعمال</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">اجتماع شركات</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-04-autha-coffee-roasters.webp" type="image/webp">
-          <img src="assets/images/work-04-autha-coffee-roasters.jpg" alt="Autha Coffee Roasters" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">Autha Coffee Roasters</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير منتجات</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-17-brand-tshirt.webp" type="image/webp">
-          <img src="assets/images/work-17-brand-tshirt.jpg" alt="تصوير ماركة" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">تصوير ماركة</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير خارجي</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-07-fashion-shoot.webp" type="image/webp">
-          <img src="assets/images/work-07-fashion-shoot.jpg" alt="تصوير تخرج" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">تصوير تخرج</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير استديو</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-12-portrait-session-side.webp" type="image/webp">
-          <img src="assets/images/work-12-portrait-session-side.jpg" alt="بورتريه احترافي" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">بورتريه احترافي</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير استديو</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-08-formal-event.webp" type="image/webp">
-          <img src="assets/images/work-08-formal-event.jpg" alt="أفراح وزواجات" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">أفراح وزواجات</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تغطية مناسبات</span></div>
-      </a>
-      <a class="proj" href="#" data-anim="rise">
-        <picture>
-          <source srcset="assets/images/work-09-table-tennis-federation.webp" type="image/webp">
-          <img src="assets/images/work-09-table-tennis-federation.jpg" alt="الاتحاد السعودي لكرة الطاولة" loading="lazy">
-        </picture>
-        <div class="cap"><span class="t-row"><span class="t">الاتحاد السعودي لكرة الطاولة</span><svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 17 7 7M16 7h-9v9"/></svg></span><span class="n">تصوير فعالية</span></div>
-      </a>
+    <!-- Story Gallery: 7 curated shots, one full-bleed frame at a time, no
+         arrows/dots/autoplay — advances purely via normal page scroll (see
+         css/style.css "story gallery" block and js/script.js's dedicated
+         controller). Same sticky-pin technique as the mobile services
+         section (position:sticky + a spacer — plain native CSS, never
+         intercepts scroll), active at every breakpoint (mobile AND desktop)
+         per spec, driven by fade+parallax instead of a horizontal slide.
+         Each .story-slide carries its own caption content (data-title/
+         data-desc) so js/script.js only ever reads from markup here — no
+         copy duplicated in the script. -->
+    <div class="story-sticky-outer" id="storyStickyOuter">
+      <div class="story-sticky-inner" id="storyStickyInner">
+        <div class="story-stage" id="storyStage">
+          <figure class="story-slide" data-story-index="0" data-title="التصوير الرياضي" data-desc="تغطيات ميدانية لأكبر البطولات المحلية والدولية، بتوقيت الحركة ولحظة الذروة.">
+            <picture>
+              <source srcset="assets/images/work-15-al-hilal-club.webp" type="image/webp">
+              <img src="assets/images/work-15-al-hilal-club.jpg" alt="التصوير الرياضي" loading="lazy">
+            </picture>
+          </figure>
+          <figure class="story-slide" data-story-index="1" data-title="التصوير الشخصي والبورتريه" data-desc="جلسات تصوير تعكس الهيبة والحضور، لقادة ومؤسسات وشخصيات عامة.">
+            <picture>
+              <source srcset="assets/images/work-11-portrait-session-studio.webp" type="image/webp">
+              <img src="assets/images/work-11-portrait-session-studio.jpg" alt="التصوير الشخصي والبورتريه" loading="lazy">
+            </picture>
+          </figure>
+          <figure class="story-slide" data-story-index="2" data-title="الإنتاج التجاري والمنتجات" data-desc="تصوير منتجات وحملات تجارية بجودة تليق بالعلامات الفاخرة.">
+            <picture>
+              <source srcset="assets/images/work-02-rk-aroma-perfumes.webp" type="image/webp">
+              <img src="assets/images/work-02-rk-aroma-perfumes.jpg" alt="الإنتاج التجاري والمنتجات" loading="lazy">
+            </picture>
+          </figure>
+          <figure class="story-slide" data-story-index="3" data-title="الفعاليات والمناسبات الكبرى" data-desc="توثيق بصري كامل للمؤتمرات والفعاليات الرسمية والحفلات الكبرى.">
+            <picture>
+              <source srcset="assets/images/work-18-formal-gathering.webp" type="image/webp">
+              <img src="assets/images/work-18-formal-gathering.jpg" alt="الفعاليات والمناسبات الكبرى" loading="lazy">
+            </picture>
+          </figure>
+          <figure class="story-slide" data-story-index="4" data-title="تصوير الأزياء" data-desc="لقطات أزياء بحسّ تحريري أنيق، تبرز الشخصية والستايل بثقة وحضور عصري.">
+            <picture>
+              <source srcset="assets/images/work-16-fashion-coat.webp" type="image/webp">
+              <img src="assets/images/work-16-fashion-coat.jpg" alt="تصوير الأزياء" loading="lazy">
+            </picture>
+          </figure>
+          <figure class="story-slide" data-story-index="5" data-title="المطاعم والضيافة" data-desc="تصوير يحوّل التفاصيل الصغيرة إلى لغة بصرية شهية.">
+            <picture>
+              <source srcset="assets/images/work-04-autha-coffee-roasters.webp" type="image/webp">
+              <img src="assets/images/work-04-autha-coffee-roasters.jpg" alt="المطاعم والضيافة" loading="lazy">
+            </picture>
+          </figure>
+          <figure class="story-slide" data-story-index="6" data-title="الزواجات والمناسبات الخاصة" data-desc="توثيق حميمي للحظات لا تتكرر، بحس سينمائي هادئ.">
+            <picture>
+              <source srcset="assets/images/work-08-formal-event.webp" type="image/webp">
+              <img src="assets/images/work-08-formal-event.jpg" alt="الزواجات والمناسبات الخاصة" loading="lazy">
+            </picture>
+          </figure>
+        </div>
+
+        <div class="story-caption" id="storyCaption">
+          <span class="story-count"><span id="storyCountCurrent">01</span> / <span id="storyCountTotal">07</span></span>
+          <h3 id="storyTitle">التصوير الرياضي</h3>
+          <p id="storyDesc">تغطيات ميدانية لأكبر البطولات المحلية والدولية، بتوقيت الحركة ولحظة الذروة.</p>
+        </div>
+      </div>
+
+      <!-- Inert markers, same as .svc-snap-point in the services section —
+           scroll-snap-type has been removed sitewide (see css/style.css)
+           since it was fighting the Lenis smooth-scroll library and
+           breaking normal page scroll. Scrolling through this gallery is
+           now fully native; js/script.js's fade+parallax crossfade still
+           tracks scroll position continuously regardless. -->
+      <div class="story-snap-point" data-snap-step="0" aria-hidden="true"></div>
+      <div class="story-snap-point" data-snap-step="1" aria-hidden="true"></div>
+      <div class="story-snap-point" data-snap-step="2" aria-hidden="true"></div>
+      <div class="story-snap-point" data-snap-step="3" aria-hidden="true"></div>
+      <div class="story-snap-point" data-snap-step="4" aria-hidden="true"></div>
+      <div class="story-snap-point" data-snap-step="5" aria-hidden="true"></div>
+      <div class="story-snap-point" data-snap-step="6" aria-hidden="true"></div>
     </div>
   </div>
 </section>
@@ -462,16 +429,16 @@
        glow, desaturate-to-color) are untouched. -->
   <div class="logo-marquee" id="logoMarquee">
     <div class="logo-marquee-track" id="logoTrack">
-      <div class="client" style="--glow:#7a3b3b" data-anim="rise"><img src="assets/images/client-01-al-faisaly.png" alt="نادي الفيصلي"></div>
-      <div class="client" style="--glow:#3f6b4f" data-anim="rise"><img src="assets/images/client-02-saudi-football-federation.png" alt="الاتحاد السعودي لكرة القدم"></div>
-      <div class="client" style="--glow:#22405f" data-anim="rise"><img src="assets/images/client-03-florde.png" alt="فلورد"></div>
-      <div class="client" style="--glow:#4a4a48" data-anim="rise"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="مكتب محاماة صالح الغالب"></div>
-      <div class="client" style="--glow:#8a7550" data-anim="rise"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="الراجحي، السديس والسحيباني للاستشارات القانونية"></div>
-      <div class="client" style="--glow:#6b4fa0" data-anim="rise"><img src="assets/images/client-06-weco.png" alt="WECO"></div>
-      <div class="client" style="--glow:#1f5c73" data-anim="rise"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="Autha Coffee Roasters"></div>
-      <div class="client" style="--glow:#3a6b8a" data-anim="rise"><img src="assets/images/client-08-roshn-league.png" alt="دوري روشن السعودي"></div>
-      <div class="client" style="--glow:#1a1f4d" data-anim="rise"><img src="assets/images/client-09-fares-academy.png" alt="Fares Academy"></div>
-      <div class="client" style="--glow:#2f7a4f" data-anim="rise"><img src="assets/images/client-10-table-tennis-federation.png" alt="الاتحاد السعودي لكرة الطاولة"></div>
+      <div class="client" style="--glow:#7a3b3b" data-anim="rise"><img src="assets/images/client-01-al-faisaly.png" alt="نادي الفيصلي" loading="lazy"></div>
+      <div class="client" style="--glow:#3f6b4f" data-anim="rise"><img src="assets/images/client-02-saudi-football-federation.png" alt="الاتحاد السعودي لكرة القدم" loading="lazy"></div>
+      <div class="client" style="--glow:#22405f" data-anim="rise"><img src="assets/images/client-03-florde.png" alt="فلورد" loading="lazy"></div>
+      <div class="client" style="--glow:#4a4a48" data-anim="rise"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="مكتب محاماة صالح الغالب" loading="lazy"></div>
+      <div class="client" style="--glow:#8a7550" data-anim="rise"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="الراجحي، السديس والسحيباني للاستشارات القانونية" loading="lazy"></div>
+      <div class="client" style="--glow:#6b4fa0" data-anim="rise"><img src="assets/images/client-06-weco.png" alt="WECO" loading="lazy"></div>
+      <div class="client" style="--glow:#1f5c73" data-anim="rise"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="Autha Coffee Roasters" loading="lazy"></div>
+      <div class="client" style="--glow:#3a6b8a" data-anim="rise"><img src="assets/images/client-08-roshn-league.png" alt="دوري روشن السعودي" loading="lazy"></div>
+      <div class="client" style="--glow:#1a1f4d" data-anim="rise"><img src="assets/images/client-09-fares-academy.png" alt="Fares Academy" loading="lazy"></div>
+      <div class="client" style="--glow:#2f7a4f" data-anim="rise"><img src="assets/images/client-10-table-tennis-federation.png" alt="الاتحاد السعودي لكرة الطاولة" loading="lazy"></div>
     </div>
   </div>
 </section>
@@ -584,26 +551,15 @@
   </div>
 </section>
 
-<!-- lightbox: opens portfolio images from the "work-grid" on click -->
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="عرض الصورة" hidden>
-  <button class="lb-close" id="lbClose" type="button" aria-label="إغلاق">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5l13 13"/><path d="M18.5 5.5l-13 13"/></svg>
-  </button>
-  <button class="lb-nav lb-prev" id="lbPrev" type="button" aria-label="الصورة السابقة">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-  </button>
-  <button class="lb-nav lb-next" id="lbNext" type="button" aria-label="الصورة التالية">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
-  </button>
-  <figure class="lb-figure">
-    <img id="lbImg" src="" alt="">
-    <figcaption id="lbCaption"></figcaption>
-  </figure>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" crossorigin="anonymous"></script>
-<script src="js/script.js"></script>
+<!-- defer (not async): lets the browser fetch all four scripts in parallel
+     instead of one-at-a-time, while still guaranteeing they execute in this
+     exact order right before DOMContentLoaded — script.js reads
+     window.gsap/ScrollTrigger/Lenis, so that order must be preserved. Safe
+     here since all four are already the very last thing in <body>, so there
+     is no visible content left to delay. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous" defer></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" crossorigin="anonymous" defer></script>
+<script src="js/script.js" defer></script>
 </body>
 </html>

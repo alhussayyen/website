@@ -211,56 +211,14 @@
     window.addEventListener('resize', () => { if (window.innerWidth > 1024) closeNav(); });
   })();
 
-  // ---- "الخدمات" nav link: manual scroll offset so the fixed header never
-  // covers "أبرز خدماتنا الإعلامية" (mobile only) ----
-  // How this link actually navigates, confirmed by reading the code (not
-  // assumed): it's a plain <a href="#services"> with no other JS anywhere
-  // registering a click/hash handler for it (grepped the whole file), so by
-  // default the browser's native fragment navigation runs. CSS
-  // scroll-margin-top on #services is still in place as a fallback for any
-  // navigation path that isn't a click (keyboard activation that doesn't
-  // fire 'click', direct URL/#services, back/forward), but a click is
-  // additionally intercepted here and computed explicitly, per spec:
-  //   targetPosition = sectionTop - headerHeight - 24
-  // both measured live at click time (not cached), so it's correct at any
-  // header height / any mobile screen size. This page also runs Lenis for
-  // smooth scrolling (see above); Lenis intercepts wheel/touch input to
-  // *drive* scrolling, but a programmatic native window.scrollTo() is not
-  // wheel/touch input, so it isn't intercepted — Lenis just observes the
-  // resulting native 'scroll' events afterward and re-syncs its own
-  // internal position to match (confirmed in Lenis's source:
-  // onNativeScroll sets animatedScroll/targetScroll = actualScroll). Lenis
-  // is still explicitly paused for the duration of this jump anyway (belt
-  // and braces — same stop()/start() pattern already used for the mobile
-  // nav overlay above), purely so nothing else can compete for the scroll
-  // while it's happening; it isn't needed for correctness.
-  (function(){
-    const servicesLink = document.querySelector('#siteNav a[href="#services"]');
-    const servicesSection = document.getElementById('services');
-    const header = document.querySelector('header.site-nav');
-    if (!servicesLink || !servicesSection || !header) return;
-
-    servicesLink.addEventListener('click', function(e){
-      if (!mqServicesMobile.matches) return; // desktop: untouched, native jump as before
-      e.preventDefault();
-
-      __lenis?.stop();
-
-      const headerHeight = header.getBoundingClientRect().height; // live, not cached
-      const sectionTop = servicesSection.getBoundingClientRect().top + window.scrollY; // absolute page position
-      const targetPosition = Math.max(0, sectionTop - headerHeight - 24); // exact spec formula, 24px safety gap
-
-      window.scrollTo({ top: targetPosition, behavior:'smooth' });
-      if (history.pushState) history.pushState(null, '', '#services');
-
-      function resumeLenis(){
-        window.removeEventListener('scrollend', resumeLenis);
-        __lenis?.start();
-      }
-      window.addEventListener('scrollend', resumeLenis, { once:true });
-      setTimeout(resumeLenis, 1200); // fallback for browsers without 'scrollend'
-    });
-  })();
+  // ---- "الخدمات" nav link ----
+  // Plain <a href="#services">, native fragment navigation, no JS scroll-
+  // offset interception needed: the header clearance under "أبرز خدماتنا
+  // الإعلامية" is now real padding baked into .services-sticky-inner's own
+  // layout (see css/style.css), so the heading sits correctly below the
+  // fixed header no matter how #services is reached — clicking this link,
+  // a manual scroll, a direct #services URL, or back/forward — without
+  // needing a per-click JS-computed offset or scroll-margin-top.
 
   // ---- nav logo theme (invert over dark sections) ----
   const navLogo = document.getElementById('navLogo');
@@ -288,7 +246,7 @@
     ring.style.left = rx+'px'; ring.style.top = ry+'px';
     requestAnimationFrame(loop);
   })();
-  document.querySelectorAll('a, button, .proj, .client').forEach(el=>{
+  document.querySelectorAll('a, button, .story-slide, .client').forEach(el=>{
     el.addEventListener('mouseenter', ()=>ring.classList.add('big'));
     el.addEventListener('mouseleave', ()=>ring.classList.remove('big'));
   });
@@ -413,9 +371,10 @@
       scrollTrigger:{ trigger:'.hero', start:'top top', end:'60% top', scrub:.6 }
     });
 
-    // (portfolio image scroll-triggered scale reveal removed per spec —
-    // images are static within their frame; the .proj card wrapper itself
-    // still gets the standard [data-anim="rise"] reveal above.)
+    // (the old grid's portfolio image scroll-scale reveal no longer
+    // applies — the photography section is now the dedicated story-gallery
+    // controller further down, which owns its own photos' opacity/transform
+    // every frame; a generic GSAP reveal here would fight that.)
 
     // ---- video production section: pinned-feel zoom + drift on the grid ----
     if (document.querySelector('.video-grid')){
@@ -705,6 +664,10 @@
       // deliberately larger scroll distance to traverse (roughly 60dvh per
       // transition instead of ~20dvh) instead of transitioning on a small
       // scroll nudge.
+      // NOTE: css/style.css's four `.svc-snap-point[data-snap-step]` scroll-
+      // snap targets are positioned at 0/60/120/180dvh — i.e. hand-derived
+      // from this exact value (280) and items.length (4). If either changes,
+      // those offsets (and the number of snap points) need updating too.
       var PIN_BUDGET_VH = 280;
       outer.style.height = PIN_BUDGET_VH + 'dvh';
       renderedIndex = targetIndex();
@@ -743,69 +706,112 @@
   // markup as before); the keyframes just shift it exactly one set-width
   // (-50%) so the loop point is invisible. Nothing to wire up here.
 
-  // ---- portfolio lightbox ----
+  // ---- work/photography story gallery: sticky-pinned, scroll-driven
+  // fade + light parallax, one photo at a time — see markup in index.html
+  // (#storyStickyOuter) and the dedicated CSS block in style.css. Same
+  // core mechanism as the mobile services showcase below (sticky spacer +
+  // fractional scroll-position index, lerped for a smooth settle), but:
+  // (a) active at EVERY breakpoint, not just mobile — this section is in
+  // scope for both mobile and desktop per spec — and (b) crossfades
+  // opacity + a small translateY parallax instead of sliding cards
+  // horizontally, since this is a single full-bleed photo stage, not a
+  // multi-card row. No buttons, no arrows, no dots, no autoplay/timer: the
+  // only input is normal, un-hijacked page scroll — position:sticky here
+  // never intercepts or blocks scrolling, it only pins this box in place
+  // while its spacer scrolls past (native scroll-snap "pause" removed
+  // sitewide, see style.css — it was fighting the Lenis smooth-scroll
+  // library and breaking normal scrolling). ----
   (function(){
-    const items = Array.from(document.querySelectorAll('.work-grid a.proj'));
-    const lightbox = document.getElementById('lightbox');
-    if (!items.length || !lightbox) return;
+    const outer = document.getElementById('storyStickyOuter');
+    const slides = Array.from(document.querySelectorAll('.story-slide'));
+    const captionEl = document.getElementById('storyCaption');
+    const titleEl = document.getElementById('storyTitle');
+    const descEl = document.getElementById('storyDesc');
+    const countEl = document.getElementById('storyCountCurrent');
+    if (!outer || !slides.length || !captionEl) return;
 
-    const lbImg = document.getElementById('lbImg');
-    const lbCaption = document.getElementById('lbCaption');
-    const btnClose = document.getElementById('lbClose');
-    const btnPrev = document.getElementById('lbPrev');
-    const btnNext = document.getElementById('lbNext');
+    // Scroll budget per photo transition, in dvh — generous enough (versus
+    // the services row's 60dvh/step) that each photo needs a deliberate
+    // scroll to advance, giving natural room to read the caption before the
+    // next one settles in. css/style.css's `.story-snap-point[data-snap-step]`
+    // offsets are hand-derived from this exact value and slides.length —
+    // if either changes, those snap offsets need updating too.
+    var STEP_VH = 65;
+    var PIN_BUDGET_VH = 100 + (slides.length - 1) * STEP_VH;
+    var LERP = 0.16;
+    var SETTLE_EPSILON = 0.0015;
+    var PARALLAX_PX = 26;
 
-    const slides = items.map(a => ({
-      src: a.querySelector('img')?.getAttribute('src') || '',
-      alt: a.querySelector('img')?.getAttribute('alt') || '',
-      caption: a.querySelector('.cap .t')?.textContent.trim() || ''
-    }));
+    let renderedIndex = 0;
+    let paintedNearest = -1;
+    let swapTimer = null;
+    let raf = null;
 
-    let index = 0;
-    let lastFocused = null;
-
-    function render(){
-      const s = slides[index];
-      lbImg.src = s.src;
-      lbImg.alt = s.alt;
-      lbCaption.textContent = s.caption;
+    function targetIndex(){
+      const rect = outer.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const scrollable = rect.height - vh;
+      let progress = scrollable > 0 ? (-rect.top) / scrollable : 0;
+      progress = Math.min(1, Math.max(0, progress));
+      return progress * (slides.length - 1);
     }
 
-    function open(i){
-      index = i;
-      lastFocused = document.activeElement;
-      render();
-      lightbox.hidden = false;
-      requestAnimationFrame(() => lightbox.classList.add('lb-open'));
-      document.body.style.overflow = 'hidden';
-      __lenis?.stop();
-      btnClose.focus();
+    function swapCaption(idx){
+      const slide = slides[idx];
+      if (!slide) return;
+      captionEl.classList.add('is-swap');
+      clearTimeout(swapTimer);
+      swapTimer = setTimeout(() => {
+        titleEl.textContent = slide.dataset.title || '';
+        descEl.textContent = slide.dataset.desc || '';
+        countEl.textContent = String(idx + 1).padStart(2, '0');
+        captionEl.classList.remove('is-swap');
+      }, 180);
     }
 
-    function close(){
-      lightbox.classList.remove('lb-open');
-      document.body.style.overflow = '';
-      __lenis?.start();
-      setTimeout(() => { lightbox.hidden = true; }, 350);
-      lastFocused?.focus?.();
+    function paint(continuousIndex){
+      const nearest = Math.round(continuousIndex);
+      slides.forEach((el, idx) => {
+        const delta = idx - continuousIndex;
+        el.style.opacity = Math.max(0, 1 - Math.abs(delta));
+        el.style.transform = 'translateY(' + (delta * PARALLAX_PX) + 'px)';
+        const on = idx === nearest;
+        el.classList.toggle('is-active', on);
+        el.setAttribute('aria-hidden', on ? 'false' : 'true');
+      });
+      if (nearest !== paintedNearest){
+        paintedNearest = nearest;
+        swapCaption(nearest);
+      }
     }
 
-    function next(){ index = (index + 1) % slides.length; render(); }
-    function prev(){ index = (index - 1 + slides.length) % slides.length; render(); }
+    function tick(){
+      raf = null;
+      const target = targetIndex();
+      renderedIndex += (target - renderedIndex) * LERP;
+      if (Math.abs(target - renderedIndex) < SETTLE_EPSILON) renderedIndex = target;
+      paint(renderedIndex);
+      if (renderedIndex !== target) raf = requestAnimationFrame(tick);
+    }
 
-    items.forEach((a, i) => {
-      a.addEventListener('click', e => { e.preventDefault(); open(i); });
-    });
+    function onScroll(){
+      if (!raf) raf = requestAnimationFrame(tick);
+    }
 
-    btnClose.addEventListener('click', close);
-    btnNext.addEventListener('click', next);
-    btnPrev.addEventListener('click', prev);
-    lightbox.addEventListener('click', e => { if (e.target === lightbox) close(); });
+    outer.style.height = PIN_BUDGET_VH + 'dvh';
+    // Initial paint so the first photo/caption are correct even before any
+    // scroll event fires (e.g. landing directly on a #work URL). Caption
+    // text is set directly (not via swapCaption()) and paintedNearest is
+    // pre-seeded to match, so this first paint() never triggers the
+    // fade-swap transition — that's reserved for actual in-scroll changes.
+    renderedIndex = targetIndex();
+    const initialNearest = Math.round(renderedIndex);
+    titleEl.textContent = slides[initialNearest].dataset.title || '';
+    descEl.textContent = slides[initialNearest].dataset.desc || '';
+    countEl.textContent = String(initialNearest + 1).padStart(2, '0');
+    paintedNearest = initialNearest;
+    paint(renderedIndex);
 
-    document.addEventListener('keydown', e => {
-      if (lightbox.hidden) return;
-      if (e.key === 'Escape') close();
-      if (e.key === 'ArrowRight') (getComputedStyle(document.documentElement).direction === 'rtl') ? prev() : next();
-      if (e.key === 'ArrowLeft') (getComputedStyle(document.documentElement).direction === 'rtl') ? next() : prev();
-    });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => { outer.style.height = PIN_BUDGET_VH + 'dvh'; onScroll(); });
   })();
