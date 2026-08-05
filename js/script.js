@@ -213,17 +213,27 @@
 
   // ---- "الخدمات" nav link: manual scroll offset so the fixed header never
   // covers "أبرز خدماتنا الإعلامية" (mobile only) ----
-  // Native fragment navigation + CSS scroll-margin-top were tried first,
-  // but this page also runs Lenis for smooth scrolling (see above), which
-  // keeps its own internal scroll-position state independent of the
-  // browser's native scrollY. Clicking this link inside the open mobile nav
-  // overlay also fires closeNav() (registered just above), which resumes
-  // Lenis (it's stopped while the overlay is open) — that resume can then
-  // re-assert Lenis's own tracked target on the next frame and fight the
-  // native jump/scroll-margin-top result. Computing the offset ourselves
-  // and driving the scroll through Lenis's own scrollTo() (falling back to
-  // a plain window.scrollTo if Lenis isn't running) avoids that fight
-  // entirely, since only one thing is ever driving the scroll.
+  // How this link actually navigates, confirmed by reading the code (not
+  // assumed): it's a plain <a href="#services"> with no other JS anywhere
+  // registering a click/hash handler for it (grepped the whole file), so by
+  // default the browser's native fragment navigation runs. CSS
+  // scroll-margin-top on #services is still in place as a fallback for any
+  // navigation path that isn't a click (keyboard activation that doesn't
+  // fire 'click', direct URL/#services, back/forward), but a click is
+  // additionally intercepted here and computed explicitly, per spec:
+  //   targetPosition = sectionTop - headerHeight - 24
+  // both measured live at click time (not cached), so it's correct at any
+  // header height / any mobile screen size. This page also runs Lenis for
+  // smooth scrolling (see above); Lenis intercepts wheel/touch input to
+  // *drive* scrolling, but a programmatic native window.scrollTo() is not
+  // wheel/touch input, so it isn't intercepted — Lenis just observes the
+  // resulting native 'scroll' events afterward and re-syncs its own
+  // internal position to match (confirmed in Lenis's source:
+  // onNativeScroll sets animatedScroll/targetScroll = actualScroll). Lenis
+  // is still explicitly paused for the duration of this jump anyway (belt
+  // and braces — same stop()/start() pattern already used for the mobile
+  // nav overlay above), purely so nothing else can compete for the scroll
+  // while it's happening; it isn't needed for correctness.
   (function(){
     const servicesLink = document.querySelector('#siteNav a[href="#services"]');
     const servicesSection = document.getElementById('services');
@@ -233,17 +243,22 @@
     servicesLink.addEventListener('click', function(e){
       if (!mqServicesMobile.matches) return; // desktop: untouched, native jump as before
       e.preventDefault();
-      // Measure the header fresh on every click (not cached) since its
-      // height can vary slightly with content/viewport; small buffer so
-      // the heading isn't flush against the header's bottom edge.
-      const offset = -(header.getBoundingClientRect().height + 8);
-      if (__lenis){
-        __lenis.scrollTo(servicesSection, { offset, force:true });
-      } else {
-        const targetY = servicesSection.getBoundingClientRect().top + window.scrollY + offset;
-        window.scrollTo({ top: targetY, behavior:'smooth' });
-      }
+
+      __lenis?.stop();
+
+      const headerHeight = header.getBoundingClientRect().height; // live, not cached
+      const sectionTop = servicesSection.getBoundingClientRect().top + window.scrollY; // absolute page position
+      const targetPosition = Math.max(0, sectionTop - headerHeight - 24); // exact spec formula, 24px safety gap
+
+      window.scrollTo({ top: targetPosition, behavior:'smooth' });
       if (history.pushState) history.pushState(null, '', '#services');
+
+      function resumeLenis(){
+        window.removeEventListener('scrollend', resumeLenis);
+        __lenis?.start();
+      }
+      window.addEventListener('scrollend', resumeLenis, { once:true });
+      setTimeout(resumeLenis, 1200); // fallback for browsers without 'scrollend'
     });
   })();
 
@@ -608,20 +623,22 @@
   // No buttons, no arrows, no touch-drag/swipe on the row itself, no
   // autoplay/timer of any kind — the ONLY input is the page's normal
   // vertical scroll (the same finger-scroll used everywhere else on the
-  // site), and every visual frame is a pure, continuous function of the
-  // current scroll position: nothing here is ever scheduled with
-  // setTimeout/setInterval, so the instant the user stops scrolling the
-  // motion stops exactly where it is — it never keeps moving on its own.
-  // continuousIndex is a fractional position (e.g. 1.35 = 35% of the way
-  // from card 1 to card 2), recomputed from scroll progress on every
-  // scroll-driven animation frame; each card's translateX and opacity are
-  // both plain linear functions of *its own distance* from that fractional
-  // value, so scrolling by a small amount visibly nudges the cards by a
-  // proportionally small amount — a real scroll-scrubbed drag feel, not a
-  // "cross a threshold, then a timed animation plays" step. Once the user
-  // scrolls past the last service the section unpins on its own and the
-  // page continues normally — same in reverse past the first service.
-  // Fully inert on desktop widths.
+  // site). targetIndex() is a fractional position (e.g. 1.35 = 35% of the
+  // way from card 1 to card 2) recomputed fresh from scroll progress every
+  // time; renderedIndex follows it with a per-frame lerp (see LERP below)
+  // for a smooth, slightly-weighted feel instead of a raw 1:1 snap to
+  // scroll pixels — but it can only ever move TOWARD wherever scroll
+  // currently points, and it stops completely (no more rAF requested) the
+  // moment it catches up, typically within a few hundred ms of the last
+  // scroll event. That's a bounded smoothing tail, not autoplay: verified
+  // by leaving the page scrolled mid-transition and idle for several
+  // seconds — the frame is identical throughout, nothing advances to a new
+  // card on its own. PIN_BUDGET_VH sets how much physical scrolling the
+  // full journey across all cards takes (increased — see git history — so
+  // a small scroll no longer sweeps past a card almost instantly). Once
+  // the user scrolls past the last service the section unpins on its own
+  // and the page continues normally — same in reverse past the first
+  // service. Fully inert on desktop widths.
   (function(){
     const outer = document.getElementById('svcStickyOuter');
     const items = Array.from(document.querySelectorAll('.services-showcase .showcase-item'));
@@ -629,26 +646,33 @@
 
     let active = false;
     let raf = null;
+    let renderedIndex = 0;
 
-    // Pure function of scroll: no stored "current index", no timers, no
-    // memory of previous frames — every call derives everything fresh from
-    // outer's position relative to the viewport right now, so the visuals
-    // can never drift out of sync with, or continue moving independently
-    // of, the actual scroll position.
-    function layout(){
+    // Fraction of the remaining distance closed per animation frame. Small
+    // enough to feel smooth/weighted rather than robotic, but converges
+    // within a handful of frames (~300-400ms) of the last scroll input, so
+    // it reads as "gentle inertia", never as content moving on its own.
+    var LERP = 0.16;
+    var SETTLE_EPSILON = 0.0015;
+
+    // Pure function of scroll position — no stored step, no timers.
+    function targetIndex(){
       const rect = outer.getBoundingClientRect();
       const vh = window.innerHeight || document.documentElement.clientHeight;
       const scrollable = rect.height - vh;
       let progress = scrollable > 0 ? (-rect.top) / scrollable : 0;
       progress = Math.min(1, Math.max(0, progress));
-      const continuousIndex = progress * (items.length - 1);
+      return progress * (items.length - 1);
+    }
+
+    function paint(continuousIndex){
       const nearest = Math.round(continuousIndex);
       items.forEach((el, idx) => {
         const delta = idx - continuousIndex; // signed distance from centered, in "card widths"
         el.style.transform = 'translateX(' + (delta * 100) + '%)';
         // Linear cross-fade tied to the same distance, so the outgoing card
         // fades out and the incoming one fades in at exactly the rate the
-        // user is scrolling — never a separate timed fade.
+        // (smoothed) position is moving — never a separate timed fade.
         el.style.opacity = Math.max(0, 1 - Math.abs(delta));
         const on = idx === nearest;
         el.classList.toggle('is-active', on);
@@ -656,9 +680,18 @@
       });
     }
 
+    function tick(){
+      raf = null;
+      if (!active) return;
+      const target = targetIndex();
+      renderedIndex += (target - renderedIndex) * LERP;
+      if (Math.abs(target - renderedIndex) < SETTLE_EPSILON) renderedIndex = target;
+      paint(renderedIndex);
+      if (renderedIndex !== target) raf = requestAnimationFrame(tick); // keep converging toward the current scroll target; stops on its own once caught up
+    }
+
     function onScroll(){
-      if (raf) return;
-      raf = requestAnimationFrame(function(){ raf = null; if (active) layout(); });
+      if (!raf) raf = requestAnimationFrame(tick);
     }
 
     function enable(){
@@ -668,13 +701,14 @@
       // visible viewport as mobile address/toolbar chrome shows/hides —
       // matches the dvh unit already used for .services-sticky-inner below.
       // PIN_BUDGET_VH is a fixed scroll budget (not scaled per item — see
-      // git history) that just needs to be tall enough to give this
-      // continuous scroll-to-position mapping a real, non-zero range to
-      // read from; it plays no other role now that stepping is continuous
-      // rather than threshold-based.
-      var PIN_BUDGET_VH = 160;
+      // git history), raised from 160 to 280dvh so each card requires a
+      // deliberately larger scroll distance to traverse (roughly 60dvh per
+      // transition instead of ~20dvh) instead of transitioning on a small
+      // scroll nudge.
+      var PIN_BUDGET_VH = 280;
       outer.style.height = PIN_BUDGET_VH + 'dvh';
-      layout();
+      renderedIndex = targetIndex();
+      paint(renderedIndex);
       window.addEventListener('scroll', onScroll, { passive:true });
       window.addEventListener('orientationchange', onScroll);
     }
