@@ -280,6 +280,21 @@
   /* ---------- generic section ---------- */
   section{ position:relative; }
   .sec-pad{ padding:clamp(6.5rem, 12vw, 11rem) 0; }
+  @media (max-width:760px){
+    /* ROOT CAUSE of the large empty gap before "أبرز خدماتنا الإعلامية" on
+       mobile: it isn't .services-showcase's own top spacing (that's already
+       padding:0 on mobile, see its dedicated mobile block below) — #about
+       (the section immediately before it) carries the shared .sec-pad
+       rhythm above, which puts 6.5rem/104px of padding-BOTTOM under #about
+       on top of whatever padding-top .services-showcase itself has. That
+       104px is tuned for desktop's much larger overall section rhythm; on
+       mobile it reads as a big dead gap between the end of the "قيمنا" copy
+       and the services heading. Overriding it here, scoped to #about only
+       and to this mobile breakpoint only, so .sec-pad's shared padding
+       keeps working normally for every other section (desktop and mobile)
+       — same technique already used below for the #profile/#team junction. */
+    #about{ padding-bottom:clamp(2rem, 6vw, 3rem); }
+  }
 
   .reveal{ overflow:hidden; }
   .reveal-line{ transform:translateY(110%); opacity:0; }
