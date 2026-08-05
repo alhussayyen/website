@@ -642,7 +642,61 @@
      the section unpins on its own and the page continues normally — same
      for scrolling back up past the first service. ---- */
   @media (max-width:760px){
-    .services-showcase{ padding:0; min-height:auto; }
+    /* ROOT CAUSE of the large empty gaps before/after the card on mobile:
+       .services-sticky-inner's `position:sticky` was being anchored to the
+       wrong ancestor instead of the real viewport, so it never actually
+       pinned — it just scrolled past like a normal static element, leaving
+       the card visible only briefly and the rest of the spacer's reserved
+       height (js/script.js) as plain empty section background before/after
+       it. Verified directly by rendering the page and reading
+       .services-sticky-inner's live getBoundingClientRect() mid-scroll:
+       its top was drifting to large negative values instead of staying
+       pinned at 0.
+       Both `html` and `body` (top of this file) set overflow-x:hidden
+       site-wide, with no overflow-y set. A previous attempt here tried
+       `html, body{ overflow-y:visible }` to undo that, but per the CSS
+       overflow spec you can't actually combine overflow-x:hidden with a
+       *used* overflow-y of visible on the same box — the engine silently
+       forces the visible axis back to auto no matter what's authored, so
+       that rule had no real effect (confirmed via getComputedStyle: both
+       still report overflow-y:auto even with that rule in place).
+       The part that matters is *which* element ends up establishing the
+       clipping/scroll box. Per spec, the root <html> element's overflow
+       propagates up to the viewport itself whenever html's own overflow
+       isn't visible (true here) — the viewport handling that hidden-x/
+       auto-y is completely normal and never breaks position:sticky. But
+       because html already claims that propagation, <body>'s own
+       overflow-x:hidden is NOT propagated anywhere — body is instead
+       treated as an ordinary element that establishes its own separate
+       (but non-scrolling, since it's just auto-height) clipping box, and
+       that's the box .services-sticky-inner was actually being anchored
+       to. Stripping body's overflow restriction on mobile removes that
+       stray box, so the sticky element resolves back to the viewport —
+       confirmed by re-rendering: .services-sticky-inner now stays at
+       top:0 for the full pinned duration instead of drifting negative.
+       html's overflow-x:hidden is left completely untouched (still
+       propagates to the viewport, still fully prevents horizontal
+       scroll/scrollbars), so this has zero effect on horizontal clipping.
+       Scoped to this mobile-only query specifically because
+       position:sticky is used nowhere else in this stylesheet (grep
+       confirms it's the only occurrence), so this has zero effect above
+       760px — desktop/tablet CSS is untouched. */
+    body{ overflow-x:visible; overflow-y:visible; }
+    /* .services-showcase itself (base rule above, line 592) also sets its own
+       overflow:hidden unconditionally — a second, closer ancestor between
+       .services-sticky-inner and the (now-fixed) html/body that independently
+       breaks position:sticky the exact same way: any ancestor with
+       overflow other than visible becomes the sticky element's containing
+       block for scroll purposes, and since this one doesn't actually scroll
+       internally either, the inner never pins — it was still scrolling past
+       normally even with the html/body fix above in place (confirmed by
+       rendering the page and reading .services-sticky-inner's live
+       getBoundingClientRect() mid-scroll: its top went negative instead of
+       staying pinned at 0). overflow:visible here only un-clips vertically;
+       the horizontal card-slide is still clipped by .showcase-wrap/
+       .showcase-row's own overflow:hidden a few rules down, so nothing
+       becomes visibly scrollable sideways. */
+    .services-showcase{ padding:0; min-height:auto; overflow:visible; }
     .services-sticky-outer{ position:relative; }
     .services-sticky-inner{
       position:sticky; top:0;
