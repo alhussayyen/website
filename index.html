@@ -317,12 +317,15 @@
 
       <!-- ============ mobile: accordion (<=760px) ============ -->
       <div class="pf-mobile" id="pfMobile">
-        <div class="pf-acc-item" data-pf-index="0">
-          <button class="pf-acc-head" type="button" aria-expanded="false" aria-controls="pfMobilePanel0" id="pfMobileHead0">
+        <div class="pf-acc-item is-open" data-pf-index="0">
+          <button class="pf-acc-head" type="button" aria-expanded="true" aria-controls="pfMobilePanel0" id="pfMobileHead0">
             <span class="pf-acc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>
             <span class="pf-acc-name">التصوير الرياضي</span>
             <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
           </button>
+          <!-- open by default (see js/script.js accordion init): no inline
+               display:none here, unlike the other six panels below, so this
+               one renders expanded from first paint with no JS-timing flash. -->
           <div class="pf-acc-body" id="pfMobilePanel0" role="region" aria-labelledby="pfMobileHead0">
             <div class="pf-acc-inner">
               <p class="pf-desc">نلتقط اللحظة التي تصنع التاريخ. تغطيات احترافية للمباريات والبطولات والفعاليات الرياضية، بعدسة تواكب سرعة الحدث وتحافظ على أدق التفاصيل.</p>
@@ -360,7 +363,13 @@
             <span class="pf-acc-name">التصوير الشخصي والبورتريه</span>
             <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
           </button>
-          <div class="pf-acc-body" id="pfMobilePanel1" role="region" aria-labelledby="pfMobileHead1">
+          <!-- closed by default: real inline display:none (not the CSS-only
+               grid-rows:0fr collapse, which can leave a sliver of the
+               description/gallery visible in some engines because the
+               gallery slides carry an aspect-ratio that resists collapsing
+               to a true 0 row track) — see js/script.js for how this is
+               toggled on open/close. -->
+          <div class="pf-acc-body" id="pfMobilePanel1" role="region" aria-labelledby="pfMobileHead1" style="display:none">
             <div class="pf-acc-inner">
               <p class="pf-desc">صورة تعكس حضورك قبل كلماتك. جلسات تصوير احترافية للأفراد والقيادات والشخصيات العامة، بإضاءة مدروسة وإخراج يعكس الثقة والاحترافية.</p>
               <div class="pf-gallery" data-pf-gallery>
@@ -397,7 +406,7 @@
             <span class="pf-acc-name">الإنتاج التجاري والمنتجات</span>
             <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
           </button>
-          <div class="pf-acc-body" id="pfMobilePanel2" role="region" aria-labelledby="pfMobileHead2">
+          <div class="pf-acc-body" id="pfMobilePanel2" role="region" aria-labelledby="pfMobileHead2" style="display:none">
             <div class="pf-acc-inner">
               <p class="pf-desc">نحوّل المنتج إلى تجربة بصرية. إنتاج صور دعائية عالية الجودة تبرز تفاصيل المنتجات وتدعم الحملات التسويقية للعلامات التجارية.</p>
               <div class="pf-gallery" data-pf-gallery>
@@ -434,7 +443,7 @@
             <span class="pf-acc-name">الفعاليات والمناسبات الكبرى</span>
             <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
           </button>
-          <div class="pf-acc-body" id="pfMobilePanel3" role="region" aria-labelledby="pfMobileHead3">
+          <div class="pf-acc-body" id="pfMobilePanel3" role="region" aria-labelledby="pfMobileHead3" style="display:none">
             <div class="pf-acc-inner">
               <p class="pf-desc">نوثق الحدث كما يستحق أن يُروى. تغطية شاملة للمؤتمرات والفعاليات الرسمية والمناسبات الكبرى مع التركيز على أهم اللحظات.</p>
               <div class="pf-gallery" data-pf-gallery>
@@ -471,7 +480,7 @@
             <span class="pf-acc-name">التصوير العقاري والمعماري</span>
             <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
           </button>
-          <div class="pf-acc-body" id="pfMobilePanel4" role="region" aria-labelledby="pfMobileHead4">
+          <div class="pf-acc-body" id="pfMobilePanel4" role="region" aria-labelledby="pfMobileHead4" style="display:none">
             <div class="pf-acc-inner">
               <p class="pf-desc">نبرز جمال المكان قبل زيارته. تصوير احترافي للمشاريع العقارية والمعالم المعمارية لإظهار المساحات والهوية البصرية بأفضل صورة.</p>
               <div class="pf-gallery" data-pf-gallery>
@@ -508,7 +517,7 @@
             <span class="pf-acc-name">المطاعم والضيافة</span>
             <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
           </button>
-          <div class="pf-acc-body" id="pfMobilePanel5" role="region" aria-labelledby="pfMobileHead5">
+          <div class="pf-acc-body" id="pfMobilePanel5" role="region" aria-labelledby="pfMobileHead5" style="display:none">
             <div class="pf-acc-inner">
               <p class="pf-desc">صور تفتح الشهية قبل أول لقمة. تصوير احترافي للأطباق والمشروبات وتجربة الضيافة بإخراج بصري يبرز الجودة والتفاصيل.</p>
               <div class="pf-gallery" data-pf-gallery>
@@ -545,7 +554,7 @@
             <span class="pf-acc-name">الزواجات والمناسبات الخاصة</span>
             <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
           </button>
-          <div class="pf-acc-body" id="pfMobilePanel6" role="region" aria-labelledby="pfMobileHead6">
+          <div class="pf-acc-body" id="pfMobilePanel6" role="region" aria-labelledby="pfMobileHead6" style="display:none">
             <div class="pf-acc-inner">
               <p class="pf-desc">ذكريات تُحفظ كما عشتها. توثيق سينمائي للحظات الاستثنائية بأسلوب هادئ وطبيعي يحافظ على المشاعر الحقيقية.</p>
               <div class="pf-gallery" data-pf-gallery>

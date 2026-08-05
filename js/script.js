@@ -28,19 +28,19 @@
       }, 200);
     }
 
-    // The loading screen is shown for a fixed minimum of ~3s so it reads as an
-    // intentional brand moment rather than a flicker, even on a fast connection
-    // where the page itself is ready almost instantly. Progress animates
-    // smoothly (capped at 96%) across that whole window; dismissal only fires
-    // once BOTH the minimum time has elapsed AND the page has actually finished
-    // loading, so on slower connections it still waits for the real load event
-    // instead of ever showing an unfinished page.
-    var MIN_DURATION = 3000;
+    // The loading screen animates its progress bar over ~1s so it still
+    // reads as an intentional brand moment rather than a flicker — but that
+    // 1s is only a cosmetic pace for the progress bar, not a forced minimum
+    // wait. Dismissal fires the instant the real page `load` event happens,
+    // even if that's well under 1s (fast connections skip straight to the
+    // homepage, no artificial delay); on slower connections the bar simply
+    // holds at 96% until the real load event arrives, so an unfinished page
+    // is still never shown.
+    var MIN_DURATION = 1000;
     var pageLoaded = false;
-    var minTimeElapsed = false;
 
     function tryDismiss(){
-      if (pageLoaded && minTimeElapsed) dismiss();
+      if (pageLoaded) dismiss();
     }
 
     var steps = 24;
@@ -52,11 +52,6 @@
       setPct(Math.min(96, Math.round((i / steps) * 100)));
       setTimeout(tick, stepDur);
     })();
-
-    setTimeout(function(){
-      minTimeElapsed = true;
-      tryDismiss();
-    }, MIN_DURATION);
 
     function onLoad(){
       pageLoaded = true;
@@ -723,22 +718,67 @@
     if (!root) return;
 
     // -- mobile accordion: tap a name to open it; opening one closes
-    // whichever else was open, so at most one is ever expanded. --
+    // whichever else was open, so exactly one is always expanded (one starts
+    // open — "التصوير الرياضي", data-pf-index="0" — via the is-open class
+    // already baked into index.html, no JS needed for that initial state).
+    // Re-tapping the already-open service is a no-op: it never closes on its
+    // own, so there's always a gallery visible to signal "every service has
+    // one of these".
+    //
+    // The open/closed state is driven from here, not CSS alone: each closed
+    // panel's <div class="pf-acc-body"> carries a real inline
+    // display:none (set in the HTML for the six that start closed). CSS's
+    // grid-template-rows:0fr→1fr trick still drives the smooth open/close
+    // animation exactly as before, but a 0fr row can fail to fully collapse
+    // to zero height in some engines when its content includes an
+    // aspect-ratio box (the gallery slides do) — that's what let a sliver of
+    // description/gallery peek through on a "closed" service. Toggling the
+    // real `display` property here — removed just before opening, restored
+    // only after the closing transition has fully finished — guarantees a
+    // closed service renders nothing at all, regardless of that edge case.
     const accItems = Array.from(root.querySelectorAll('.pf-acc-item'));
+    const ACC_CLOSE_MS = 550; // matches .pf-acc-body's grid-template-rows transition duration in css/style.css
+
+    function closeAccItem(item){
+      const head = item.querySelector('.pf-acc-head');
+      const body = item.querySelector('.pf-acc-body');
+      if (!item.classList.contains('is-open')) return;
+      item.classList.remove('is-open');
+      if (head) head.setAttribute('aria-expanded', 'false');
+      if (!body) return;
+      let hidden = false;
+      const hideNow = () => {
+        if (hidden) return;
+        hidden = true;
+        // only actually hide if it wasn't re-opened again in the meantime
+        if (!item.classList.contains('is-open')) body.style.display = 'none';
+        body.removeEventListener('transitionend', onEnd);
+      };
+      const onEnd = (e) => {
+        if (e.target === body && e.propertyName === 'grid-template-rows') hideNow();
+      };
+      body.addEventListener('transitionend', onEnd);
+      setTimeout(hideNow, ACC_CLOSE_MS); // fallback in case transitionend doesn't fire
+    }
+
+    function openAccItem(item){
+      const head = item.querySelector('.pf-acc-head');
+      const body = item.querySelector('.pf-acc-body');
+      if (!body) return;
+      body.style.display = ''; // un-hide first so the grid-rows transition can actually run
+      void body.offsetHeight;  // force a reflow so the browser registers that un-hidden state
+      // before the class below flips grid-template-rows and starts animating
+      item.classList.add('is-open');
+      if (head) head.setAttribute('aria-expanded', 'true');
+    }
+
     accItems.forEach(item => {
       const head = item.querySelector('.pf-acc-head');
       if (!head) return;
       head.addEventListener('click', () => {
-        const willOpen = !item.classList.contains('is-open');
-        accItems.forEach(other => {
-          other.classList.remove('is-open');
-          const otherHead = other.querySelector('.pf-acc-head');
-          if (otherHead) otherHead.setAttribute('aria-expanded', 'false');
-        });
-        if (willOpen){
-          item.classList.add('is-open');
-          head.setAttribute('aria-expanded', 'true');
-        }
+        if (item.classList.contains('is-open')) return; // already open: stays open, never closes on re-tap
+        accItems.forEach(other => { if (other !== item) closeAccItem(other); });
+        openAccItem(item);
       });
     });
 
