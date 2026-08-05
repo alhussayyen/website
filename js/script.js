@@ -34,9 +34,16 @@
     // wait. Dismissal fires the instant the real page `load` event happens,
     // even if that's well under 1s (fast connections skip straight to the
     // homepage, no artificial delay); on slower connections the bar simply
-    // holds at 96% until the real load event arrives, so an unfinished page
-    // is still never shown.
+    // holds at 96% until the real load event arrives — but never past
+    // MAX_DURATION below, which hard-caps how long the splash can ever stay
+    // on screen regardless of load time.
     var MIN_DURATION = 1000;
+    // Hard ceiling: the splash is dismissed the moment the page finishes
+    // loading, or after 2s, whichever comes first — same visuals/transition
+    // as a normal dismiss (dismiss()'s own `finishing` guard makes it safe
+    // to call from both places, so whichever fires first wins and the other
+    // becomes a no-op).
+    var MAX_DURATION = 2000;
     var pageLoaded = false;
 
     function tryDismiss(){
@@ -63,6 +70,8 @@
     } else {
       window.addEventListener('load', onLoad, { once: true });
     }
+
+    setTimeout(dismiss, MAX_DURATION);
   })();
 
   // ---- shared background video ----
@@ -249,6 +258,20 @@
   // ---- scroll reveals (respects prefers-reduced-motion) ----
   if (!reduceMotion && window.gsap && window.ScrollTrigger){
     gsap.registerPlugin(ScrollTrigger);
+    // iPhone-only scroll shake fix: Safari's address bar collapses/expands
+    // as the page scrolls, which fires a `resize` event on window even
+    // though the user never actually resized anything. By default
+    // ScrollTrigger reacts to that with a refresh(), recalculating every
+    // trigger's start/end against the new viewport height mid-scroll —
+    // for the scrub-driven animations on this page (hero video parallax,
+    // the video-production grid drift right after the "أعمال فوتوغرافية"
+    // section, etc.) that recalculation makes the interpolated scroll
+    // value jump, which reads as the whole page shaking up/down while
+    // scrolling past those sections. This is GSAP's own documented flag
+    // for exactly that iOS/Safari address-bar case — it only ever
+    // suppresses refreshes caused by that mobile chrome resize, so
+    // desktop/tablet resize behavior (and everything else) is untouched.
+    ScrollTrigger.config({ ignoreMobileResize: true });
     // clearProps:'transform' after each one-off reveal so CSS :hover transforms
     // (lift/scale on cards, buttons, avatars…) keep working normally afterwards.
 

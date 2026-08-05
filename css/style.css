@@ -435,7 +435,7 @@
     padding:1.35rem .1rem; background:none; border:none; cursor:pointer;
     text-align:start; color:var(--ink); -webkit-tap-highlight-color:transparent;
   }
-  .pf-acc-name{ flex:1 1 auto; font-weight:700; font-size:1.02rem; }
+  .pf-acc-name{ flex:1 1 auto; font-weight:700; font-size:calc(1.02rem + 3px); }
   .pf-acc-icon{
     flex:none; width:20px; height:20px; display:flex; align-items:center; justify-content:center;
     color:var(--accent);
@@ -529,7 +529,7 @@
     }
     .pf-row-icon svg{ width:100%; height:100%; }
     .pf-row-name{
-      flex:1 1 auto; font-weight:700; font-size:1.1rem; color:var(--ink-soft);
+      flex:1 1 auto; font-weight:700; font-size:calc(1.1rem + 3px); color:var(--ink-soft);
       transition:color .35s var(--ease-soft);
     }
     .pf-row-mark{
