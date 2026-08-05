@@ -246,7 +246,7 @@
     ring.style.left = rx+'px'; ring.style.top = ry+'px';
     requestAnimationFrame(loop);
   })();
-  document.querySelectorAll('a, button, .story-slide, .client').forEach(el=>{
+  document.querySelectorAll('a, button, .pf-dot, .pf-gallery-track, .client').forEach(el=>{
     el.addEventListener('mouseenter', ()=>ring.classList.add('big'));
     el.addEventListener('mouseleave', ()=>ring.classList.remove('big'));
   });
@@ -372,9 +372,10 @@
     });
 
     // (the old grid's portfolio image scroll-scale reveal no longer
-    // applies — the photography section is now the dedicated story-gallery
-    // controller further down, which owns its own photos' opacity/transform
-    // every frame; a generic GSAP reveal here would fight that.)
+    // applies — the photography section is now the accordion/two-column
+    // portfolio further down, which drives its own gallery photos'
+    // opacity/transform via CSS classes; a generic GSAP reveal here would
+    // fight that.)
 
     // ---- video production section: pinned-feel zoom + drift on the grid ----
     if (document.querySelector('.video-grid')){
@@ -706,112 +707,129 @@
   // markup as before); the keyframes just shift it exactly one set-width
   // (-50%) so the loop point is invisible. Nothing to wire up here.
 
-  // ---- work/photography story gallery: sticky-pinned, scroll-driven
-  // fade + light parallax, one photo at a time — see markup in index.html
-  // (#storyStickyOuter) and the dedicated CSS block in style.css. Same
-  // core mechanism as the mobile services showcase below (sticky spacer +
-  // fractional scroll-position index, lerped for a smooth settle), but:
-  // (a) active at EVERY breakpoint, not just mobile — this section is in
-  // scope for both mobile and desktop per spec — and (b) crossfades
-  // opacity + a small translateY parallax instead of sliding cards
-  // horizontally, since this is a single full-bleed photo stage, not a
-  // multi-card row. No buttons, no arrows, no dots, no autoplay/timer: the
-  // only input is normal, un-hijacked page scroll — position:sticky here
-  // never intercepts or blocks scrolling, it only pins this box in place
-  // while its spacer scrolls past (native scroll-snap "pause" removed
-  // sitewide, see style.css — it was fighting the Lenis smooth-scroll
-  // library and breaking normal scrolling). ----
+  // ---- work/photography portfolio: mobile single-open accordion + desktop
+  // permanent two-column switcher, each service's 3-photo gallery being an
+  // independent swipeable/draggable carousel — see markup in index.html
+  // (#work .pf-*) and the dedicated CSS block in style.css. Deliberately
+  // scroll-agnostic: nothing here reads window scroll position or calls
+  // preventDefault on page scroll/wheel/touchmove. The accordion open/close
+  // is a pure CSS grid-template-rows transition (no JS height measurement,
+  // no layout jump); the desktop switch is a pure class-toggle crossfade
+  // (grid-stacked panel-sets so the tallest one already sets the stage's
+  // height — see CSS comment). Only the gallery below reads/writes scroll,
+  // and only its OWN horizontal track, never the page. ----
   (function(){
-    const outer = document.getElementById('storyStickyOuter');
-    const slides = Array.from(document.querySelectorAll('.story-slide'));
-    const captionEl = document.getElementById('storyCaption');
-    const titleEl = document.getElementById('storyTitle');
-    const descEl = document.getElementById('storyDesc');
-    const countEl = document.getElementById('storyCountCurrent');
-    if (!outer || !slides.length || !captionEl) return;
+    const root = document.getElementById('work');
+    if (!root) return;
 
-    // Scroll budget per photo transition, in dvh — generous enough (versus
-    // the services row's 60dvh/step) that each photo needs a deliberate
-    // scroll to advance, giving natural room to read the caption before the
-    // next one settles in. css/style.css's `.story-snap-point[data-snap-step]`
-    // offsets are hand-derived from this exact value and slides.length —
-    // if either changes, those snap offsets need updating too.
-    var STEP_VH = 65;
-    var PIN_BUDGET_VH = 100 + (slides.length - 1) * STEP_VH;
-    var LERP = 0.16;
-    var SETTLE_EPSILON = 0.0015;
-    var PARALLAX_PX = 26;
-
-    let renderedIndex = 0;
-    let paintedNearest = -1;
-    let swapTimer = null;
-    let raf = null;
-
-    function targetIndex(){
-      const rect = outer.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      const scrollable = rect.height - vh;
-      let progress = scrollable > 0 ? (-rect.top) / scrollable : 0;
-      progress = Math.min(1, Math.max(0, progress));
-      return progress * (slides.length - 1);
-    }
-
-    function swapCaption(idx){
-      const slide = slides[idx];
-      if (!slide) return;
-      captionEl.classList.add('is-swap');
-      clearTimeout(swapTimer);
-      swapTimer = setTimeout(() => {
-        titleEl.textContent = slide.dataset.title || '';
-        descEl.textContent = slide.dataset.desc || '';
-        countEl.textContent = String(idx + 1).padStart(2, '0');
-        captionEl.classList.remove('is-swap');
-      }, 180);
-    }
-
-    function paint(continuousIndex){
-      const nearest = Math.round(continuousIndex);
-      slides.forEach((el, idx) => {
-        const delta = idx - continuousIndex;
-        el.style.opacity = Math.max(0, 1 - Math.abs(delta));
-        el.style.transform = 'translateY(' + (delta * PARALLAX_PX) + 'px)';
-        const on = idx === nearest;
-        el.classList.toggle('is-active', on);
-        el.setAttribute('aria-hidden', on ? 'false' : 'true');
+    // -- mobile accordion: tap a name to open it; opening one closes
+    // whichever else was open, so at most one is ever expanded. --
+    const accItems = Array.from(root.querySelectorAll('.pf-acc-item'));
+    accItems.forEach(item => {
+      const head = item.querySelector('.pf-acc-head');
+      if (!head) return;
+      head.addEventListener('click', () => {
+        const willOpen = !item.classList.contains('is-open');
+        accItems.forEach(other => {
+          other.classList.remove('is-open');
+          const otherHead = other.querySelector('.pf-acc-head');
+          if (otherHead) otherHead.setAttribute('aria-expanded', 'false');
+        });
+        if (willOpen){
+          item.classList.add('is-open');
+          head.setAttribute('aria-expanded', 'true');
+        }
       });
-      if (nearest !== paintedNearest){
-        paintedNearest = nearest;
-        swapCaption(nearest);
+    });
+
+    // -- desktop two-column: clicking a row crossfades the right panel to
+    // that service's panel-set only; nothing else on the page moves. --
+    const rows = Array.from(root.querySelectorAll('.pf-row'));
+    const panels = Array.from(root.querySelectorAll('.pf-panel-set'));
+    rows.forEach(row => {
+      row.addEventListener('click', () => {
+        if (row.classList.contains('is-active')) return;
+        const idx = row.dataset.pfIndex;
+        rows.forEach(r => { r.classList.remove('is-active'); r.setAttribute('aria-selected', 'false'); });
+        row.classList.add('is-active');
+        row.setAttribute('aria-selected', 'true');
+        panels.forEach(p => p.classList.toggle('is-active', p.dataset.pfIndex === idx));
+      });
+    });
+
+    // -- gallery: native swipe (touch, free from the browser via the
+    // scroll-snap track in CSS) + desktop mouse-drag + dot sync/click. Runs
+    // once per .pf-gallery, so every accordion panel and every desktop
+    // panel-set gets its own fully independent 3-photo carousel. --
+    function initGallery(gallery){
+      const track = gallery.querySelector('.pf-gallery-track');
+      const slides = Array.from(gallery.querySelectorAll('.pf-gallery-slide'));
+      const dots = Array.from(gallery.querySelectorAll('.pf-dot'));
+      if (!track || !slides.length) return;
+
+      let activeIndex = 0;
+      let rafPending = false;
+
+      function setActive(idx){
+        idx = Math.max(0, Math.min(slides.length - 1, idx));
+        activeIndex = idx;
+        slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+        dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
       }
+
+      function nearestIndex(){
+        const w = track.clientWidth || 1;
+        return Math.round(track.scrollLeft / w);
+      }
+
+      function onScroll(){
+        if (rafPending) return;
+        rafPending = true;
+        requestAnimationFrame(() => {
+          rafPending = false;
+          setActive(nearestIndex());
+        });
+      }
+      track.addEventListener('scroll', onScroll, { passive: true });
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+          track.scrollTo({ left: i * track.clientWidth, behavior: 'smooth' });
+        });
+      });
+
+      // Desktop mouse-drag-to-scroll only (pointerType 'mouse'); touch/pen
+      // input is left entirely to the browser's own native swipe+momentum
+      // on the scroll-snap track above, so nothing is duplicated there.
+      let dragging = false, startX = 0, startScroll = 0;
+      track.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        dragging = true;
+        startX = e.clientX;
+        startScroll = track.scrollLeft;
+        track.classList.add('is-dragging');
+        track.setPointerCapture(e.pointerId);
+        e.preventDefault();
+      });
+      track.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        track.scrollLeft = startScroll - (e.clientX - startX);
+      });
+      function endDrag(){
+        if (!dragging) return;
+        dragging = false;
+        track.classList.remove('is-dragging');
+        track.scrollTo({ left: nearestIndex() * track.clientWidth, behavior: 'smooth' });
+      }
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+      track.addEventListener('pointerleave', endDrag);
+
+      setActive(0);
+      window.addEventListener('resize', () => {
+        track.scrollLeft = activeIndex * track.clientWidth;
+      });
     }
 
-    function tick(){
-      raf = null;
-      const target = targetIndex();
-      renderedIndex += (target - renderedIndex) * LERP;
-      if (Math.abs(target - renderedIndex) < SETTLE_EPSILON) renderedIndex = target;
-      paint(renderedIndex);
-      if (renderedIndex !== target) raf = requestAnimationFrame(tick);
-    }
-
-    function onScroll(){
-      if (!raf) raf = requestAnimationFrame(tick);
-    }
-
-    outer.style.height = PIN_BUDGET_VH + 'dvh';
-    // Initial paint so the first photo/caption are correct even before any
-    // scroll event fires (e.g. landing directly on a #work URL). Caption
-    // text is set directly (not via swapCaption()) and paintedNearest is
-    // pre-seeded to match, so this first paint() never triggers the
-    // fade-swap transition — that's reserved for actual in-scroll changes.
-    renderedIndex = targetIndex();
-    const initialNearest = Math.round(renderedIndex);
-    titleEl.textContent = slides[initialNearest].dataset.title || '';
-    descEl.textContent = slides[initialNearest].dataset.desc || '';
-    countEl.textContent = String(initialNearest + 1).padStart(2, '0');
-    paintedNearest = initialNearest;
-    paint(renderedIndex);
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { outer.style.height = PIN_BUDGET_VH + 'dvh'; onScroll(); });
+    root.querySelectorAll('[data-pf-gallery]').forEach(initGallery);
   })();

@@ -111,6 +111,13 @@
 
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
+<!-- Inter: used ONLY for the "أعمال فوتوغرافية" section's headings (see
+     css/style.css, scoped to #work .pf-heading/.pf-title/.pf-acc-name/
+     .pf-row-name) — the sitewide body font (SFMada) is untouched everywhere
+     else, per spec. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <noscript><style>#preloader{display:none!important}[data-anim],.reveal-line{opacity:1!important;transform:none!important}</style></noscript>
 </head>
@@ -288,88 +295,523 @@
   <div class="wrap">
     <div class="work-head">
       <div>
-        <h2 style="margin-top:1rem">أعمال فوتوغرافية</h2>
+        <h2 class="pf-heading" style="margin-top:1rem">أعمال فوتوغرافية</h2>
       </div>
       <p style="max-width:44ch; color:var(--ink-soft); font-weight:300" data-anim="fade">نحوّل اللحظات إلى صور تنبض بالحياة، بعدسات احترافية ولمسات إبداعية تُبرز التفاصيل بدقة، لتعكس هوية علامتك وتترك أثرًا بصريًا لا يُنسى.</p>
     </div>
 
-    <!-- Story Gallery: 7 curated shots, one full-bleed frame at a time, no
-         arrows/dots/autoplay — advances purely via normal page scroll (see
-         css/style.css "story gallery" block and js/script.js's dedicated
-         controller). Same sticky-pin technique as the mobile services
-         section (position:sticky + a spacer — plain native CSS, never
-         intercepts scroll), active at every breakpoint (mobile AND desktop)
-         per spec, driven by fade+parallax instead of a horizontal slide.
-         Each .story-slide carries its own caption content (data-title/
-         data-desc) so js/script.js only ever reads from markup here — no
-         copy duplicated in the script. -->
-    <div class="story-sticky-outer" id="storyStickyOuter">
-      <div class="story-sticky-inner" id="storyStickyInner">
-        <div class="story-stage" id="storyStage">
-          <figure class="story-slide" data-story-index="0" data-title="التصوير الرياضي" data-desc="تغطيات ميدانية لأكبر البطولات المحلية والدولية، بتوقيت الحركة ولحظة الذروة.">
-            <picture>
-              <source srcset="assets/images/work-15-al-hilal-club.webp" type="image/webp">
-              <img src="assets/images/work-15-al-hilal-club.jpg" alt="التصوير الرياضي" loading="lazy">
-            </picture>
-          </figure>
-          <figure class="story-slide" data-story-index="1" data-title="التصوير الشخصي والبورتريه" data-desc="جلسات تصوير تعكس الهيبة والحضور، لقادة ومؤسسات وشخصيات عامة.">
-            <picture>
-              <source srcset="assets/images/work-11-portrait-session-studio.webp" type="image/webp">
-              <img src="assets/images/work-11-portrait-session-studio.jpg" alt="التصوير الشخصي والبورتريه" loading="lazy">
-            </picture>
-          </figure>
-          <figure class="story-slide" data-story-index="2" data-title="الإنتاج التجاري والمنتجات" data-desc="تصوير منتجات وحملات تجارية بجودة تليق بالعلامات الفاخرة.">
-            <picture>
-              <source srcset="assets/images/work-02-rk-aroma-perfumes.webp" type="image/webp">
-              <img src="assets/images/work-02-rk-aroma-perfumes.jpg" alt="الإنتاج التجاري والمنتجات" loading="lazy">
-            </picture>
-          </figure>
-          <figure class="story-slide" data-story-index="3" data-title="الفعاليات والمناسبات الكبرى" data-desc="توثيق بصري كامل للمؤتمرات والفعاليات الرسمية والحفلات الكبرى.">
-            <picture>
-              <source srcset="assets/images/work-18-formal-gathering.webp" type="image/webp">
-              <img src="assets/images/work-18-formal-gathering.jpg" alt="الفعاليات والمناسبات الكبرى" loading="lazy">
-            </picture>
-          </figure>
-          <figure class="story-slide" data-story-index="4" data-title="تصوير الأزياء" data-desc="لقطات أزياء بحسّ تحريري أنيق، تبرز الشخصية والستايل بثقة وحضور عصري.">
-            <picture>
-              <source srcset="assets/images/work-16-fashion-coat.webp" type="image/webp">
-              <img src="assets/images/work-16-fashion-coat.jpg" alt="تصوير الأزياء" loading="lazy">
-            </picture>
-          </figure>
-          <figure class="story-slide" data-story-index="5" data-title="المطاعم والضيافة" data-desc="تصوير يحوّل التفاصيل الصغيرة إلى لغة بصرية شهية.">
-            <picture>
-              <source srcset="assets/images/work-04-autha-coffee-roasters.webp" type="image/webp">
-              <img src="assets/images/work-04-autha-coffee-roasters.jpg" alt="المطاعم والضيافة" loading="lazy">
-            </picture>
-          </figure>
-          <figure class="story-slide" data-story-index="6" data-title="الزواجات والمناسبات الخاصة" data-desc="توثيق حميمي للحظات لا تتكرر، بحس سينمائي هادئ.">
-            <picture>
-              <source srcset="assets/images/work-08-formal-event.webp" type="image/webp">
-              <img src="assets/images/work-08-formal-event.jpg" alt="الزواجات والمناسبات الخاصة" loading="lazy">
-            </picture>
-          </figure>
-        </div>
+    <!-- Photography portfolio: 7 services. Mobile = single-open accordion
+         (tap a name to expand title + description + a swipeable 3-photo
+         gallery in place; opening one auto-closes whichever was open).
+         Desktop = permanent two-column layout instead (service list on the
+         left, one persistent panel on the right that only crossfades its
+         title/description/gallery — no accordion, no page movement, no
+         layout shift). Both trees live in the DOM at all times; CSS shows
+         only the one matching the current breakpoint (>760px = desktop,
+         see css/style.css), and js/script.js wires up whichever is visible
+         plus every gallery's swipe/drag/dots. Some categories below reuse
+         an existing work-* photo as a temporary placeholder (marked per
+         item) until dedicated shots are supplied — swap the <source>/<img>
+         pair only, nothing else needs to change. -->
+    <div class="pf-wrap">
 
-        <div class="story-caption" id="storyCaption">
-          <span class="story-count"><span id="storyCountCurrent">01</span> / <span id="storyCountTotal">07</span></span>
-          <h3 id="storyTitle">التصوير الرياضي</h3>
-          <p id="storyDesc">تغطيات ميدانية لأكبر البطولات المحلية والدولية، بتوقيت الحركة ولحظة الذروة.</p>
+      <!-- ============ mobile: accordion (<=760px) ============ -->
+      <div class="pf-mobile" id="pfMobile">
+        <div class="pf-acc-item" data-pf-index="0">
+          <button class="pf-acc-head" type="button" aria-expanded="false" aria-controls="pfMobilePanel0" id="pfMobileHead0">
+            <span class="pf-acc-name">التصوير الرياضي</span>
+            <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="pf-acc-body" id="pfMobilePanel0" role="region" aria-labelledby="pfMobileHead0">
+            <div class="pf-acc-inner">
+              <h3 class="pf-title">التصوير الرياضي</h3>
+              <p class="pf-desc">نلتقط اللحظة التي تصنع التاريخ. تغطيات احترافية للمباريات والبطولات والفعاليات الرياضية، بعدسة تواكب سرعة الحدث وتحافظ على أدق التفاصيل.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-15-al-hilal-club.webp" type="image/webp">
+                      <img src="assets/images/work-15-al-hilal-club.jpg" alt="التصوير الرياضي" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-06-al-hazm-club.webp" type="image/webp">
+                      <img src="assets/images/work-06-al-hazm-club.jpg" alt="التصوير الرياضي" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-09-table-tennis-federation.webp" type="image/webp">
+                      <img src="assets/images/work-09-table-tennis-federation.jpg" alt="التصوير الرياضي" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pf-acc-item" data-pf-index="1">
+          <button class="pf-acc-head" type="button" aria-expanded="false" aria-controls="pfMobilePanel1" id="pfMobileHead1">
+            <span class="pf-acc-name">التصوير الشخصي والبورتريه</span>
+            <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="pf-acc-body" id="pfMobilePanel1" role="region" aria-labelledby="pfMobileHead1">
+            <div class="pf-acc-inner">
+              <h3 class="pf-title">التصوير الشخصي والبورتريه</h3>
+              <p class="pf-desc">صورة تعكس حضورك قبل كلماتك. جلسات تصوير احترافية للأفراد والقيادات والشخصيات العامة، بإضاءة مدروسة وإخراج يعكس الثقة والاحترافية.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-11-portrait-session-studio.webp" type="image/webp">
+                      <img src="assets/images/work-11-portrait-session-studio.jpg" alt="التصوير الشخصي والبورتريه" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-12-portrait-session-side.webp" type="image/webp">
+                      <img src="assets/images/work-12-portrait-session-side.jpg" alt="التصوير الشخصي والبورتريه" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-03-portrait-session.webp" type="image/webp">
+                      <img src="assets/images/work-03-portrait-session.jpg" alt="التصوير الشخصي والبورتريه" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pf-acc-item" data-pf-index="2">
+          <button class="pf-acc-head" type="button" aria-expanded="false" aria-controls="pfMobilePanel2" id="pfMobileHead2">
+            <span class="pf-acc-name">الإنتاج التجاري والمنتجات</span>
+            <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="pf-acc-body" id="pfMobilePanel2" role="region" aria-labelledby="pfMobileHead2">
+            <div class="pf-acc-inner">
+              <h3 class="pf-title">الإنتاج التجاري والمنتجات</h3>
+              <p class="pf-desc">نحوّل المنتج إلى تجربة بصرية. إنتاج صور دعائية عالية الجودة تبرز تفاصيل المنتجات وتدعم الحملات التسويقية للعلامات التجارية.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-02-rk-aroma-perfumes.webp" type="image/webp">
+                      <img src="assets/images/work-02-rk-aroma-perfumes.jpg" alt="الإنتاج التجاري والمنتجات" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-14-car-product.webp" type="image/webp">
+                      <img src="assets/images/work-14-car-product.jpg" alt="الإنتاج التجاري والمنتجات" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-13-car-exterior.webp" type="image/webp">
+                      <img src="assets/images/work-13-car-exterior.jpg" alt="الإنتاج التجاري والمنتجات" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pf-acc-item" data-pf-index="3">
+          <button class="pf-acc-head" type="button" aria-expanded="false" aria-controls="pfMobilePanel3" id="pfMobileHead3">
+            <span class="pf-acc-name">الفعاليات والمناسبات الكبرى</span>
+            <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="pf-acc-body" id="pfMobilePanel3" role="region" aria-labelledby="pfMobileHead3">
+            <div class="pf-acc-inner">
+              <h3 class="pf-title">الفعاليات والمناسبات الكبرى</h3>
+              <p class="pf-desc">نوثق الحدث كما يستحق أن يُروى. تغطية شاملة للمؤتمرات والفعاليات الرسمية والمناسبات الكبرى مع التركيز على أهم اللحظات.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-18-formal-gathering.webp" type="image/webp">
+                      <img src="assets/images/work-18-formal-gathering.jpg" alt="الفعاليات والمناسبات الكبرى" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-19-business-meeting.webp" type="image/webp">
+                      <img src="assets/images/work-19-business-meeting.jpg" alt="الفعاليات والمناسبات الكبرى" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-05-graduation-ceremony.webp" type="image/webp">
+                      <img src="assets/images/work-05-graduation-ceremony.jpg" alt="الفعاليات والمناسبات الكبرى" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pf-acc-item" data-pf-index="4">  <!-- placeholder photos, swap later -->
+          <button class="pf-acc-head" type="button" aria-expanded="false" aria-controls="pfMobilePanel4" id="pfMobileHead4">
+            <span class="pf-acc-name">التصوير العقاري والمعماري</span>
+            <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="pf-acc-body" id="pfMobilePanel4" role="region" aria-labelledby="pfMobileHead4">
+            <div class="pf-acc-inner">
+              <h3 class="pf-title">التصوير العقاري والمعماري</h3>
+              <p class="pf-desc">نبرز جمال المكان قبل زيارته. تصوير احترافي للمشاريع العقارية والمعالم المعمارية لإظهار المساحات والهوية البصرية بأفضل صورة.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-13-car-exterior.webp" type="image/webp">
+                      <img src="assets/images/work-13-car-exterior.jpg" alt="التصوير العقاري والمعماري" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-19-business-meeting.webp" type="image/webp">
+                      <img src="assets/images/work-19-business-meeting.jpg" alt="التصوير العقاري والمعماري" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-08-formal-event.webp" type="image/webp">
+                      <img src="assets/images/work-08-formal-event.jpg" alt="التصوير العقاري والمعماري" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pf-acc-item" data-pf-index="5">  <!-- placeholder photos, swap later -->
+          <button class="pf-acc-head" type="button" aria-expanded="false" aria-controls="pfMobilePanel5" id="pfMobileHead5">
+            <span class="pf-acc-name">المطاعم والضيافة</span>
+            <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="pf-acc-body" id="pfMobilePanel5" role="region" aria-labelledby="pfMobileHead5">
+            <div class="pf-acc-inner">
+              <h3 class="pf-title">المطاعم والضيافة</h3>
+              <p class="pf-desc">صور تفتح الشهية قبل أول لقمة. تصوير احترافي للأطباق والمشروبات وتجربة الضيافة بإخراج بصري يبرز الجودة والتفاصيل.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-04-autha-coffee-roasters.webp" type="image/webp">
+                      <img src="assets/images/work-04-autha-coffee-roasters.jpg" alt="المطاعم والضيافة" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-04-autha-coffee-roasters.webp" type="image/webp">
+                      <img src="assets/images/work-04-autha-coffee-roasters.jpg" alt="المطاعم والضيافة" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-04-autha-coffee-roasters.webp" type="image/webp">
+                      <img src="assets/images/work-04-autha-coffee-roasters.jpg" alt="المطاعم والضيافة" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pf-acc-item" data-pf-index="6">  <!-- placeholder photos, swap later -->
+          <button class="pf-acc-head" type="button" aria-expanded="false" aria-controls="pfMobilePanel6" id="pfMobileHead6">
+            <span class="pf-acc-name">الزواجات والمناسبات الخاصة</span>
+            <span class="pf-acc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="pf-acc-body" id="pfMobilePanel6" role="region" aria-labelledby="pfMobileHead6">
+            <div class="pf-acc-inner">
+              <h3 class="pf-title">الزواجات والمناسبات الخاصة</h3>
+              <p class="pf-desc">ذكريات تُحفظ كما عشتها. توثيق سينمائي للحظات الاستثنائية بأسلوب هادئ وطبيعي يحافظ على المشاعر الحقيقية.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-08-formal-event.webp" type="image/webp">
+                      <img src="assets/images/work-08-formal-event.jpg" alt="الزواجات والمناسبات الخاصة" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-18-formal-gathering.webp" type="image/webp">
+                      <img src="assets/images/work-18-formal-gathering.jpg" alt="الزواجات والمناسبات الخاصة" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-05-graduation-ceremony.webp" type="image/webp">
+                      <img src="assets/images/work-05-graduation-ceremony.jpg" alt="الزواجات والمناسبات الخاصة" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Inert markers, same as .svc-snap-point in the services section —
-           scroll-snap-type has been removed sitewide (see css/style.css)
-           since it was fighting the Lenis smooth-scroll library and
-           breaking normal page scroll. Scrolling through this gallery is
-           now fully native; js/script.js's fade+parallax crossfade still
-           tracks scroll position continuously regardless. -->
-      <div class="story-snap-point" data-snap-step="0" aria-hidden="true"></div>
-      <div class="story-snap-point" data-snap-step="1" aria-hidden="true"></div>
-      <div class="story-snap-point" data-snap-step="2" aria-hidden="true"></div>
-      <div class="story-snap-point" data-snap-step="3" aria-hidden="true"></div>
-      <div class="story-snap-point" data-snap-step="4" aria-hidden="true"></div>
-      <div class="story-snap-point" data-snap-step="5" aria-hidden="true"></div>
-      <div class="story-snap-point" data-snap-step="6" aria-hidden="true"></div>
+      <!-- ============ desktop: two-column (>=761px) ============ -->
+      <div class="pf-desktop" id="pfDesktop">
+        <div class="pf-desktop-left" role="tablist" aria-orientation="vertical">
+          <button class="pf-row is-active" type="button" data-pf-index="0" role="tab" aria-selected="true" aria-controls="pfDeskPanel0" id="pfDeskRow0">
+            <span class="pf-row-num">01</span><span class="pf-row-name">التصوير الرياضي</span><span class="pf-row-mark" aria-hidden="true"></span>
+          </button>
+          <button class="pf-row" type="button" data-pf-index="1" role="tab" aria-selected="false" aria-controls="pfDeskPanel1" id="pfDeskRow1">
+            <span class="pf-row-num">02</span><span class="pf-row-name">التصوير الشخصي والبورتريه</span><span class="pf-row-mark" aria-hidden="true"></span>
+          </button>
+          <button class="pf-row" type="button" data-pf-index="2" role="tab" aria-selected="false" aria-controls="pfDeskPanel2" id="pfDeskRow2">
+            <span class="pf-row-num">03</span><span class="pf-row-name">الإنتاج التجاري والمنتجات</span><span class="pf-row-mark" aria-hidden="true"></span>
+          </button>
+          <button class="pf-row" type="button" data-pf-index="3" role="tab" aria-selected="false" aria-controls="pfDeskPanel3" id="pfDeskRow3">
+            <span class="pf-row-num">04</span><span class="pf-row-name">الفعاليات والمناسبات الكبرى</span><span class="pf-row-mark" aria-hidden="true"></span>
+          </button>
+          <button class="pf-row" type="button" data-pf-index="4" role="tab" aria-selected="false" aria-controls="pfDeskPanel4" id="pfDeskRow4">
+            <span class="pf-row-num">05</span><span class="pf-row-name">التصوير العقاري والمعماري</span><span class="pf-row-mark" aria-hidden="true"></span>
+          </button>
+          <button class="pf-row" type="button" data-pf-index="5" role="tab" aria-selected="false" aria-controls="pfDeskPanel5" id="pfDeskRow5">
+            <span class="pf-row-num">06</span><span class="pf-row-name">المطاعم والضيافة</span><span class="pf-row-mark" aria-hidden="true"></span>
+          </button>
+          <button class="pf-row" type="button" data-pf-index="6" role="tab" aria-selected="false" aria-controls="pfDeskPanel6" id="pfDeskRow6">
+            <span class="pf-row-num">07</span><span class="pf-row-name">الزواجات والمناسبات الخاصة</span><span class="pf-row-mark" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="pf-desktop-right">
+          <div class="pf-panel-stage" id="pfPanelStage">
+            <div class="pf-panel-set is-active" data-pf-index="0" role="tabpanel" id="pfDeskPanel0" aria-labelledby="pfDeskRow0">
+              <h3 class="pf-title">التصوير الرياضي</h3>
+              <p class="pf-desc">نلتقط اللحظة التي تصنع التاريخ. تغطيات احترافية للمباريات والبطولات والفعاليات الرياضية، بعدسة تواكب سرعة الحدث وتحافظ على أدق التفاصيل.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-15-al-hilal-club.webp" type="image/webp">
+                      <img src="assets/images/work-15-al-hilal-club.jpg" alt="التصوير الرياضي" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-06-al-hazm-club.webp" type="image/webp">
+                      <img src="assets/images/work-06-al-hazm-club.jpg" alt="التصوير الرياضي" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-09-table-tennis-federation.webp" type="image/webp">
+                      <img src="assets/images/work-09-table-tennis-federation.jpg" alt="التصوير الرياضي" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+            <div class="pf-panel-set" data-pf-index="1" role="tabpanel" id="pfDeskPanel1" aria-labelledby="pfDeskRow1">
+              <h3 class="pf-title">التصوير الشخصي والبورتريه</h3>
+              <p class="pf-desc">صورة تعكس حضورك قبل كلماتك. جلسات تصوير احترافية للأفراد والقيادات والشخصيات العامة، بإضاءة مدروسة وإخراج يعكس الثقة والاحترافية.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-11-portrait-session-studio.webp" type="image/webp">
+                      <img src="assets/images/work-11-portrait-session-studio.jpg" alt="التصوير الشخصي والبورتريه" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-12-portrait-session-side.webp" type="image/webp">
+                      <img src="assets/images/work-12-portrait-session-side.jpg" alt="التصوير الشخصي والبورتريه" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-03-portrait-session.webp" type="image/webp">
+                      <img src="assets/images/work-03-portrait-session.jpg" alt="التصوير الشخصي والبورتريه" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+            <div class="pf-panel-set" data-pf-index="2" role="tabpanel" id="pfDeskPanel2" aria-labelledby="pfDeskRow2">
+              <h3 class="pf-title">الإنتاج التجاري والمنتجات</h3>
+              <p class="pf-desc">نحوّل المنتج إلى تجربة بصرية. إنتاج صور دعائية عالية الجودة تبرز تفاصيل المنتجات وتدعم الحملات التسويقية للعلامات التجارية.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-02-rk-aroma-perfumes.webp" type="image/webp">
+                      <img src="assets/images/work-02-rk-aroma-perfumes.jpg" alt="الإنتاج التجاري والمنتجات" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-14-car-product.webp" type="image/webp">
+                      <img src="assets/images/work-14-car-product.jpg" alt="الإنتاج التجاري والمنتجات" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-13-car-exterior.webp" type="image/webp">
+                      <img src="assets/images/work-13-car-exterior.jpg" alt="الإنتاج التجاري والمنتجات" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+            <div class="pf-panel-set" data-pf-index="3" role="tabpanel" id="pfDeskPanel3" aria-labelledby="pfDeskRow3">
+              <h3 class="pf-title">الفعاليات والمناسبات الكبرى</h3>
+              <p class="pf-desc">نوثق الحدث كما يستحق أن يُروى. تغطية شاملة للمؤتمرات والفعاليات الرسمية والمناسبات الكبرى مع التركيز على أهم اللحظات.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-18-formal-gathering.webp" type="image/webp">
+                      <img src="assets/images/work-18-formal-gathering.jpg" alt="الفعاليات والمناسبات الكبرى" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-19-business-meeting.webp" type="image/webp">
+                      <img src="assets/images/work-19-business-meeting.jpg" alt="الفعاليات والمناسبات الكبرى" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-05-graduation-ceremony.webp" type="image/webp">
+                      <img src="assets/images/work-05-graduation-ceremony.jpg" alt="الفعاليات والمناسبات الكبرى" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+            <div class="pf-panel-set" data-pf-index="4" role="tabpanel" id="pfDeskPanel4" aria-labelledby="pfDeskRow4">  <!-- placeholder photos, swap later -->
+              <h3 class="pf-title">التصوير العقاري والمعماري</h3>
+              <p class="pf-desc">نبرز جمال المكان قبل زيارته. تصوير احترافي للمشاريع العقارية والمعالم المعمارية لإظهار المساحات والهوية البصرية بأفضل صورة.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-13-car-exterior.webp" type="image/webp">
+                      <img src="assets/images/work-13-car-exterior.jpg" alt="التصوير العقاري والمعماري" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-19-business-meeting.webp" type="image/webp">
+                      <img src="assets/images/work-19-business-meeting.jpg" alt="التصوير العقاري والمعماري" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-08-formal-event.webp" type="image/webp">
+                      <img src="assets/images/work-08-formal-event.jpg" alt="التصوير العقاري والمعماري" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+            <div class="pf-panel-set" data-pf-index="5" role="tabpanel" id="pfDeskPanel5" aria-labelledby="pfDeskRow5">  <!-- placeholder photos, swap later -->
+              <h3 class="pf-title">المطاعم والضيافة</h3>
+              <p class="pf-desc">صور تفتح الشهية قبل أول لقمة. تصوير احترافي للأطباق والمشروبات وتجربة الضيافة بإخراج بصري يبرز الجودة والتفاصيل.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-04-autha-coffee-roasters.webp" type="image/webp">
+                      <img src="assets/images/work-04-autha-coffee-roasters.jpg" alt="المطاعم والضيافة" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-04-autha-coffee-roasters.webp" type="image/webp">
+                      <img src="assets/images/work-04-autha-coffee-roasters.jpg" alt="المطاعم والضيافة" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-04-autha-coffee-roasters.webp" type="image/webp">
+                      <img src="assets/images/work-04-autha-coffee-roasters.jpg" alt="المطاعم والضيافة" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+            <div class="pf-panel-set" data-pf-index="6" role="tabpanel" id="pfDeskPanel6" aria-labelledby="pfDeskRow6">  <!-- placeholder photos, swap later -->
+              <h3 class="pf-title">الزواجات والمناسبات الخاصة</h3>
+              <p class="pf-desc">ذكريات تُحفظ كما عشتها. توثيق سينمائي للحظات الاستثنائية بأسلوب هادئ وطبيعي يحافظ على المشاعر الحقيقية.</p>
+              <div class="pf-gallery" data-pf-gallery>
+                <div class="pf-gallery-track">
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-08-formal-event.webp" type="image/webp">
+                      <img src="assets/images/work-08-formal-event.jpg" alt="الزواجات والمناسبات الخاصة" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-18-formal-gathering.webp" type="image/webp">
+                      <img src="assets/images/work-18-formal-gathering.jpg" alt="الزواجات والمناسبات الخاصة" loading="lazy">
+                    </picture>
+                  </div>
+                  <div class="pf-gallery-slide">
+                    <picture>
+                      <source srcset="assets/images/work-05-graduation-ceremony.webp" type="image/webp">
+                      <img src="assets/images/work-05-graduation-ceremony.jpg" alt="الزواجات والمناسبات الخاصة" loading="lazy">
+                    </picture>
+                  </div>
+                </div>
+                <div class="pf-gallery-dots" aria-hidden="true">
+                  <span class="pf-dot is-active"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>

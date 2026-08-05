@@ -400,99 +400,151 @@
     .stat:nth-child(n+3){ border-top:1px solid var(--line); }
   }
 
-  /* ---------- 04 work: photography story gallery ---------- */
+  /* ---------- 04 work: photography portfolio (accordion / two-column) ---------- */
   .work-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:2rem; flex-wrap:wrap; margin-bottom:3.5rem; }
 
-  /* Sticky spacer (see js/script.js — height set inline to
-     100dvh + (photoCount-1)*65dvh) + the pinned stage/caption inside it.
-     Active at EVERY breakpoint (mobile and desktop both in scope), unlike
-     the services showcase's mobile-only pin — relies on the shared
-     sticky-pin base declared earlier in this file (body's overflow fix),
-     so no extra plumbing is needed here. Purely position:sticky + native
-     scroll; nothing here intercepts or forces scroll position. */
-  .story-sticky-outer{ position:relative; width:100%; }
-  .story-sticky-inner{
-    position:sticky; top:0;
-    height:100vh; height:100dvh;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    overflow:hidden;
-    padding:clamp(1.5rem,4vh,3rem) 0;
-  }
+  /* Apple-style heading treatment, scoped ONLY to this section's headings
+     per spec (sitewide body copy stays on SFMada everywhere else) — Inter
+     loaded in index.html's <head>, tight negative letter-spacing to read
+     closer to SF Pro. */
+  #work .pf-heading{ font-family:'Inter','SFMada',sans-serif; font-weight:700; letter-spacing:-0.02em; }
+  #work .pf-acc-name,
+  #work .pf-row-name,
+  #work .pf-title{ font-family:'Inter','SFMada',sans-serif; letter-spacing:-0.015em; }
 
-  /* Fixed-height, aspect-ratio-locked frame (height-driven rather than
-     width-driven) so it reliably fits inside the 100dvh pinned box above
-     alongside the caption block below it, on any phone or laptop viewport,
-     without ever needing to know the caption's exact height in advance. */
-  .story-stage{
-    position:relative; flex:0 0 auto;
-    height:clamp(280px, 50dvh, 560px);
-    width:auto; max-width:92vw;
-    aspect-ratio:4/5;
-    border-radius:var(--radius-lg);
-    overflow:hidden;
-    background:#111;
-    box-shadow:var(--shadow-lg);
+  .pf-wrap{ margin-top:.5rem; }
+
+  /* shared (both mobile accordion + desktop panel) title/description ---- */
+  .pf-title{ font-weight:700; font-size:clamp(1.2rem,2vw,1.6rem); color:var(--ink); }
+  .pf-desc{ margin-top:.75rem; max-width:52ch; font-size:.95rem; line-height:1.8; color:var(--ink-soft); font-weight:300; }
+
+  /* =====================================================================
+     MOBILE — single-open accordion (<=760px, see the min-width:761px
+     query further down which swaps to the desktop two-column layout and
+     hides this entirely). Height animates via the CSS grid-template-rows
+     "0fr -> 1fr" technique: no JS height measurement, no layout jump, and
+     it never fights normal page scroll since only this element's own box
+     resizes — nothing here touches window scroll position. ===================================================================== */
+  .pf-desktop{ display:none; }
+
+  .pf-acc-item{ border-bottom:1px solid var(--line); }
+  .pf-acc-item:first-child{ border-top:1px solid var(--line); }
+
+  .pf-acc-head{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding:1.35rem .1rem; background:none; border:none; cursor:pointer;
+    text-align:start; color:var(--ink); -webkit-tap-highlight-color:transparent;
   }
-  @media (min-width:761px){
-    .story-stage{ height:clamp(360px, 56dvh, 620px); }
+  .pf-acc-name{ font-weight:600; font-size:1.02rem; }
+  .pf-acc-arrow{
+    flex:none; width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+    color:var(--ink-faint); transition:transform .45s var(--ease-soft), color .35s ease;
   }
-  /* Every photo stacks in the same spot; js/script.js drives opacity
-     (crossfade) and a small translateY (light parallax) per frame from the
-     smoothed scroll position — continuously scroll-scrubbed, so no CSS
-     transition here (it would fight the constant inline updates, same
-     reasoning as the services showcase's card slide). */
-  .story-slide{
-    position:absolute; inset:0; margin:0;
-    opacity:0; pointer-events:none;
-    will-change:transform, opacity;
+  .pf-acc-arrow svg{ width:100%; height:100%; }
+  .pf-acc-item.is-open .pf-acc-head{ color:var(--ink); }
+  .pf-acc-item.is-open .pf-acc-arrow{ transform:rotate(180deg); color:var(--accent); }
+
+  .pf-acc-body{
+    display:grid; grid-template-rows:0fr; overflow:hidden;
+    transition:grid-template-rows .55s var(--ease-soft);
   }
-  .story-slide.is-active{ pointer-events:auto; }
-  .story-slide picture{ position:absolute; inset:0; display:block; width:100%; height:100%; }
-  .story-slide img{
+  .pf-acc-item.is-open .pf-acc-body{ grid-template-rows:1fr; }
+  .pf-acc-inner{ min-height:0; overflow:hidden; padding:0 .1rem 2rem; }
+
+  /* =====================================================================
+     GALLERY — shared by every mobile accordion panel AND every desktop
+     panel-set. Native horizontally-scrolling, scroll-snap track: touch
+     swipe and momentum come free from the browser (no JS gesture code, no
+     preventDefault, so vertical page scroll is never intercepted); dot
+     sync + click-to-jump + a desktop-only mouse-drag affordance are added
+     in js/script.js on top of that native scroll. direction:ltr isolates
+     the track's scrollLeft math from the page's own RTL context so it's
+     consistent cross-browser — purely a widget-internal detail, doesn't
+     affect the page's reading direction anywhere else. ===================================================================== */
+  .pf-gallery{ margin-top:1.5rem; }
+  .pf-gallery-track{
+    position:relative; display:flex; overflow-x:auto; overflow-y:hidden;
+    scroll-snap-type:x mandatory; scroll-behavior:smooth;
+    direction:ltr; cursor:grab;
+    border-radius:var(--radius-md); background:#111;
+    -ms-overflow-style:none; scrollbar-width:none;
+  }
+  .pf-gallery-track::-webkit-scrollbar{ display:none; }
+  .pf-gallery-track.is-dragging{ cursor:grabbing; scroll-snap-type:none; user-select:none; }
+  .pf-gallery-slide{
+    flex:0 0 100%; scroll-snap-align:start;
+    position:relative; aspect-ratio:4/5; overflow:hidden;
+  }
+  .pf-gallery-slide picture{ position:absolute; inset:0; display:block; width:100%; height:100%; }
+  .pf-gallery-slide img{
     position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
     filter:contrast(1.06) saturate(1.03);
+    transform:scale(1.045);
+    transition:transform .8s var(--ease-soft);
+    pointer-events:none; -webkit-user-drag:none;
   }
+  /* very subtle zoom-settle exactly when a slide becomes the active one
+     (js/script.js toggles this class from the track's own scroll position —
+     see the "gallery" IIFE) — kept small per spec ("Zoom بسيط جداً"). */
+  .pf-gallery-slide.is-active img{ transform:scale(1); }
 
-  /* Caption sits below the frame (not overlaid on the photo, per spec):
-     service name, description, counter. Text swaps discretely the instant
-     scroll settles on a new nearest photo (see js/script.js's
-     swapCaption()); the brief opacity dip during that swap is the only
-     transition here, everything else is scroll-scrubbed above. */
-  .story-caption{
-    margin-top:clamp(1.4rem,3vh,2.2rem);
-    max-width:46ch; text-align:center;
-    transition:opacity .3s ease;
+  .pf-gallery-dots{ direction:ltr; display:flex; justify-content:center; gap:.5rem; margin-top:.9rem; }
+  .pf-dot{
+    width:6px; height:6px; border-radius:50%; background:var(--line);
+    transition:background .35s var(--ease-soft), transform .35s var(--ease-soft);
+    cursor:pointer;
   }
-  .story-caption.is-swap{ opacity:0; }
-  .story-count{
-    display:block; margin-bottom:.6rem;
-    font-size:.78rem; letter-spacing:.16em;
-    color:var(--ink-faint); font-variant-numeric:tabular-nums;
-  }
-  .story-caption h3{ font-family:'SFMada'; font-weight:700; font-size:clamp(1.15rem,2.2vw,1.6rem); letter-spacing:-0.01em; color:var(--ink); }
-  .story-caption p{ margin-top:.55rem; font-size:.95rem; line-height:1.75; color:var(--ink-soft); font-weight:300; }
+  .pf-dot.is-active{ background:var(--accent); transform:scale(1.4); }
 
-  /* Inert leftovers, same as .svc-snap-point in the services section:
-     scroll-snap-align only has an effect when an ancestor sets
-     scroll-snap-type, and that's been removed sitewide (see the "shared
-     sticky-pin base" comment near the top of this file — it was fighting
-     the Lenis smooth-scroll library and breaking normal page scroll). Kept
-     in the markup/CSS rather than torn out to keep that fix minimal; the
-     fade/parallax crossfade itself (js/script.js) is untouched and still
-     tracks scroll continuously — there's just no forced hard stop anymore. */
-  .story-snap-point{
-    display:block;
-    position:absolute; left:0; width:100%; height:100dvh;
-    pointer-events:none;
-    scroll-snap-align:start;
+  /* =====================================================================
+     DESKTOP — permanent two-column layout (>=761px). Swaps in for the
+     accordion above (mobile tree is hidden here, desktop tree hidden at
+     <=760px — see .pf-mobile below), and is a dedicated layout in its own
+     right rather than the mobile design stretched wide: fixed left list +
+     one persistent right panel, nothing here scrolls the page or moves any
+     element — only the right panel's content crossfades. ===================================================================== */
+  @media (min-width:761px){
+    .pf-mobile{ display:none; }
+    .pf-desktop{
+      display:grid; grid-template-columns:minmax(230px,320px) 1fr;
+      gap:clamp(2.5rem,5vw,5rem); align-items:start;
+    }
+
+    .pf-desktop-left{ display:flex; flex-direction:column; position:sticky; top:clamp(6rem,16vh,9rem); }
+    .pf-row{
+      display:flex; align-items:center; gap:.9rem; width:100%;
+      padding:1.1rem .1rem; background:none; border:none; border-bottom:1px solid var(--line);
+      cursor:pointer; text-align:start;
+    }
+    .pf-desktop-left .pf-row:first-child{ border-top:1px solid var(--line); }
+    .pf-row-num{ flex:none; font-size:.76rem; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+    .pf-row-name{
+      flex:1 1 auto; font-weight:600; font-size:1.1rem; color:var(--ink-soft);
+      transition:color .35s var(--ease-soft);
+    }
+    .pf-row-mark{
+      flex:none; width:6px; height:6px; border-radius:50%; background:transparent; transform:scale(.4);
+      transition:background .35s var(--ease-soft), transform .35s var(--ease-soft);
+    }
+    .pf-row:hover .pf-row-name{ color:var(--ink); }
+    .pf-row.is-active .pf-row-name{ color:var(--ink); }
+    .pf-row.is-active .pf-row-mark{ background:var(--accent); transform:scale(1); }
+
+    .pf-desktop-right{ min-width:0; }
+    /* Grid-stacking trick: every .pf-panel-set occupies the same cell
+       (grid-area:1/1), so the stage's height is always the max of all 7 —
+       switching which one is visible can NEVER shift the section's total
+       height/scroll position, satisfying "لا يتم تحريك Layout" without any
+       JS height measurement. */
+    .pf-panel-stage{ position:relative; display:grid; }
+    .pf-panel-set{
+      grid-area:1/1; opacity:0; pointer-events:none; transform:translateY(6px);
+      transition:opacity .5s var(--ease-soft), transform .5s var(--ease-soft);
+    }
+    .pf-panel-set.is-active{ opacity:1; pointer-events:auto; transform:translateY(0); }
+    .pf-panel-set .pf-gallery{ margin-top:2rem; }
+    .pf-gallery-slide{ aspect-ratio:16/10; }
   }
-  .story-snap-point[data-snap-step="0"]{ top:0; }
-  .story-snap-point[data-snap-step="1"]{ top:65dvh; }
-  .story-snap-point[data-snap-step="2"]{ top:130dvh; }
-  .story-snap-point[data-snap-step="3"]{ top:195dvh; }
-  .story-snap-point[data-snap-step="4"]{ top:260dvh; }
-  .story-snap-point[data-snap-step="5"]{ top:325dvh; }
-  .story-snap-point[data-snap-step="6"]{ top:390dvh; }
 
   /* ---------- statement bands (photography / video production) ---------- */
   .statement{ padding:clamp(4.5rem,9vw,6.5rem) 0; text-align:center; }
@@ -628,29 +680,31 @@
   }
 
   /* ---------- shared sticky-pin base ----------
-     Needed at EVERY breakpoint (not just mobile) now that two sections use
-     the sticky-spacer technique: the services showcase (mobile-only pin)
-     and the photography story gallery (#work, all breakpoints — see its
-     dedicated block further down). position:sticky itself is plain native
-     CSS — it never blocks, intercepts, or slows native scrolling; the user
-     scrolls the real page the whole time, this only pins one element in
-     place while its spacer scrolls past. body's overflow-x/y:visible (set
-     on the base `body{}` rule near the top of this file) is what makes
-     that pinning actually work — see the comment there, and the longer
-     explanation further down, for why body independently keeping any
-     non-visible overflow breaks position:sticky.
+     Needed at EVERY breakpoint (not just mobile) for the services showcase's
+     mobile-only sticky-spacer pin technique. position:sticky itself is
+     plain native CSS — it never blocks, intercepts, or slows native
+     scrolling; the user scrolls the real page the whole time, this only
+     pins one element in place while its spacer scrolls past. body's
+     overflow-x/y:visible (set on the base `body{}` rule near the top of
+     this file) is what makes that pinning actually work — see the comment
+     there, and the longer explanation further down, for why body
+     independently keeping any non-visible overflow breaks position:sticky.
      NOTE: this file previously also set `html{ scroll-snap-type:y
      mandatory }` here, forcing scroll to always rest on one of the
-     .svc-snap-point/.story-snap-point targets below. Removed per explicit
-     request — combined with the Lenis smooth-scroll library already running
+     .svc-snap-point targets below (the photography section used to have an
+     equivalent sticky-pinned "story gallery" of its own too, with matching
+     .story-snap-point markers — it's since been redesigned into the
+     accordion/two-column portfolio further down, which doesn't use
+     position:sticky or scroll-snap at all). Removed per explicit request —
+     combined with the Lenis smooth-scroll library already running
      site-wide, that forced snapping was fighting native scroll (page not
-     starting at the top, sections becoming hard to reach). Scrolling through
-     both sections is now 100% native/free: the crossfade animations still
-     track scroll position continuously, there's just no more hard stop or
-     forced full traversal before moving on — .svc-snap-point/.story-snap-point
-     are harmless no-ops now (scroll-snap-align only has an effect when an
-     ancestor sets scroll-snap-type), left in place rather than torn out to
-     keep this fix minimal. */
+     starting at the top, sections becoming hard to reach). Scrolling
+     through the services showcase is now 100% native/free: its crossfade
+     animation still tracks scroll position continuously, there's just no
+     more hard stop or forced full traversal before moving on —
+     .svc-snap-point is a harmless no-op now (scroll-snap-align only has an
+     effect when an ancestor sets scroll-snap-type), left in place rather
+     than torn out to keep this fix minimal. */
 
   /* ---------- services showcase (full width, single row, scroll-linked drift) ---------- */
   .services-showcase{
@@ -1253,7 +1307,7 @@
      will-change is scoped narrowly, only on elements actually transformed
      while scrolling, so it doesn't create unnecessary compositing layers
      elsewhere on the page. */
-  .story-slide img,
+  .pf-gallery-slide img,
   #heroVideo,
   .video-grid,
   .stats-grid,
