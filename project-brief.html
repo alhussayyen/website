@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F6F6F3">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/project-brief.css">
+<title data-en="Your Project Brief | SIIRAH">تفاصيل مشروعك | سيرة</title>
+<meta name="description" content="صفحة خاصة لعملاء سيرة لتعبئة تفاصيل مشروعهم بعد الاتفاق على التنفيذ.">
+</head>
+<body class="brief-page">
+
+<!-- ============================================================
+     SIIRAH — Phase 10: Project Brief (client project intake)
+     ------------------------------------------------------------
+     Fully standalone page — NOT part of site navigation, not linked
+     from index.html, not meant to be discovered publicly (noindex).
+     Sent directly to a client after a project has been agreed on, so
+     they can hand SIIRAH's team every detail needed to execute it.
+
+     Reuses site-wide infrastructure so nothing is duplicated:
+       - css/style.css       → design tokens, fonts, reset, .lang-toggle-btn, .hp-field
+       - js/config.js        → window.SIIRAH_FORMS_ENDPOINT (same Apps Script
+                                Web App the two Phase 9 forms already use —
+                                Code.gs dispatches on formType, so one
+                                deployment serves all three forms)
+       - js/i18n.js           → the site's existing AR/EN engine (data-en /
+                                data-en-* attributes, .lang-toggle-btn)
+     Everything specific to this page (the wizard, its light "portal"
+     look, validation, review screen, Drive/Sheet submission) lives in
+     css/project-brief.css + js/project-brief.js, under a "pb-" class
+     prefix so nothing here collides with the dark, homepage-only
+     .site-form/.chip/.dropzone rules Phase 9 wrote for #contact/#join.
+     ============================================================ -->
+
+<header class="pb-header">
+  <div class="pb-header-inner">
+    <img src="assets/images/logo.png" alt="سيرة" data-en-alt="SIIRAH" class="pb-logo">
+    <button type="button" class="lang-toggle-btn" style="border-color:var(--line);color:var(--ink)" aria-label="التبديل إلى الإنجليزية">English</button>
+  </div>
+  <div class="pb-header-copy">
+    <span class="pb-eyebrow" data-en="Client Project Portal">بوابة مشاريع العملاء</span>
+    <h1 data-en="Your Project Brief">تفاصيل مشروعك</h1>
+    <p data-en="Tell us everything we need to know to execute your project properly.">أخبرنا بكل ما نحتاج معرفته لتنفيذ المشروع بالشكل الصحيح.</p>
+  </div>
+</header>
+
+<main class="pb-main">
+
+  <!-- Progress: a single tracked line + "01 / 06" caption, updated by JS.
+       Deliberately not a heavy multi-circle SaaS stepper (spec §21). -->
+  <div class="pb-progress" role="group" aria-label="خطوات النموذج" data-en-aria-label="Form steps">
+    <div class="pb-progress-track"><div class="pb-progress-fill" id="pbProgressFill"></div></div>
+    <div class="pb-progress-row">
+      <span class="pb-progress-count"><span id="pbStepCurrent">01</span> / <span id="pbStepTotal">06</span></span>
+      <span class="pb-progress-label" id="pbStepLabel" data-en="Client">العميل</span>
+    </div>
+  </div>
+
+  <form id="pbForm" novalidate autocomplete="on">
+    <!-- honeypot — real visitors never see or reach this field -->
+    <div class="hp-field" aria-hidden="true">
+      <label for="pbHp">Leave this field empty</label>
+      <input type="text" id="pbHp" name="hp_field" tabindex="-1" autocomplete="off">
+    </div>
+
+    <!-- ===================== STEP 01 — بيانات العميل ===================== -->
+    <section class="pb-step" data-step="1" aria-labelledby="pbStep1Title">
+      <h2 class="pb-step-title" id="pbStep1Title" data-en="Client Information">بيانات العميل</h2>
+
+      <div class="pb-grid">
+        <div class="pb-field">
+          <label for="pbName"><span data-en="Name">الاسم</span> <span class="pb-req" aria-hidden="true">*</span></label>
+          <input type="text" id="pbName" name="name" required autocomplete="name" aria-describedby="pbName-error" data-en-placeholder="Full name" placeholder="الاسم الكامل">
+          <span class="pb-error" id="pbName-error" role="alert"></span>
+        </div>
+        <div class="pb-field">
+          <label for="pbCompany"><span data-en="Company / Organization">اسم الشركة / المؤسسة</span> <span class="pb-req" aria-hidden="true">*</span></label>
+          <input type="text" id="pbCompany" name="company" required autocomplete="organization" aria-describedby="pbCompany-error">
+          <span class="pb-error" id="pbCompany-error" role="alert"></span>
+        </div>
+        <div class="pb-field">
+          <label for="pbEmail"><span data-en="Email">البريد الإلكتروني</span> <span class="pb-req" aria-hidden="true">*</span></label>
+          <input type="email" id="pbEmail" name="email" required autocomplete="email" inputmode="email" aria-describedby="pbEmail-error" data-en-placeholder="name@example.com" placeholder="name@example.com">
+          <span class="pb-error" id="pbEmail-error" role="alert"></span>
+        </div>
+        <div class="pb-field">
+          <label for="pbPhone"><span data-en="Mobile Number">رقم الجوال</span> <span class="pb-req" aria-hidden="true">*</span></label>
+          <input type="tel" id="pbPhone" name="phone" required autocomplete="tel" inputmode="tel" aria-describedby="pbPhone-error" data-en-placeholder="05xxxxxxxx" placeholder="05xxxxxxxx">
+          <span class="pb-error" id="pbPhone-error" role="alert"></span>
+        </div>
+        <div class="pb-field">
+          <label for="pbPosition"><span data-en="Job Title">المسمى الوظيفي</span></label>
+          <input type="text" id="pbPosition" name="position" autocomplete="organization-title">
+        </div>
+        <div class="pb-field">
+          <label for="pbWebsite"><span data-en="Website">رابط الموقع</span></label>
+          <input type="url" id="pbWebsite" name="website" inputmode="url" data-en-placeholder="https://" placeholder="https://" aria-describedby="pbWebsite-error">
+          <span class="pb-error" id="pbWebsite-error" role="alert"></span>
+        </div>
+        <div class="pb-field pb-field--full">
+          <label for="pbSocial"><span data-en="Official Social Accounts">روابط الحسابات الرسمية</span></label>
+          <input type="text" id="pbSocial" name="socialLinks" data-en-placeholder="Instagram, X, TikTok…" placeholder="إنستقرام، إكس، تيك توك…">
+        </div>
+      </div>
+
+      <div class="pb-actions">
+        <span></span>
+        <button type="button" class="pb-btn pb-btn-primary" data-next>
+          <span data-en="Next">التالي</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================== STEP 02 — تفاصيل المشروع ===================== -->
+    <section class="pb-step" data-step="2" hidden aria-labelledby="pbStep2Title">
+      <h2 class="pb-step-title" id="pbStep2Title" data-en="Project Details">تفاصيل المشروع</h2>
+
+      <div class="pb-grid">
+        <div class="pb-field">
+          <label for="pbProjectName"><span data-en="Project Name">اسم المشروع</span> <span class="pb-req" aria-hidden="true">*</span></label>
+          <input type="text" id="pbProjectName" name="projectName" required aria-describedby="pbProjectName-error">
+          <span class="pb-error" id="pbProjectName-error" role="alert"></span>
+        </div>
+        <div class="pb-field">
+          <label for="pbProjectType"><span data-en="Project Type">نوع المشروع</span> <span class="pb-req" aria-hidden="true">*</span></label>
+          <input type="text" id="pbProjectType" name="projectType" required aria-describedby="pbProjectType-error" data-en-placeholder="e.g. Product launch, event coverage…" placeholder="مثال: إطلاق منتج، تغطية فعالية…">
+          <span class="pb-error" id="pbProjectType-error" role="alert"></span>
+        </div>
+        <div class="pb-field">
+          <label for="pbAudience"><span data-en="Target Audience">الجمهور المستهدف</span></label>
+          <input type="text" id="pbAudience" name="targetAudience">
+        </div>
+        <div class="pb-field">
+          <label for="pbDeadline"><span data-en="Requested Delivery Date">موعد التسليم المطلوب</span></label>
+          <input type="date" id="pbDeadline" name="deadline">
+        </div>
+        <div class="pb-field">
+          <label for="pbLocation"><span data-en="Execution Location">مكان التنفيذ</span></label>
+          <input type="text" id="pbLocation" name="location">
+        </div>
+        <div class="pb-field">
+          <label for="pbBudget"><span data-en="Agreed Budget">الميزانية المتفق عليها</span></label>
+          <input type="text" id="pbBudget" name="budget">
+        </div>
+        <div class="pb-field">
+          <label for="pbProjectId"><span data-en="Project ID">رقم المشروع / Project ID</span></label>
+          <input type="text" id="pbProjectId" name="projectId" data-en-placeholder="Leave empty to auto-generate" placeholder="اتركه فارغًا لتوليده تلقائيًا">
+          <span class="pb-hint" data-en="Only fill this in if SIIRAH already assigned your project an ID. Otherwise we&#39;ll generate one for you.">عبّئ هذا الحقل فقط إذا سبق وحصل مشروعك على رقم من سيرة. غير ذلك سنولّده لك تلقائيًا.</span>
+        </div>
+      </div>
+
+      <div class="pb-field pb-field--full">
+        <label for="pbDescription"><span data-en="Project Description">وصف المشروع</span> <span class="pb-req" aria-hidden="true">*</span></label>
+        <textarea id="pbDescription" name="description" rows="4" required aria-describedby="pbDescription-error"></textarea>
+        <span class="pb-error" id="pbDescription-error" role="alert"></span>
+      </div>
+
+      <div class="pb-field pb-field--full">
+        <label for="pbGoal"><span data-en="Project Goal">الهدف من المشروع</span> <span class="pb-req" aria-hidden="true">*</span></label>
+        <textarea id="pbGoal" name="goal" rows="3" required aria-describedby="pbGoal-error"></textarea>
+        <span class="pb-error" id="pbGoal-error" role="alert"></span>
+      </div>
+
+      <div class="pb-field pb-field--full">
+        <label id="pbServicesLabel"><span data-en="Services Needed">الخدمات المطلوبة</span> <span class="pb-req" aria-hidden="true">*</span></label>
+        <div class="pb-chip-group" id="pbServices" role="group" aria-labelledby="pbServicesLabel" aria-describedby="pbServices-error">
+          <button type="button" class="pb-chip" data-value="Video &amp; Editing" data-value-ar="تصوير الفيديو والمونتاج" aria-pressed="false"><span data-en="Video &amp; Editing">تصوير الفيديو والمونتاج</span></button>
+          <button type="button" class="pb-chip" data-value="Photography" data-value-ar="التصوير الفوتوغرافي" aria-pressed="false"><span data-en="Photography">التصوير الفوتوغرافي</span></button>
+          <button type="button" class="pb-chip" data-value="Design" data-value-ar="التصميم" aria-pressed="false"><span data-en="Design">التصميم</span></button>
+          <button type="button" class="pb-chip" data-value="Marketing" data-value-ar="التسويق" aria-pressed="false"><span data-en="Marketing">التسويق</span></button>
+        </div>
+        <span class="pb-error" id="pbServices-error" role="alert"></span>
+      </div>
+
+      <div class="pb-field pb-field--full">
+        <label for="pbDeliverables"><span data-en="Deliverables">المخرجات المطلوبة</span> <span class="pb-req" aria-hidden="true">*</span></label>
+        <textarea id="pbDeliverables" name="deliverables" rows="3" required aria-describedby="pbDeliverables-error" data-en-placeholder="e.g. 10 edited photos, 3 reels, 1 highlight video…" placeholder="مثال: 10 صور معالجة، 3 ريلز، فيديو تجميعي واحد…"></textarea>
+        <span class="pb-error" id="pbDeliverables-error" role="alert"></span>
+      </div>
+
+      <div class="pb-actions">
+        <button type="button" class="pb-btn pb-btn-ghost" data-back><span data-en="Back">السابق</span></button>
+        <button type="button" class="pb-btn pb-btn-primary" data-next><span data-en="Next">التالي</span></button>
+      </div>
+    </section>
+
+    <!-- ===================== STEP 03 — التوجه الإبداعي ===================== -->
+    <section class="pb-step" data-step="3" hidden aria-labelledby="pbStep3Title">
+      <h2 class="pb-step-title" id="pbStep3Title" data-en="Creative Direction">التوجه الإبداعي</h2>
+      <p class="pb-step-desc" data-en="All optional — share whatever helps us understand the look and feel you have in mind.">جميع الحقول اختيارية — شاركنا بأي شيء يساعدنا على فهم الشكل والإحساس الذي تتخيله.</p>
+
+      <div class="pb-field pb-field--full">
+        <label for="pbMainIdea"><span data-en="Main Idea">الفكرة الرئيسية</span></label>
+        <textarea id="pbMainIdea" name="mainIdea" rows="3"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbMessage"><span data-en="Message We Want to Deliver">الرسالة التي نريد إيصالها</span></label>
+        <textarea id="pbMessage" name="message" rows="3"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbVisualIdentity"><span data-en="Visual Identity">الهوية البصرية</span></label>
+        <textarea id="pbVisualIdentity" name="visualIdentity" rows="3"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbColors"><span data-en="Colors">الألوان</span></label>
+        <textarea id="pbColors" name="colors" rows="2"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbStyle"><span data-en="Style">الأسلوب المطلوب</span></label>
+        <textarea id="pbStyle" name="style" rows="2"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbReferences"><span data-en="Visual Examples or References">أمثلة أو مراجع بصرية</span></label>
+        <textarea id="pbReferences" name="visualReferences" rows="3" data-en-placeholder="Links to Instagram, Behance, Pinterest, Google Drive…" placeholder="روابط إنستقرام، بيهانس، بينترست، جوجل درايف…"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbAvoid"><span data-en="Things to Avoid">أشياء نريد تجنبها</span></label>
+        <textarea id="pbAvoid" name="thingsToAvoid" rows="2"></textarea>
+      </div>
+
+      <div class="pb-actions">
+        <button type="button" class="pb-btn pb-btn-ghost" data-back><span data-en="Back">السابق</span></button>
+        <button type="button" class="pb-btn pb-btn-primary" data-next><span data-en="Next">التالي</span></button>
+      </div>
+    </section>
+
+    <!-- ===================== STEP 04 — المحتوى ===================== -->
+    <section class="pb-step" data-step="4" hidden aria-labelledby="pbStep4Title">
+      <h2 class="pb-step-title" id="pbStep4Title" data-en="Content">المحتوى</h2>
+      <p class="pb-step-desc" data-en="All optional — describe what you&#39;ll provide, or need from us, in each area.">جميع الحقول اختيارية — صف ما ستزوّدنا به أو تحتاجه منا في كل جانب.</p>
+
+      <div class="pb-field pb-field--full">
+        <label for="pbTexts"><span data-en="Copy / Text Needed">النصوص المطلوبة</span></label>
+        <textarea id="pbTexts" name="textsNeeded" rows="3"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbLogos"><span data-en="Logos">الشعارات</span></label>
+        <textarea id="pbLogos" name="logos" rows="2"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbImages"><span data-en="Images">الصور</span></label>
+        <textarea id="pbImages" name="images" rows="2"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbVideos"><span data-en="Videos">الفيديوهات</span></label>
+        <textarea id="pbVideos" name="videos" rows="2"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbContentRefs"><span data-en="References">المراجع</span></label>
+        <textarea id="pbContentRefs" name="contentReferences" rows="2"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbFilesNeeded"><span data-en="Files Required From Client">الملفات المطلوبة من العميل</span></label>
+        <textarea id="pbFilesNeeded" name="filesNeededFromClient" rows="2"></textarea>
+      </div>
+      <div class="pb-field pb-field--full">
+        <label for="pbAdditionalInfo"><span data-en="Additional Information">أي معلومات إضافية</span></label>
+        <textarea id="pbAdditionalInfo" name="additionalInfo" rows="3"></textarea>
+      </div>
+
+      <div class="pb-actions">
+        <button type="button" class="pb-btn pb-btn-ghost" data-back><span data-en="Back">السابق</span></button>
+        <button type="button" class="pb-btn pb-btn-primary" data-next><span data-en="Next">التالي</span></button>
+      </div>
+    </section>
+
+    <!-- ===================== STEP 05 — الملفات ===================== -->
+    <section class="pb-step" data-step="5" hidden aria-labelledby="pbStep5Title">
+      <h2 class="pb-step-title" id="pbStep5Title" data-en="Files">الملفات</h2>
+      <p class="pb-step-desc" data-en="Attach your logo, brand guide, references, or any other files SIIRAH needs to execute the project.">أرفق الشعار، دليل الهوية، المراجع، أو أي ملفات أخرى يحتاجها سيرة لتنفيذ المشروع.</p>
+
+      <div class="pb-field pb-field--full">
+        <div class="pb-dropzone" id="pbDropzone" tabindex="0" role="button" aria-describedby="pbDropzoneHint">
+          <input type="file" id="pbFileInput" class="pb-dropzone-input" accept=".pdf,.jpg,.jpeg,.png,.webp,.mp4,.mov,.doc,.docx,.zip" multiple tabindex="-1" aria-hidden="true">
+          <span class="pb-dropzone-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg></span>
+          <span class="pb-dropzone-text">
+            <span data-en="Drag your files here or">اسحب ملفاتك هنا أو</span>
+            <span class="pb-dropzone-browse" data-en="choose files">اختر ملفات</span>
+          </span>
+          <span class="pb-dropzone-hint" id="pbDropzoneHint" data-en="PDF, JPG, PNG, WEBP, MP4, MOV, DOC, DOCX, ZIP — up to 15MB each">PDF, JPG, PNG, WEBP, MP4, MOV, DOC, DOCX, ZIP — حتى 15 ميجابايت لكل ملف</span>
+        </div>
+        <span class="pb-hint" data-en="Have larger video files? Add a Google Drive/WeTransfer link in the &quot;References&quot; or &quot;Videos&quot; field in the previous steps instead.">لديك ملفات فيديو أكبر؟ أضف رابط جوجل درايف أو WeTransfer في حقل «المراجع» أو «الفيديوهات» بدلًا من ذلك.</span>
+        <ul class="pb-file-list" id="pbFileList" aria-live="polite"></ul>
+      </div>
+
+      <div class="pb-actions">
+        <button type="button" class="pb-btn pb-btn-ghost" data-back><span data-en="Back">السابق</span></button>
+        <button type="button" class="pb-btn pb-btn-primary" data-next><span data-en="Next">التالي</span></button>
+      </div>
+    </section>
+
+    <!-- ===================== STEP 06 — المراجعة والإرسال ===================== -->
+    <section class="pb-step" data-step="6" hidden aria-labelledby="pbStep6Title">
+      <h2 class="pb-step-title" id="pbStep6Title" data-en="Review Your Project Brief">راجع تفاصيل مشروعك</h2>
+      <p class="pb-step-desc" data-en="Make sure everything below is correct before sending it to SIIRAH.">تأكد من صحة كل ما يلي قبل إرساله إلى سيرة.</p>
+
+      <div class="pb-review" id="pbReview"></div>
+
+      <p class="pb-privacy">
+        <span data-en="By submitting this form, you agree that the information provided will be used to study and execute the project and to communicate about it.">بإرسال هذا النموذج، أنت توافق على استخدام المعلومات المقدمة لغرض دراسة وتنفيذ المشروع والتواصل بشأنه.</span>
+        <a href="privacy-policy.html" target="_blank" rel="noopener" data-en="Privacy Policy">سياسة الخصوصية</a>
+      </p>
+
+      <div class="pb-actions">
+        <button type="button" class="pb-btn pb-btn-ghost" data-back><span data-en="Back">السابق</span></button>
+        <button type="submit" class="pb-btn pb-btn-primary pb-submit" id="pbSubmitBtn">
+          <span class="pb-submit-label" data-en="Submit Project Brief">إرسال تفاصيل المشروع</span>
+          <span class="pb-submit-spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="pb-status" id="pbStatus" role="status" aria-live="polite"></div>
+    </section>
+  </form>
+
+  <!-- ===================== SUCCESS SCREEN ===================== -->
+  <section class="pb-success" id="pbSuccess" hidden>
+    <span class="pb-success-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    </span>
+    <h2 data-en="Your project brief has been received successfully.">تم استلام تفاصيل المشروع بنجاح.</h2>
+    <p data-en="Thank you for providing the details. The SIIRAH team now has the information needed to begin.">شكرًا لتزويدنا بكل هذه التفاصيل. أصبح فريق سيرة يملك الآن المعلومات اللازمة للبدء.</p>
+    <div class="pb-success-id" id="pbSuccessId" hidden>
+      <span class="pb-success-id-label" data-en="Project ID">رقم المشروع</span>
+      <span class="pb-success-id-value" id="pbSuccessIdValue"></span>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pb-footer">
+  <img src="assets/images/logo-mark.png" alt="سيرة" data-en-alt="SIIRAH" class="pb-footer-mark">
+  <span data-en="All rights reserved — SIIRAH Media Production">جميع الحقوق محفوظة لمؤسسة سيرة للإنتاج الإعلامي</span>
+</footer>
+
+<script src="js/config.js" defer></script>
+<script src="js/i18n.js" defer></script>
+<script src="js/project-brief.js" defer></script>
+</body>
+</html>
