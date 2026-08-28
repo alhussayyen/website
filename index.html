@@ -1021,40 +1021,22 @@
 <section class="sec-pad behind-section" id="behind-siirah">
   <div class="wrap behind-head">
     <h2 class="behind-title" data-en="Behind SIIRAH">خلف سيرة</h2>
-    <p class="behind-subtitle" data-en="A real look behind SIIRAH&#39;s work.">لمحة حقيقية من كواليس أعمال سيرة.</p>
+    <p class="behind-subtitle" data-en="Behind the Scenes at SIIRAH">لمحة حقيقية من كواليس أعمال سيرة</p>
     <span class="behind-mark" aria-hidden="true"></span>
   </div>
 
+  <!-- Phase 4 — trimmed to exactly two real photos (was a 5-tile
+       placeholder mosaic). Both are existing project files, real unposed
+       moments from SIIRAH's own event coverage — nothing sourced online,
+       nothing invented. See the matching CSS comment in style.css for the
+       full rationale on the asymmetric two-up layout and the QR
+       placeholder below. -->
   <div class="wrap behind-gallery" id="behindGallery">
     <div class="behind-item behind-item--a" data-anim="rise">
-      <div class="behind-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-        <span data-en="Photo coming soon">الصورة قيد الإضافة</span>
-      </div>
+      <img src="assets/images/work-19-business-meeting.jpg" alt="لقطة حقيقية من تغطية سيرة لإحدى الفعاليات" data-en-alt="A real moment from one of SIIRAH's event coverages" loading="lazy">
     </div>
     <div class="behind-item behind-item--b" data-anim="rise">
-      <div class="behind-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-        <span data-en="Photo coming soon">الصورة قيد الإضافة</span>
-      </div>
-    </div>
-    <div class="behind-item behind-item--c" data-anim="rise">
-      <div class="behind-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-        <span data-en="Photo coming soon">الصورة قيد الإضافة</span>
-      </div>
-    </div>
-    <div class="behind-item behind-item--d" data-anim="rise">
-      <div class="behind-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-        <span data-en="Photo coming soon">الصورة قيد الإضافة</span>
-      </div>
-    </div>
-    <div class="behind-item behind-item--e" data-anim="rise">
-      <div class="behind-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-        <span data-en="Photo coming soon">الصورة قيد الإضافة</span>
-      </div>
+      <img src="assets/images/work-05-graduation-ceremony.jpg" alt="لقطة من كواليس تغطية سيرة لحفل تخرج" data-en-alt="Behind the scenes from a SIIRAH ceremony coverage" loading="lazy">
     </div>
   </div>
 
@@ -1066,13 +1048,17 @@
         <span data-en="View more">شاهد المزيد</span>
       </a>
     </div>
+    <!-- Phase 4 — real SIIRAH Snapchat QR code supplied by the client
+         (assets/images/behind-snapchat-qr.png, 645x645, transparent
+         rounded-corner PNG). Sits in the same fixed 1:1 .behind-qr-frame
+         box the placeholder used, so no layout change was needed:
+         object-fit:contain keeps it undistorted and fully scannable.
+         Marked aria-hidden because the adjacent "شاهد المزيد" / "View
+         more" button already provides the same Snapchat link to
+         assistive tech; the QR is a visual/camera-scan convenience. -->
     <div class="behind-qr" aria-hidden="true">
       <div class="behind-qr-frame">
-        <span class="behind-qr-corner behind-qr-corner--tl"></span>
-        <span class="behind-qr-corner behind-qr-corner--tr"></span>
-        <span class="behind-qr-corner behind-qr-corner--bl"></span>
-        <span class="behind-qr-corner behind-qr-corner--br"></span>
-        <span class="behind-qr-label" data-en="QR code coming soon">رمز QR قيد الإضافة</span>
+        <img src="assets/images/behind-snapchat-qr.png" alt="">
       </div>
     </div>
   </div>
@@ -1087,34 +1073,85 @@
     </div>
   </div>
 
-  <!-- Phase 7 — premium/editorial logo grid: one hand-composed mosaic, not a
-       repeating card grid. Desktop: three rows of even squares plus one wide
-       "spotlight" cell (Florde) breaking row two, plus one full-width
-       "signature" bar closing the section (Saleh Alghalib Law's wordmark
-       reads best stretched edge-to-edge) — sizes are fixed per logo via
-       named grid-areas (.cl-1..cl-10 in css/style.css) so the composition
-       never reshuffles. Below 761px it collapses to a plain 2-column grid,
-       with the wide/signature cells (.cl-wide/.cl-signature) spanning both
-       columns. Every logo keeps its original file and aspect ratio —
-       object-fit:contain inside a fixed cell, never cropped or stretched;
-       visual balance across very differently-shaped source PNGs (from
-       300x300 up to 400x134) comes purely from the cell sizing in CSS.
-       Each cell keeps the site's standard one-time [data-anim="rise"]
-       scroll-reveal (unchanged from before); a single extra container-level
-       reveal in js/script.js adds a very subtle whole-grid settle so the
-       section arrives as one considered composition, not ten separate
-       logo animations. -->
-  <div class="wrap clients-editorial" id="clientsGrid">
-    <div class="cl-cell cl-1" style="--glow:#7a3b3b" data-anim="rise"><span class="cl-idx" aria-hidden="true">01</span><img src="assets/images/client-01-al-faisaly.png" alt="نادي الفيصلي" data-en-alt="Al-Faisaly Club" loading="lazy"></div>
-    <div class="cl-cell cl-2" style="--glow:#3f6b4f" data-anim="rise"><span class="cl-idx" aria-hidden="true">02</span><img src="assets/images/client-02-saudi-football-federation.png" alt="الاتحاد السعودي لكرة القدم" data-en-alt="Saudi Arabian Football Federation" loading="lazy"></div>
-    <div class="cl-cell cl-3" style="--glow:#3a6b8a" data-anim="rise"><span class="cl-idx" aria-hidden="true">03</span><img src="assets/images/client-08-roshn-league.png" alt="دوري روشن السعودي" data-en-alt="Roshn Saudi League" loading="lazy"></div>
-    <div class="cl-cell cl-4 cl-wide" style="--glow:#22405f" data-anim="rise"><span class="cl-idx" aria-hidden="true">04</span><img src="assets/images/client-03-florde.png" alt="فلورد" data-en-alt="Florde" loading="lazy"></div>
-    <div class="cl-cell cl-5" style="--glow:#8a7550" data-anim="rise"><span class="cl-idx" aria-hidden="true">05</span><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="الراجحي، السديس والسحيباني للاستشارات القانونية" data-en-alt="Alrajhi, Alsudais &amp; Alsuhaibani Legal Consultants" loading="lazy"></div>
-    <div class="cl-cell cl-6" style="--glow:#6b4fa0" data-anim="rise"><span class="cl-idx" aria-hidden="true">06</span><img src="assets/images/client-06-weco.png" alt="WECO" loading="lazy"></div>
-    <div class="cl-cell cl-7" style="--glow:#1a1f4d" data-anim="rise"><span class="cl-idx" aria-hidden="true">07</span><img src="assets/images/client-09-fares-academy.png" alt="Fares Academy" loading="lazy"></div>
-    <div class="cl-cell cl-8" style="--glow:#2f7a4f" data-anim="rise"><span class="cl-idx" aria-hidden="true">08</span><img src="assets/images/client-10-table-tennis-federation.png" alt="الاتحاد السعودي لكرة الطاولة" data-en-alt="Saudi Table Tennis Federation" loading="lazy"></div>
-    <div class="cl-cell cl-9" style="--glow:#1f5c73" data-anim="rise"><span class="cl-idx" aria-hidden="true">09</span><img src="assets/images/client-07-autha-coffee-roasters.png" alt="Autha Coffee Roasters" loading="lazy"></div>
-    <div class="cl-cell cl-10 cl-signature" style="--glow:#4a4a48" data-anim="rise"><span class="cl-idx" aria-hidden="true">10</span><img src="assets/images/client-04-saleh-alghalib-law.png" alt="مكتب محاماة صالح الغالب" data-en-alt="Saleh Alghalib Law Firm" loading="lazy"></div>
+  <!-- Phase 3 (Behind SIIRAH / Clients revamp) — infinite two-row logo
+       marquee replacing the earlier hand-composed editorial mosaic, and a
+       far shorter section overall (see .clients padding in style.css).
+       Every logo below is one of the project's real client PNGs
+       (assets/images/client-01..10-*.png) — nothing sourced online,
+       nothing invented. Each row's .marquee-track holds the same 10
+       logos twice back to back (a real, screen-reader-visible
+       .marquee-set plus an aria-hidden duplicate .marquee-set) — a plain
+       CSS animation slides the whole track exactly one set-width to the
+       left (row 1) or plays that same animation in reverse, i.e. to the
+       right (row 2), so the instant it "resets" the duplicate set is
+       already sitting in the exact spot the first one started in and the
+       loop reads as continuous, never a jump cut. Every <img> keeps its
+       original file and aspect ratio: each .marquee-logo is a fixed-size
+       box and the image inside uses object-fit:contain, so nothing is
+       ever stretched or cropped — the fixed box is what visually
+       balances square vs. wide source logos, not the images themselves.
+       prefers-reduced-motion freezes both tracks and hides the duplicate
+       set (see css/style.css); js/script.js only ever adds/removes one
+       "is-scrolling" class to nudge the speed up slightly while the page
+       is being scrolled — it never drives the motion itself. -->
+  <div class="clients-marquee" id="clientsMarquee" data-anim="fade">
+    <div class="marquee-row marquee-row-1">
+      <div class="marquee-track" id="marqueeTrack1">
+        <div class="marquee-set">
+          <div class="marquee-logo"><img src="assets/images/client-01-al-faisaly.png" alt="نادي الفيصلي" data-en-alt="Al-Faisaly Club"></div>
+          <div class="marquee-logo"><img src="assets/images/client-02-saudi-football-federation.png" alt="الاتحاد السعودي لكرة القدم" data-en-alt="Saudi Arabian Football Federation"></div>
+          <div class="marquee-logo"><img src="assets/images/client-03-florde.png" alt="فلورد" data-en-alt="Florde"></div>
+          <div class="marquee-logo"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="مكتب محاماة صالح الغالب" data-en-alt="Saleh Alghalib Law Firm"></div>
+          <div class="marquee-logo"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="الراجحي، السديس والسحيباني للاستشارات القانونية" data-en-alt="Alrajhi, Alsudais &amp; Alsuhaibani Legal Consultants"></div>
+          <div class="marquee-logo"><img src="assets/images/client-06-weco.png" alt="WECO"></div>
+          <div class="marquee-logo"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="Autha Coffee Roasters"></div>
+          <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="دوري روشن السعودي" data-en-alt="Roshn Saudi League"></div>
+          <div class="marquee-logo"><img src="assets/images/client-09-fares-academy.png" alt="Fares Academy"></div>
+          <div class="marquee-logo"><img src="assets/images/client-10-table-tennis-federation.png" alt="الاتحاد السعودي لكرة الطاولة" data-en-alt="Saudi Table Tennis Federation"></div>
+        </div>
+        <div class="marquee-set" aria-hidden="true">
+          <div class="marquee-logo"><img src="assets/images/client-01-al-faisaly.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-02-saudi-football-federation.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-03-florde.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-06-weco.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-09-fares-academy.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-10-table-tennis-federation.png" alt="" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="marquee-row marquee-row-2">
+      <div class="marquee-track" id="marqueeTrack2">
+        <div class="marquee-set">
+          <div class="marquee-logo"><img src="assets/images/client-06-weco.png" alt="WECO"></div>
+          <div class="marquee-logo"><img src="assets/images/client-09-fares-academy.png" alt="Fares Academy"></div>
+          <div class="marquee-logo"><img src="assets/images/client-02-saudi-football-federation.png" alt="الاتحاد السعودي لكرة القدم" data-en-alt="Saudi Arabian Football Federation"></div>
+          <div class="marquee-logo"><img src="assets/images/client-10-table-tennis-federation.png" alt="الاتحاد السعودي لكرة الطاولة" data-en-alt="Saudi Table Tennis Federation"></div>
+          <div class="marquee-logo"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="مكتب محاماة صالح الغالب" data-en-alt="Saleh Alghalib Law Firm"></div>
+          <div class="marquee-logo"><img src="assets/images/client-01-al-faisaly.png" alt="نادي الفيصلي" data-en-alt="Al-Faisaly Club"></div>
+          <div class="marquee-logo"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="Autha Coffee Roasters"></div>
+          <div class="marquee-logo"><img src="assets/images/client-03-florde.png" alt="فلورد" data-en-alt="Florde"></div>
+          <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="دوري روشن السعودي" data-en-alt="Roshn Saudi League"></div>
+          <div class="marquee-logo"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="الراجحي، السديس والسحيباني للاستشارات القانونية" data-en-alt="Alrajhi, Alsudais &amp; Alsuhaibani Legal Consultants"></div>
+        </div>
+        <div class="marquee-set" aria-hidden="true">
+          <div class="marquee-logo"><img src="assets/images/client-06-weco.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-09-fares-academy.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-02-saudi-football-federation.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-10-table-tennis-federation.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-01-al-faisaly.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-03-florde.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1234,176 +1271,74 @@
   <div class="wrap">
     <h2 style="margin-top:1rem" data-en="Who&#39;s Behind SIIRAH?!">من خلف سيرة؟!</h2>
 
-    <div class="team-list">
-      <span class="team-spine" data-anim="team-spine" aria-hidden="true"></span>
-
-      <article class="member" data-anim="team">
-        <span class="member-num" aria-hidden="true">01</span>
-        <div class="member-visual">
-          <div class="avatar"><img src="assets/images/team-01-mohammed-alhussain.jpg" alt="محمد الحصين" data-en-alt="Mohammed Alhussain" loading="lazy"></div>
+    <!-- Phase 3 — animated single-person "Behind SIIRAH" viewer (inspired
+         by the Animated Testimonials pattern, adapted for the three
+         SIIRAH team members rather than client testimonials). All three
+         .team-slide images and .team-card text blocks stay in the DOM at
+         all times, each keeping its own data-en/data-en-alt attributes,
+         purely so js/i18n.js's generic scan keeps translating them like
+         every other element on the page; js/script.js (see the "Behind
+         SIIRAH animated team viewer" block near the end of that file)
+         only ever toggles which one carries .is-active and recomputes
+         #teamCards' height so switching members never shifts the layout. -->
+    <div class="team-stage" id="teamStage" data-anim="fade">
+      <div class="team-visual" id="teamVisual">
+        <div class="team-slide is-active" data-index="0">
+          <img src="assets/images/team-01-mohammed-alhussain.jpg" alt="محمد الحصين" data-en-alt="Mohammed Alhussain" loading="lazy">
         </div>
-        <div class="member-info">
-          <h3 class="member-name" data-en="Mohammed Alhussain">محمد الحصين</h3>
-          <p class="member-role" data-en="Creative Director">مدير إبداعي</p>
-          <p class="member-desc" data-en="He leads the creative direction of every project, from the first idea to the final touch before delivery.">يقود التوجه الإبداعي لكل مشروع، من الفكرة الأولى حتى آخر لمسة قبل التسليم.</p>
-          <blockquote class="member-quote" data-en="I believe good ideas need protecting from day one, not just polishing at the end.">أؤمن أن الأفكار الجيدة تحتاج من يحميها من أول يوم، لا من يزيّنها في النهاية فقط.</blockquote>
+        <div class="team-slide" data-index="1">
+          <img src="assets/images/team-02-ali-alzahiri.jpg" alt="علي الظاهري" data-en-alt="Ali Alzahiri" loading="lazy">
         </div>
-      </article>
-
-      <article class="member" data-anim="team">
-        <span class="member-num" aria-hidden="true">02</span>
-        <div class="member-visual">
-          <div class="avatar"><img src="assets/images/team-02-ali-alzahiri.jpg" alt="علي الظاهري" data-en-alt="Ali Alzahiri" loading="lazy"></div>
-        </div>
-        <div class="member-info">
-          <h3 class="member-name" data-en="Ali Alzahiri">علي الظاهري</h3>
-          <p class="member-role" data-en="Visual Storyteller">راوي بصري</p>
-          <p class="member-desc" data-en="He turns ideas into images, with an eye that catches the moment before it becomes one.">يحوّل الفكرة إلى صورة، بعين تلتقط اللحظة قبل أن تصير لحظة.</p>
-          <blockquote class="member-quote" data-en="What draws me in most is the moment no one else notices, the one quietly holding the whole story.">أكثر ما يشدّني هو اللحظة التي لا يلاحظها أحد، لكنها تحمل القصة كاملة.</blockquote>
-        </div>
-      </article>
-
-      <article class="member" data-anim="team">
-        <span class="member-num" aria-hidden="true">03</span>
-        <div class="member-visual">
-          <div class="avatar"><img src="assets/images/team-03-mubarak-alnimr.jpg" alt="مبارك النمر" data-en-alt="Mubarak Alnimr" loading="lazy"></div>
-        </div>
-        <div class="member-info">
-          <h3 class="member-name" data-en="Mubarak Alnimr">مبارك النمر</h3>
-          <p class="member-role" data-en="Creative Producer">منتج إبداعي</p>
-          <p class="member-desc" data-en="He builds every production from the ground up, turning the plan into real execution on set.">يبني كل إنتاج من الصفر، ويحوّل الخطة إلى تنفيذ فعلي على أرض الموقع.</p>
-          <blockquote class="member-quote" data-en="My real satisfaction is in the details no one sees, they are what keeps execution running without a stumble.">أجد رضاي الحقيقي في التفاصيل التي لا يراها أحد، فهي ما يجعل التنفيذ يسير دون عثرات.</blockquote>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- 06.5 -->
-<section class="join sec-pad" id="join">
-  <div class="wrap join-grid">
-    <div class="join-content">
-      <h2 style="margin-top:1rem" data-en="Join SIIRAH">انضم إلى سيرة</h2>
-      <p class="join-desc" data-anim="fade" data-en="We&#39;re looking for creatives who share our passion for telling visual stories worth telling.">نبحث عن المبدعين الذين يشاركوننا الشغف بصناعة قصص بصرية تستحق أن تُروى.</p>
-
-      <div class="form-block" data-anim="fade" id="careersBlock">
-        <form class="site-form" id="careersForm" novalidate autocomplete="on">
-          <!-- honeypot -->
-          <div class="hp-field" aria-hidden="true">
-            <label for="carHp">Leave this field empty</label>
-            <input type="text" id="carHp" name="hp_field" tabindex="-1" autocomplete="off">
-          </div>
-          <input type="hidden" id="carRenderedAt">
-
-          <div class="form-grid">
-            <div class="form-field">
-              <label for="carName"><span data-en="Name">الاسم</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="text" id="carName" name="name" required autocomplete="name" aria-describedby="carName-error" data-en-placeholder="Full name" placeholder="الاسم الكامل">
-              <span class="field-error" id="carName-error" role="alert"></span>
-            </div>
-            <div class="form-field">
-              <label for="carEmail"><span data-en="Email">البريد الإلكتروني</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="email" id="carEmail" name="email" required autocomplete="email" inputmode="email" aria-describedby="carEmail-error" data-en-placeholder="name@example.com" placeholder="name@example.com">
-              <span class="field-error" id="carEmail-error" role="alert"></span>
-            </div>
-            <div class="form-field">
-              <label for="carPhone"><span data-en="Mobile Number">رقم الجوال</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="tel" id="carPhone" name="phone" required autocomplete="tel" inputmode="tel" aria-describedby="carPhone-error" data-en-placeholder="05xxxxxxxx" placeholder="05xxxxxxxx">
-              <span class="field-error" id="carPhone-error" role="alert"></span>
-            </div>
-            <div class="form-field">
-              <label for="carGender"><span data-en="Gender">الجنس</span></label>
-              <select id="carGender" name="gender">
-                <option value="" data-en="Prefer not to say" selected>أفضّل عدم التحديد</option>
-                <option value="Male" data-en="Male">ذكر</option>
-                <option value="Female" data-en="Female">أنثى</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label for="carBirthYear"><span data-en="Birth Year">سنة الميلاد</span></label>
-              <input type="number" id="carBirthYear" name="birthYear" min="1950" max="2015" step="1" inputmode="numeric" data-en-placeholder="e.g. 1998" placeholder="مثال: 1998">
-            </div>
-            <div class="form-field">
-              <label for="carField"><span data-en="Field / Specialization">المجال / التخصص</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="text" id="carField" name="field" required aria-describedby="carField-error" data-en-placeholder="e.g. Photography, Video Editing…" placeholder="مثال: تصوير، مونتاج…">
-              <span class="field-error" id="carField-error" role="alert"></span>
-            </div>
-
-            <div class="form-field">
-              <label for="carPosition"><span data-en="Desired Position">المسمى الوظيفي المطلوب</span> <span class="req" aria-hidden="true">*</span></label>
-              <select id="carPosition" name="desiredPosition" required aria-describedby="carPosition-error">
-                <option value="" data-en="Select a position" selected disabled>اختر المسمى الوظيفي</option>
-                <option value="Photographer" data-en="Photographer">مصور فوتوغرافي</option>
-                <option value="Videographer" data-en="Videographer">مصور فيديو</option>
-                <option value="Video Editor" data-en="Video Editor">مونتير (محرر فيديو)</option>
-                <option value="Graphic Designer" data-en="Graphic Designer">مصمم جرافيك</option>
-                <option value="Digital Marketer" data-en="Digital Marketer">مسوّق رقمي</option>
-                <option value="Content Creator" data-en="Content Creator">صانع محتوى</option>
-                <option value="Creative Producer" data-en="Creative Producer">منتج إبداعي</option>
-                <option value="Creative Director" data-en="Creative Director">مدير إبداعي</option>
-                <option value="Other" data-en="Other">أخرى</option>
-              </select>
-              <span class="field-error" id="carPosition-error" role="alert"></span>
-            </div>
-            <div class="form-field" id="carPositionOtherWrap" hidden>
-              <label for="carPositionOther"><span data-en="Please specify">حدد المسمى الوظيفي</span></label>
-              <input type="text" id="carPositionOther" name="desiredPositionOther" aria-describedby="carPositionOther-error">
-              <span class="field-error" id="carPositionOther-error" role="alert"></span>
-            </div>
-
-            <div class="form-field">
-              <label for="carExperience"><span data-en="Years of Experience">سنوات الخبرة</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="text" id="carExperience" name="experience" required aria-describedby="carExperience-error" data-en-placeholder="e.g. 3 years" placeholder="مثال: 3 سنوات">
-              <span class="field-error" id="carExperience-error" role="alert"></span>
-            </div>
-            <div class="form-field">
-              <label for="carPortfolio"><span data-en="Portfolio Link">رابط الأعمال / Portfolio</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="url" id="carPortfolio" name="portfolio" required inputmode="url" aria-describedby="carPortfolio-error" data-en-placeholder="https://" placeholder="https://">
-              <span class="field-error" id="carPortfolio-error" role="alert"></span>
-            </div>
-          </div>
-
-          <div class="form-field form-field--full">
-            <label for="carBio"><span data-en="About You">نبذة عنك</span> <span class="req" aria-hidden="true">*</span></label>
-            <textarea id="carBio" name="bio" rows="4" required aria-describedby="carBio-error"></textarea>
-            <span class="field-error" id="carBio-error" role="alert"></span>
-          </div>
-
-          <div class="form-field form-field--full">
-            <label id="carCvLabel"><span data-en="Attach CV (optional)">إرفاق السيرة الذاتية (اختياري)</span></label>
-            <div class="dropzone" id="carDropzone" tabindex="0" role="button" aria-labelledby="carCvLabel" aria-describedby="carDropzoneHint">
-              <input type="file" id="carFileInput" class="dropzone-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" tabindex="-1" aria-hidden="true">
-              <span class="dropzone-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg></span>
-              <span class="dropzone-text">
-                <span data-en="Drag your CV here or">اسحب السيرة الذاتية هنا أو</span>
-                <span class="dropzone-browse" data-en="choose a file">اختر ملفًا</span>
-              </span>
-              <span class="dropzone-hint" id="carDropzoneHint" data-en="PDF, DOC/DOCX, JPG, PNG — up to 15MB">PDF, DOC/DOCX, JPG, PNG — حتى 15MB</span>
-            </div>
-            <ul class="file-list" id="carFileList" aria-live="polite"></ul>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="form-submit" id="carSubmitBtn">
-              <span class="form-submit-label" data-en="Send Application">إرسال الطلب</span>
-              <span class="form-submit-spinner" aria-hidden="true"></span>
-            </button>
-            <div class="form-status" id="carStatus" role="status" aria-live="polite"></div>
-          </div>
-        </form>
-
-        <div class="join-success" id="joinSuccess">
-          <span class="join-success-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          </span>
-          <h3 data-en="Your story has reached us.">وصلت سطرتك إلينا.</h3>
-          <p data-en="Thank you for wanting to be part of SIIRAH. We&#39;ll review your application and reach out if there&#39;s a good fit.">شكرًا لرغبتك في أن تكون جزءًا من سيرة. سنراجع طلبك، ونتواصل معك إذا كانت هناك فرصة مناسبة.</p>
+        <div class="team-slide" data-index="2">
+          <img src="assets/images/team-03-mubarak-alnimr.jpg" alt="مبارك النمر" data-en-alt="Mubarak Alnimr" loading="lazy">
         </div>
       </div>
-    </div>
 
-    <div class="join-visual" data-anim="fade">
-      <img src="assets/images/join-photographer.jpg" alt="لقطة احترافية بإضاءة درامية وخلفية سوداء تعكس هوية سيرة" data-en-alt="Professional portrait with dramatic lighting on a black background, reflecting SIIRAH&#39;s identity" loading="lazy">
+      <div class="team-panel">
+        <div class="team-progress">
+          <div class="team-progress-bar" id="teamProgressBar" aria-label="أعضاء الفريق" data-en-aria-label="Team members">
+            <button type="button" class="team-progress-seg is-active" data-index="0" aria-current="true" aria-label="محمد الحصين" data-en-aria-label="Mohammed Alhussain"><span class="team-progress-fill"></span></button>
+            <button type="button" class="team-progress-seg" data-index="1" aria-current="false" aria-label="علي الظاهري" data-en-aria-label="Ali Alzahiri"><span class="team-progress-fill"></span></button>
+            <button type="button" class="team-progress-seg" data-index="2" aria-current="false" aria-label="مبارك النمر" data-en-aria-label="Mubarak Alnimr"><span class="team-progress-fill"></span></button>
+          </div>
+          <div class="team-progress-count" aria-hidden="true"><span id="teamProgressCur">01</span><span class="team-progress-slash">/</span><span class="team-progress-total">03</span></div>
+        </div>
+
+        <div class="team-cards" id="teamCards">
+          <article class="team-card is-active" data-index="0">
+            <span class="member-num" aria-hidden="true">01</span>
+            <h3 class="member-name" data-en="Mohammed Alhussain">محمد الحصين</h3>
+            <p class="member-role" data-en="Creative Director">مدير إبداعي</p>
+            <p class="member-desc" data-en="He leads the creative direction of every project, from the first idea to the final touch before delivery.">يقود التوجه الإبداعي لكل مشروع، من الفكرة الأولى حتى آخر لمسة قبل التسليم.</p>
+            <blockquote class="member-quote" data-en="I believe good ideas need protecting from day one, not just polishing at the end.">أؤمن أن الأفكار الجيدة تحتاج من يحميها من أول يوم، لا من يزيّنها في النهاية فقط.</blockquote>
+          </article>
+
+          <article class="team-card" data-index="1">
+            <span class="member-num" aria-hidden="true">02</span>
+            <h3 class="member-name" data-en="Ali Alzahiri">علي الظاهري</h3>
+            <p class="member-role" data-en="Visual Storyteller">راوي بصري</p>
+            <p class="member-desc" data-en="He turns ideas into images, with an eye that catches the moment before it becomes one.">يحوّل الفكرة إلى صورة، بعين تلتقط اللحظة قبل أن تصير لحظة.</p>
+            <blockquote class="member-quote" data-en="What draws me in most is the moment no one else notices, the one quietly holding the whole story.">أكثر ما يشدّني هو اللحظة التي لا يلاحظها أحد، لكنها تحمل القصة كاملة.</blockquote>
+          </article>
+
+          <article class="team-card" data-index="2">
+            <span class="member-num" aria-hidden="true">03</span>
+            <h3 class="member-name" data-en="Mubarak Alnimr">مبارك النمر</h3>
+            <p class="member-role" data-en="Creative Producer">منتج إبداعي</p>
+            <p class="member-desc" data-en="He builds every production from the ground up, turning the plan into real execution on set.">يبني كل إنتاج من الصفر، ويحوّل الخطة إلى تنفيذ فعلي على أرض الموقع.</p>
+            <blockquote class="member-quote" data-en="My real satisfaction is in the details no one sees, they are what keeps execution running without a stumble.">أجد رضاي الحقيقي في التفاصيل التي لا يراها أحد، فهي ما يجعل التنفيذ يسير دون عثرات.</blockquote>
+          </article>
+        </div>
+
+        <div class="team-controls">
+          <button type="button" class="team-arrow team-prev" id="teamPrev" aria-label="السابق" data-en-aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+          <button type="button" class="team-arrow team-next" id="teamNext" aria-label="التالي" data-en-aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1584,136 +1519,150 @@
 <section class="contact sec-pad" id="contact">
   <div class="wrap">
     <img src="assets/images/logo.png" alt="سيرة" data-en-alt="SIIRAH" class="logo-img contact-logo" loading="lazy">
-    <h2 style="margin-top:1.4rem" data-en="Let&#39;s Start Your Next Story">لنبدأ قصتك القادمة</h2>
+    <h2 style="margin-top:1.4rem" data-en="Contact">تواصل</h2>
+    <p class="contact-lede" data-en="Choose how you&#39;d like to connect with SIIRAH.">اختر الطريقة الأنسب للتواصل مع سيرة.</p>
 
-    <!-- Phase 9 — "ابدأ مشروعك مع سيرة" project inquiry form. Fully custom
-         SIIRAH-designed UI (no embedded third-party widget) that posts to
-         a Google Apps Script Web App (see google-apps-script/Code.gs +
-         SETUP.md) — the browser never talks to Google directly and holds
-         no Google credentials; js/config.js holds only the deployed Web
-         App URL, which is not a secret (see the comment in that file).
-         Layout: one page, no wizard steps, grouped into three visually
-         separated clusters (contact / project / files & notes) via
-         .inquiry-fieldset, per spec's "clear steps" without the added
-         complexity of an actual multi-step flow. Service selection is a
-         set of togglable chips (not a native multi-select, far friendlier
-         on touch) built only from the site's real, existing four services
-         (#services section) — nothing invented. -->
-    <div class="form-block" data-anim="fade" id="inquiryBlock">
-      <div class="form-head">
-        <h3 data-en="Start Your Project With SIIRAH">ابدأ مشروعك مع سيرة</h3>
-        <p data-en="Tell us about your project and we&#39;ll get back to you." >أخبرنا عن مشروعك وسنعود إليك.</p>
+    <!-- Phase 5 — "انضم إلى سيرة" (careers, was its own #join section)
+         and "ابدأ مشروعك مع سيرة" (project inquiry, previously the whole
+         of #contact) merged into this single Contact section: one title
+         + one short lede + a two-option switcher + exactly one form
+         showing at a time, per spec (never both forms on screen at
+         once, so the section can't balloon). .contact-options reuses the
+         site's existing numbered-step visual language (see
+         .process-step-num in #process) instead of inventing a new
+         pattern. Both forms still post to the same Google Apps Script
+         Web App as before (window.SIIRAH_FORMS_ENDPOINT in js/config.js,
+         see google-apps-script/Code.gs + SETUP.md) — only the field sets
+         were trimmed down to match the spec's exact Sheet columns
+         (Code.gs's CAREERS_HEADERS / PROJECT_HEADERS). -->
+    <div class="contact-options" id="contactOptions" role="tablist" aria-label="نوع التواصل" data-en-aria-label="Contact type">
+      <button type="button" class="contact-option" id="contactTabCareer" role="tab" aria-selected="false" aria-controls="careerPanel">
+        <span class="contact-option-num">01</span>
+        <span class="contact-option-body">
+          <span class="contact-option-title" data-en="Join SIIRAH">انضم إلى سيرة</span>
+          <span class="contact-option-desc" data-en="Apply to work with the SIIRAH team.">للتقديم والعمل مع فريق سيرة.</span>
+        </span>
+      </button>
+      <button type="button" class="contact-option is-active" id="contactTabProject" role="tab" aria-selected="true" aria-controls="projectPanel">
+        <span class="contact-option-num">02</span>
+        <span class="contact-option-body">
+          <span class="contact-option-title" data-en="Start Your Project With SIIRAH">ابدأ مشروعك مع سيرة</span>
+          <span class="contact-option-desc" data-en="Start a new project or collaboration with SIIRAH.">لبدء مشروع أو تعاون جديد مع سيرة.</span>
+        </span>
+      </button>
+    </div>
+
+    <div class="form-block contact-panel" id="careerPanel" role="tabpanel" aria-labelledby="contactTabCareer" hidden>
+      <form class="site-form" id="careersForm" novalidate autocomplete="on">
+        <!-- honeypot -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="carHp">Leave this field empty</label>
+          <input type="text" id="carHp" name="hp_field" tabindex="-1" autocomplete="off">
+        </div>
+        <input type="hidden" id="carRenderedAt">
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="carFirstName"><span data-en="First Name">الاسم الأول</span> <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="carFirstName" name="firstName" required autocomplete="given-name" aria-describedby="carFirstName-error">
+            <span class="field-error" id="carFirstName-error" role="alert"></span>
+          </div>
+          <div class="form-field">
+            <label for="carLastName"><span data-en="Last Name">اسم العائلة</span> <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="carLastName" name="lastName" required autocomplete="family-name" aria-describedby="carLastName-error">
+            <span class="field-error" id="carLastName-error" role="alert"></span>
+          </div>
+          <div class="form-field">
+            <label for="carEmail"><span data-en="Email">البريد الإلكتروني</span> <span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="carEmail" name="email" required autocomplete="email" inputmode="email" aria-describedby="carEmail-error" data-en-placeholder="name@example.com" placeholder="name@example.com">
+            <span class="field-error" id="carEmail-error" role="alert"></span>
+          </div>
+          <div class="form-field">
+            <label for="carPhone"><span data-en="Mobile Number">رقم الجوال</span> <span class="req" aria-hidden="true">*</span></label>
+            <input type="tel" id="carPhone" name="phone" required autocomplete="tel" inputmode="tel" aria-describedby="carPhone-error" data-en-placeholder="05xxxxxxxx" placeholder="05xxxxxxxx">
+            <span class="field-error" id="carPhone-error" role="alert"></span>
+          </div>
+        </div>
+
+        <div class="form-field form-field--full">
+          <label for="carMessage"><span data-en="Message">الرسالة</span> <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="carMessage" name="message" rows="4" required aria-describedby="carMessage-error"></textarea>
+          <span class="field-error" id="carMessage-error" role="alert"></span>
+        </div>
+
+        <div class="form-field form-field--full">
+          <label id="carCvLabel"><span data-en="Attach CV (optional)">إرفاق السيرة الذاتية (اختياري)</span></label>
+          <div class="dropzone" id="carDropzone" tabindex="0" role="button" aria-labelledby="carCvLabel" aria-describedby="carDropzoneHint">
+            <input type="file" id="carFileInput" class="dropzone-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" tabindex="-1" aria-hidden="true">
+            <span class="dropzone-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg></span>
+            <span class="dropzone-text">
+              <span data-en="Drag your CV here or">اسحب السيرة الذاتية هنا أو</span>
+              <span class="dropzone-browse" data-en="choose a file">اختر ملفًا</span>
+            </span>
+            <span class="dropzone-hint" id="carDropzoneHint" data-en="PDF, DOC/DOCX, JPG, PNG — up to 15MB">PDF, DOC/DOCX, JPG, PNG — حتى 15MB</span>
+          </div>
+          <ul class="file-list" id="carFileList" aria-live="polite"></ul>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="form-submit" id="carSubmitBtn">
+            <span class="form-submit-label" data-en="Send Application">إرسال الطلب</span>
+            <span class="form-submit-spinner" aria-hidden="true"></span>
+          </button>
+          <div class="form-status" id="carStatus" role="status" aria-live="polite"></div>
+        </div>
+      </form>
+
+      <div class="join-success" id="joinSuccess">
+        <span class="join-success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        <h3 data-en="Your message has been received successfully.">تم استلام رسالتك بنجاح.</h3>
+        <p data-en="Thank you for wanting to be part of SIIRAH. We&#39;ll review your application and reach out if there&#39;s a good fit.">شكرًا لرغبتك في أن تكون جزءًا من سيرة. سنراجع طلبك، ونتواصل معك إذا كانت هناك فرصة مناسبة.</p>
       </div>
+    </div>
 
+    <div class="form-block contact-panel is-active" id="projectPanel" role="tabpanel" aria-labelledby="contactTabProject">
       <form class="site-form" id="inquiryForm" novalidate autocomplete="on">
-        <!-- honeypot: real users never see or reach this field -->
+        <!-- honeypot -->
         <div class="hp-field" aria-hidden="true">
           <label for="inqHp">Leave this field empty</label>
           <input type="text" id="inqHp" name="hp_field" tabindex="-1" autocomplete="off">
         </div>
         <input type="hidden" id="inqRenderedAt">
 
-        <fieldset class="site-fieldset">
-          <legend data-en="Contact details">بيانات التواصل</legend>
-          <div class="form-grid">
-            <div class="form-field">
-              <label for="inqName"><span data-en="Name">الاسم</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="text" id="inqName" name="name" required autocomplete="name" aria-describedby="inqName-error" data-en-placeholder="Full name" placeholder="الاسم الكامل">
-              <span class="field-error" id="inqName-error" role="alert"></span>
-            </div>
-            <div class="form-field">
-              <label for="inqCompany"><span data-en="Company / Organization">اسم الشركة / المؤسسة</span></label>
-              <input type="text" id="inqCompany" name="company" autocomplete="organization">
-            </div>
-            <div class="form-field">
-              <label for="inqEmail"><span data-en="Email">البريد الإلكتروني</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="email" id="inqEmail" name="email" required autocomplete="email" inputmode="email" aria-describedby="inqEmail-error" data-en-placeholder="name@example.com" placeholder="name@example.com">
-              <span class="field-error" id="inqEmail-error" role="alert"></span>
-            </div>
-            <div class="form-field">
-              <label for="inqPhone"><span data-en="Mobile Number">رقم الجوال</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="tel" id="inqPhone" name="phone" required autocomplete="tel" inputmode="tel" aria-describedby="inqPhone-error" data-en-placeholder="05xxxxxxxx" placeholder="05xxxxxxxx">
-              <span class="field-error" id="inqPhone-error" role="alert"></span>
-            </div>
-          </div>
-        </fieldset>
-
-        <fieldset class="site-fieldset">
-          <legend data-en="Project">المشروع</legend>
-          <div class="form-grid">
-            <div class="form-field">
-              <label for="inqProjectName"><span data-en="Project Name">اسم المشروع</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="text" id="inqProjectName" name="projectName" required aria-describedby="inqProjectName-error">
-              <span class="field-error" id="inqProjectName-error" role="alert"></span>
-            </div>
-            <div class="form-field">
-              <label for="inqProjectType"><span data-en="Project Type">نوع المشروع</span> <span class="req" aria-hidden="true">*</span></label>
-              <input type="text" id="inqProjectType" name="projectType" required aria-describedby="inqProjectType-error" data-en-placeholder="e.g. Product launch, event coverage…" placeholder="مثال: إطلاق منتج، تغطية فعالية…">
-              <span class="field-error" id="inqProjectType-error" role="alert"></span>
-            </div>
-            <div class="form-field">
-              <label for="inqBudget"><span data-en="Budget">الميزانية</span></label>
-              <input type="text" id="inqBudget" name="budget">
-            </div>
-            <div class="form-field">
-              <label for="inqDate"><span data-en="Requested Date">الموعد المطلوب</span></label>
-              <input type="date" id="inqDate" name="requestedDate">
-            </div>
-            <div class="form-field">
-              <label for="inqWebsite"><span data-en="Website">رابط الموقع</span></label>
-              <input type="url" id="inqWebsite" name="website" inputmode="url" data-en-placeholder="https://" placeholder="https://">
-            </div>
-            <div class="form-field">
-              <label for="inqSocial"><span data-en="Social Links">روابط الحسابات</span></label>
-              <input type="text" id="inqSocial" name="socialLinks" data-en-placeholder="Instagram, X, TikTok…" placeholder="إنستقرام، إكس، تيك توك…">
-            </div>
-          </div>
-
-          <div class="form-field form-field--full">
-            <label id="inqServicesLabel"><span data-en="Service Needed">الخدمة المطلوبة</span> <span class="req" aria-hidden="true">*</span></label>
-            <div class="chip-group" id="inqServices" role="group" aria-labelledby="inqServicesLabel" aria-describedby="inqServices-error">
-              <button type="button" class="chip" data-value="Video &amp; Editing" data-value-ar="تصوير الفيديو والمونتاج" aria-pressed="false"><span data-en="Video &amp; Editing">تصوير الفيديو والمونتاج</span></button>
-              <button type="button" class="chip" data-value="Photography" data-value-ar="التصوير الفوتوغرافي" aria-pressed="false"><span data-en="Photography">التصوير الفوتوغرافي</span></button>
-              <button type="button" class="chip" data-value="Design" data-value-ar="التصميم" aria-pressed="false"><span data-en="Design">التصميم</span></button>
-              <button type="button" class="chip" data-value="Marketing" data-value-ar="التسويق" aria-pressed="false"><span data-en="Marketing">التسويق</span></button>
-            </div>
-            <span class="field-error" id="inqServices-error" role="alert"></span>
-          </div>
-
-          <div class="form-field form-field--full">
-            <label for="inqDetails"><span data-en="Project Details">تفاصيل المشروع</span> <span class="req" aria-hidden="true">*</span></label>
-            <textarea id="inqDetails" name="projectDetails" rows="5" required aria-describedby="inqDetails-error"></textarea>
-            <span class="field-error" id="inqDetails-error" role="alert"></span>
-          </div>
-
-          <div class="form-field form-field--full">
-            <label for="inqNotes"><span data-en="Additional Notes">ملاحظات إضافية</span></label>
-            <textarea id="inqNotes" name="notes" rows="3"></textarea>
-          </div>
-
+        <div class="form-grid">
           <div class="form-field">
-            <label for="inqReference"><span data-en="Work / Reference Link">رابط أعمال أو مراجع</span></label>
-            <input type="url" id="inqReference" name="referenceLink" inputmode="url" data-en-placeholder="https://" placeholder="https://">
+            <label for="inqFirstName"><span data-en="First Name">الاسم الأول</span> <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="inqFirstName" name="firstName" required autocomplete="given-name" aria-describedby="inqFirstName-error">
+            <span class="field-error" id="inqFirstName-error" role="alert"></span>
           </div>
-        </fieldset>
+          <div class="form-field">
+            <label for="inqLastName"><span data-en="Last Name">اسم العائلة</span> <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="inqLastName" name="lastName" required autocomplete="family-name" aria-describedby="inqLastName-error">
+            <span class="field-error" id="inqLastName-error" role="alert"></span>
+          </div>
+          <div class="form-field">
+            <label for="inqEmail"><span data-en="Email">البريد الإلكتروني</span> <span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="inqEmail" name="email" required autocomplete="email" inputmode="email" aria-describedby="inqEmail-error" data-en-placeholder="name@example.com" placeholder="name@example.com">
+            <span class="field-error" id="inqEmail-error" role="alert"></span>
+          </div>
+          <div class="form-field">
+            <label for="inqPhone"><span data-en="Mobile Number">رقم الجوال</span> <span class="req" aria-hidden="true">*</span></label>
+            <input type="tel" id="inqPhone" name="phone" required autocomplete="tel" inputmode="tel" aria-describedby="inqPhone-error" data-en-placeholder="05xxxxxxxx" placeholder="05xxxxxxxx">
+            <span class="field-error" id="inqPhone-error" role="alert"></span>
+          </div>
+          <div class="form-field">
+            <label for="inqRegion"><span data-en="Region / City">المنطقة / المدينة</span></label>
+            <input type="text" id="inqRegion" name="region" autocomplete="address-level2" data-en-placeholder="e.g. Riyadh" placeholder="مثال: الرياض">
+          </div>
+        </div>
 
-        <fieldset class="site-fieldset">
-          <legend data-en="Files">الملفات</legend>
-          <div class="form-field form-field--full">
-            <label id="inqFilesLabel"><span data-en="Attach Files">إرفاق ملفات</span></label>
-            <div class="dropzone" id="inqDropzone" tabindex="0" role="button" aria-labelledby="inqFilesLabel" aria-describedby="inqDropzoneHint">
-              <input type="file" id="inqFileInput" class="dropzone-input" multiple accept=".pdf,.jpg,.jpeg,.png,.zip,.doc,.docx" tabindex="-1" aria-hidden="true">
-              <span class="dropzone-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg></span>
-              <span class="dropzone-text">
-                <span data-en="Drag files here or">اسحب الملفات هنا أو</span>
-                <span class="dropzone-browse" data-en="choose files">اختر الملفات</span>
-              </span>
-              <span class="dropzone-hint" id="inqDropzoneHint" data-en="PDF, JPG, PNG, ZIP, DOC/DOCX — up to 15MB each">PDF, JPG, PNG, ZIP, DOC/DOCX — حتى 15MB لكل ملف</span>
-            </div>
-            <ul class="file-list" id="inqFileList" aria-live="polite"></ul>
-            <span class="field-error" id="inqFiles-error" role="alert"></span>
-          </div>
-        </fieldset>
+        <div class="form-field form-field--full">
+          <label for="inqMessage"><span data-en="Message">الرسالة</span> <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="inqMessage" name="message" rows="4" required aria-describedby="inqMessage-error"></textarea>
+          <span class="field-error" id="inqMessage-error" role="alert"></span>
+        </div>
 
         <div class="form-actions">
           <button type="submit" class="form-submit" id="inqSubmitBtn">
@@ -1723,6 +1672,14 @@
           <div class="form-status" id="inqStatus" role="status" aria-live="polite"></div>
         </div>
       </form>
+
+      <div class="join-success" id="projectSuccess">
+        <span class="join-success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        <h3 data-en="Your message has been received successfully.">تم استلام رسالتك بنجاح.</h3>
+        <p data-en="Thank you for telling us about your project. We&#39;ll review the details and get back to you soon.">شكرًا لإخبارنا عن مشروعك. سنراجع التفاصيل ونعود إليك قريبًا.</p>
+      </div>
     </div>
 
     <div class="contact-grid">

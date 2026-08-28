@@ -61,16 +61,20 @@ var DRIVE_ROOT_FOLDER = 'SIIRAH FORMS';
 var DRIVE_PROJECT_SUBFOLDER = 'PROJECT INQUIRIES';
 var DRIVE_CAREERS_SUBFOLDER = 'CAREERS';
 
+// Phase 5 — both forms trimmed to a short shared shape (Timestamp, Type,
+// First Name, Last Name, Email, Phone, Message), each with one form-
+// specific extra column: Region / City for a project inquiry, CV / Files
+// for a careers application (the optional CV attachment predates Phase 5
+// and wasn't in its exact column list — kept and called out in the
+// Phase 5 report rather than silently added; see SETUP.md).
 var PROJECT_HEADERS = [
-  'Timestamp', 'Name', 'Company', 'Email', 'Phone', 'Project Name',
-  'Project Type', 'Services', 'Budget', 'Requested Date', 'Website',
-  'Social Links', 'Project Details', 'Notes', 'Reference Link', 'Files'
+  'Timestamp', 'Type', 'First Name', 'Last Name', 'Email', 'Phone',
+  'Message', 'Region / City'
 ];
 
 var CAREERS_HEADERS = [
-  'Timestamp', 'Name', 'Email', 'Phone', 'Gender', 'Birth Year',
-  'Field / Specialization', 'Desired Position', 'Experience', 'Bio',
-  'Portfolio', 'CV / Files'
+  'Timestamp', 'Type', 'First Name', 'Last Name', 'Email', 'Phone',
+  'Message', 'CV / Files'
 ];
 
 // ------------------------------------------------------------
@@ -136,53 +140,31 @@ function doPost(e) {
 }
 
 function handleProjectInquiry(data) {
-  if (!data.name || !data.email || !data.phone || !data.projectName || !data.projectType || !data.details) {
+  if (!data.firstName || !data.lastName || !data.email || !data.phone || !data.message) {
     return { status: 'error', message: 'Missing required fields.' };
-  }
-
-  var submissionFolderName = sanitizeName(
-    (data.projectName || 'Project') + ' - ' + (data.name || 'Client')
-  );
-  var fileUrls = [];
-  if (data.files && data.files.length) {
-    var folder = getOrCreateFolder(getOrCreateFolder(getRootFolder(), DRIVE_PROJECT_SUBFOLDER), submissionFolderName);
-    fileUrls = saveFiles(folder, data.files);
   }
 
   var sheet = getOrCreateSheet(PROJECT_SHEET_NAME, PROJECT_HEADERS);
   sheet.appendRow([
     new Date(),
-    data.name || '',
-    data.company || '',
+    'project',
+    data.firstName || '',
+    data.lastName || '',
     data.email || '',
     data.phone || '',
-    data.projectName || '',
-    data.projectType || '',
-    (data.services || []).join(', '),
-    data.budget || '',
-    data.requestedDate || '',
-    data.website || '',
-    data.socialLinks || '',
-    data.details || '',
-    data.notes || '',
-    data.referenceLink || '',
-    fileUrls.join(', ')
+    data.message || '',
+    data.region || ''
   ]);
 
   return { status: 'success' };
 }
 
 function handleCareersApplication(data) {
-  if (!data.name || !data.email || !data.phone || !data.field || !data.position || !data.experience || !data.bio || !data.portfolio) {
+  if (!data.firstName || !data.lastName || !data.email || !data.phone || !data.message) {
     return { status: 'error', message: 'Missing required fields.' };
   }
 
-  var position = data.position;
-  if (String(position).trim().toLowerCase() === 'other' && data.positionOther) {
-    position = data.positionOther;
-  }
-
-  var submissionFolderName = sanitizeName(data.name || 'Applicant');
+  var submissionFolderName = sanitizeName((data.firstName || '') + ' ' + (data.lastName || '') || 'Applicant');
   var fileUrls = [];
   if (data.cv && data.cv.length) {
     var folder = getOrCreateFolder(getOrCreateFolder(getRootFolder(), DRIVE_CAREERS_SUBFOLDER), submissionFolderName);
@@ -192,16 +174,12 @@ function handleCareersApplication(data) {
   var sheet = getOrCreateSheet(CAREERS_SHEET_NAME, CAREERS_HEADERS);
   sheet.appendRow([
     new Date(),
-    data.name || '',
+    'career',
+    data.firstName || '',
+    data.lastName || '',
     data.email || '',
     data.phone || '',
-    data.gender || '',
-    data.birthYear || '',
-    data.field || '',
-    position || '',
-    data.experience || '',
-    data.bio || '',
-    data.portfolio || '',
+    data.message || '',
     fileUrls.join(', ')
   ]);
 

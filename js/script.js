@@ -303,58 +303,6 @@
       });
     });
 
-    // ---- Team (Phase 3): editorial "passing through" scroll story ----
-    // Distinct from the generic fade/line/rise handlers above: each member
-    // glides in from an alternating side on desktop (a felt sense of moving
-    // from one person to the next, not three identical fade-ins), and a
-    // thin vertical spine draws down the list in sync with scroll to tie
-    // the three members into one continuous passage.
-    (function(){
-      const teamMembers = document.querySelectorAll('#team [data-anim="team"]');
-      if (teamMembers.length){
-        const teamWide = window.matchMedia('(min-width:761px)').matches;
-        teamMembers.forEach((el, i)=>{
-          const fromX = teamWide ? (i % 2 === 0 ? -32 : 32) : 0;
-          gsap.fromTo(el, {opacity:0, x:fromX, y:26, scale:.97}, {
-            opacity:1, x:0, y:0, scale:1, duration:1.05, ease:'power3.out', clearProps:'transform',
-            scrollTrigger:{ trigger:el, start:'top 86%' }
-          });
-          const num = el.querySelector('.member-num');
-          if (num){
-            gsap.fromTo(num, {opacity:0, scale:.7}, {
-              opacity:1, scale:1, duration:.8, ease:'back.out(1.7)', delay:.15, clearProps:'transform,opacity',
-              scrollTrigger:{ trigger:el, start:'top 86%' }
-            });
-          }
-        });
-      }
-      const teamSpine = document.querySelector('#team [data-anim="team-spine"]');
-      const teamListEl = document.querySelector('.team-list');
-      if (teamSpine && teamListEl){
-        gsap.fromTo(teamSpine, {scaleY:0}, {
-          scaleY:1, ease:'none',
-          scrollTrigger:{ trigger:teamListEl, start:'top 75%', end:'bottom 60%', scrub:.6 }
-        });
-      }
-    })();
-
-    // ---- Clients (Phase 7): whole-grid "arrives together" settle ----
-    // On top of each .cl-cell's own one-time [data-anim="rise"] reveal
-    // (unchanged, generic handler above), a single subtle scrub-linked
-    // opacity/scale tween on the *container* so the mosaic reads as one
-    // considered composition assembling as you scroll into it, not ten
-    // separate logo animations firing off. transform/opacity only, capped
-    // well under the 1.15 scale ceiling, and skipped entirely with the
-    // rest of this file when prefers-reduced-motion is on.
-    (function(){
-      const grid = document.getElementById('clientsGrid');
-      if (!grid) return;
-      gsap.fromTo(grid, {opacity:.7, scale:.985}, {
-        opacity:1, scale:1, ease:'none',
-        scrollTrigger:{ trigger:grid, start:'top 95%', end:'top 55%', scrub:.6 }
-      });
-    })();
-
     // ---- professional text reveal for section headings (auto word-split) ----
     // Skips the hero mark and any heading already hand-built with .reveal-line spans.
     document.querySelectorAll('h2').forEach(h2=>{
@@ -450,15 +398,15 @@
     // opacity/transform via CSS classes; a generic GSAP reveal here would
     // fight that.)
 
-    // ---- Behind SIIRAH (Phase 6): very light parallax on the large tile ----
+    // ---- Behind SIIRAH (Phase 4): very light parallax on the lead photo ----
     // Same scrub pattern as the video-grid drift just below: transform-only,
     // tied to real scroll position, capped small. Skipped entirely if the
-    // section isn't present (still just placeholder tiles pre-real-photos).
-    if (document.querySelector('.behind-item--a .behind-placeholder')){
-      // Targets the absolutely-positioned inner layer, not the grid cell
-      // itself, so the cell's own overflow:hidden clips the drift and it
-      // can never visually spill into neighboring grid cells.
-      gsap.to('.behind-item--a .behind-placeholder', {
+    // section isn't present.
+    if (document.querySelector('.behind-item--a img')){
+      // Targets the absolutely-positioned <img> itself, not the grid cell,
+      // so the cell's own overflow:hidden clips the drift and it can
+      // never visually spill into the neighboring photo.
+      gsap.to('.behind-item--a img', {
         yPercent:-4, ease:'none',
         scrollTrigger:{ trigger:'.behind-gallery', start:'top bottom', end:'bottom top', scrub:.8 }
       });
@@ -942,15 +890,12 @@
     window.addEventListener('resize', syncDiff);
   })();
 
-  // ---- clients: static logo grid (Phase 11 note: this comment previously
-  // described an infinite marquee/.logo-marquee-track — that was replaced
-  // by the current .cl-cell grid in an earlier phase and the comment was
-  // never updated; correcting it here, no behavior change). The grid's
-  // entrance is the generic [data-anim="rise"] handler on each .cl-cell
-  // above, plus the whole-grid scrub settle a few dozen lines up in this
-  // same file ("Clients (Phase 7): whole-grid 'arrives together' settle").
-  // Hover state (lift + de-saturate-to-color) is pure CSS, see .cl-cell in
-  // style.css. Nothing to wire up here.
+  // ---- clients: infinite logo marquee (Phase 3 note: this comment
+  // previously described the .cl-cell grid mosaic from an earlier phase —
+  // that grid was replaced by the two-row .clients-marquee in
+  // index.html/style.css; the marquee's own behavior now lives in its own
+  // IIFE near the end of this file, "clients logo marquee: subtle scroll
+  // speed-up"). Nothing to wire up here.
 
   // ---- work/photography portfolio: mobile single-open accordion + desktop
   // permanent two-column switcher, each service's 3-photo gallery being an
@@ -1238,13 +1183,23 @@ var SIIRAHForms = (function(){
     btn.classList.toggle('is-loading', isSubmitting);
   }
 
+  // FIX (found while rewriting the Career/Project forms for Phase 5):
+  // this used to check `json.ok !== true`, but google-apps-script/Code.gs
+  // never returns an `ok` field — every handler in it (project inquiry,
+  // careers, project brief) returns `{status:'success', ...}` or
+  // `{status:'error', message:...}` (see jsonResponse() there), exactly
+  // like js/project-brief.js's own submit handler already checks
+  // (`result.status === 'success'`). With the old check, a genuinely
+  // successful Code.gs write would still throw here and show the site's
+  // "something went wrong" error to the visitor even though their row
+  // was saved — so it's corrected to match Code.gs's real contract.
   function submitToEndpoint(payload){
     var endpoint = window.SIIRAH_FORMS_ENDPOINT;
     if (!endpoint) return Promise.reject(new Error('endpoint_not_configured'));
     return fetch(endpoint, { method: 'POST', body: JSON.stringify(payload) })
       .then(function(res){ return res.json(); })
       .then(function(json){
-        if (!json || json.ok !== true) throw new Error(json && json.error || 'server_error');
+        if (!json || json.status !== 'success') throw new Error(json && json.message || 'server_error');
         return json;
       });
   }
@@ -1366,7 +1321,48 @@ var SIIRAHForms = (function(){
   };
 })();
 
+// ---- Contact section: "01/02" switcher between the career and project
+// panels (Phase 5). Exactly one .contact-panel is ever un-hidden (the
+// other carries [hidden]) so the section can never show both forms at
+// once — see .contact-options / .contact-panel in css/style.css.
+(function(){
+  var group = document.getElementById('contactOptions');
+  if (!group) return;
+  var tabs = Array.prototype.slice.call(group.querySelectorAll('.contact-option'));
+  var panels = {
+    careerPanel: document.getElementById('careerPanel'),
+    projectPanel: document.getElementById('projectPanel')
+  };
+
+  function activate(targetId){
+    tabs.forEach(function(tab){
+      var isTarget = tab.getAttribute('aria-controls') === targetId;
+      tab.classList.toggle('is-active', isTarget);
+      tab.setAttribute('aria-selected', String(isTarget));
+    });
+    Object.keys(panels).forEach(function(id){
+      var panel = panels[id];
+      if (!panel) return;
+      var show = id === targetId;
+      panel.classList.toggle('is-active', show);
+      panel.hidden = !show;
+    });
+  }
+
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      activate(tab.getAttribute('aria-controls'));
+    });
+  });
+})();
+
 // ---- Project inquiry form (#inquiryForm) ----
+// Phase 5 — trimmed to exactly: First Name, Last Name, Email, Phone,
+// Region/City, Message (no company/project/budget/date/services/files —
+// see google-apps-script/Code.gs's PROJECT_HEADERS for the matching
+// Sheet columns). Shows the same hide-form-and-reveal-a-success-panel
+// pattern the careers form already used, for a consistent "professional
+// success message" between both forms (spec §8).
 (function(){
   var form = document.getElementById('inquiryForm');
   if (!form) return;
@@ -1375,60 +1371,30 @@ var SIIRAHForms = (function(){
   var renderedAt = document.getElementById('inqRenderedAt');
   if (renderedAt) renderedAt.value = String(Date.now());
 
-  var dropzone = F.initDropzone({
-    zoneId: 'inqDropzone', inputId: 'inqFileInput', listId: 'inqFileList',
-    multiple: true, maxFiles: 10,
-    onOversize: function(){
-      F.setFieldError('inqFiles', F.t(
-        'بعض الملفات أكبر من ' + (window.SIIRAH_FORMS_MAX_FILE_MB || 15) + 'MB ولم تُضف.',
-        'Some files were larger than ' + (window.SIIRAH_FORMS_MAX_FILE_MB || 15) + 'MB and were not added.'
-      ));
-    }
-  });
-  // initChipGroup expects a distinct hidden-input id; #inqServices is the
-  // group wrapper itself, so give it a real hidden input to sync into
-  // BEFORE initChipGroup reads it.
-  (function ensureHiddenInput(){
-    if (document.getElementById('inqServicesValue')) return;
-    var hidden = document.createElement('input');
-    hidden.type = 'hidden';
-    hidden.id = 'inqServicesValue';
-    hidden.name = 'services';
-    document.getElementById('inqServices').appendChild(hidden);
-  })();
-  var services = F.initChipGroup('inqServices', 'inqServicesValue');
-
   var submitBtn = document.getElementById('inqSubmitBtn');
   var statusEl = document.getElementById('inqStatus');
+  var successEl = document.getElementById('projectSuccess');
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
     F.clearAllErrors(form);
     F.setStatus(statusEl, null, '');
 
-    var name = document.getElementById('inqName').value.trim();
+    var firstName = document.getElementById('inqFirstName').value.trim();
+    var lastName = document.getElementById('inqLastName').value.trim();
     var email = document.getElementById('inqEmail').value.trim();
     var phone = document.getElementById('inqPhone').value.trim();
-    var projectName = document.getElementById('inqProjectName').value.trim();
-    var projectType = document.getElementById('inqProjectType').value.trim();
-    var selectedServices = services.getValues();
-    var projectDetails = document.getElementById('inqDetails').value.trim();
+    var region = document.getElementById('inqRegion').value.trim();
+    var message = document.getElementById('inqMessage').value.trim();
 
     var ok = true;
-    if (!name){ F.setFieldError('inqName', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
+    if (!firstName){ F.setFieldError('inqFirstName', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
+    if (!lastName){ F.setFieldError('inqLastName', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
     if (!email){ F.setFieldError('inqEmail', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
     else if (!F.isEmailValid(email)){ F.setFieldError('inqEmail', F.t('يرجى إدخال بريد إلكتروني صحيح.', 'Please enter a valid email address.')); ok = false; }
     if (!phone){ F.setFieldError('inqPhone', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
     else if (!F.isPhoneValid(phone)){ F.setFieldError('inqPhone', F.t('يرجى إدخال رقم جوال صحيح.', 'Please enter a valid mobile number.')); ok = false; }
-    if (!projectName){ F.setFieldError('inqProjectName', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
-    if (!projectType){ F.setFieldError('inqProjectType', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
-    if (!selectedServices.length){ F.setFieldError('inqServices', F.t('يرجى اختيار خدمة واحدة على الأقل.', 'Please select at least one service.')); ok = false; }
-    if (!projectDetails){ F.setFieldError('inqDetails', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
-
-    var website = document.getElementById('inqWebsite').value.trim();
-    if (website && !F.isUrlValid(website)){ F.setFieldError('inqWebsite', F.t('يرجى إدخال رابط صحيح.', 'Please enter a valid URL.')); ok = false; }
-    var reference = document.getElementById('inqReference').value.trim();
-    if (reference && !F.isUrlValid(reference)){ F.setFieldError('inqReference', F.t('يرجى إدخال رابط صحيح.', 'Please enter a valid URL.')); ok = false; }
+    if (!message){ F.setFieldError('inqMessage', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
 
     if (!ok){
       F.focusFirstError(form);
@@ -1440,45 +1406,21 @@ var SIIRAHForms = (function(){
       formType: 'project',
       hp: document.getElementById('inqHp').value,
       renderedAt: document.getElementById('inqRenderedAt').value,
-      fields: {
-        name: name, company: document.getElementById('inqCompany').value.trim(),
-        email: email, phone: phone,
-        projectName: projectName, projectType: projectType,
-        services: selectedServices,
-        budget: document.getElementById('inqBudget').value.trim(),
-        requestedDate: document.getElementById('inqDate').value,
-        website: website, socialLinks: document.getElementById('inqSocial').value.trim(),
-        projectDetails: projectDetails, notes: document.getElementById('inqNotes').value.trim(),
-        referenceLink: reference
-      },
-      files: []
+      firstName: firstName, lastName: lastName,
+      email: email, phone: phone,
+      region: region, message: message
     };
 
     F.setSubmitting(submitBtn, true);
-    var selectedFiles = dropzone.getFiles();
-    Promise.all(selectedFiles.map(function(file){
-      return F.fileToBase64(file).then(function(base64){
-        return { name: file.name, mimeType: file.type, base64: base64 };
-      });
-    }))
-      .then(function(encoded){
-        payload.files = encoded;
-        return F.submitToEndpoint(payload);
-      })
+    F.submitToEndpoint(payload)
       .then(function(){
-        F.setStatus(statusEl, 'success', F.t(
-          'تم استلام طلبك بنجاح.\nسنراجع التفاصيل ونتواصل معك عند الحاجة.',
-          'Your request has been received successfully.\nWe\'ll review the details and contact you if needed.'
-        ));
-        form.reset();
-        dropzone.reset();
-        services.reset();
-        if (document.getElementById('inqRenderedAt')) document.getElementById('inqRenderedAt').value = String(Date.now());
+        form.hidden = true;
+        if (successEl) successEl.classList.add('is-visible');
       })
       .catch(function(){
         F.setStatus(statusEl, 'error', F.t(
-          'تعذر إرسال الطلب حاليًا.\nيرجى المحاولة مرة أخرى.',
-          'We couldn\'t submit your request right now.\nPlease try again.'
+          'حدث خطأ أثناء الإرسال. حاول مرة أخرى.',
+          'Something went wrong. Please try again.'
         ));
       })
       .finally(function(){
@@ -1488,6 +1430,12 @@ var SIIRAHForms = (function(){
 })();
 
 // ---- Careers form (#careersForm) ----
+// Phase 5 — trimmed to exactly: First Name, Last Name, Email, Phone,
+// Message (renamed from "About You"/bio), plus the pre-existing optional
+// CV attachment (kept — see the Phase 5 report). Gender, Birth Year,
+// Field/Specialization, Desired Position, Years of Experience and
+// Portfolio Link are all gone — see google-apps-script/Code.gs's
+// CAREERS_HEADERS for the matching Sheet columns.
 (function(){
   var form = document.getElementById('careersForm');
   if (!form) return;
@@ -1507,18 +1455,6 @@ var SIIRAHForms = (function(){
     }
   });
 
-  var positionSelect = document.getElementById('carPosition');
-  var otherWrap = document.getElementById('carPositionOtherWrap');
-  var otherInput = document.getElementById('carPositionOther');
-  if (positionSelect && otherWrap && otherInput){
-    positionSelect.addEventListener('change', function(){
-      var isOther = positionSelect.value === 'Other';
-      otherWrap.hidden = !isOther;
-      if (isOther) otherInput.setAttribute('required', 'required');
-      else { otherInput.removeAttribute('required'); otherInput.value = ''; }
-    });
-  }
-
   var submitBtn = document.getElementById('carSubmitBtn');
   var statusEl = document.getElementById('carStatus');
   var successEl = document.getElementById('joinSuccess');
@@ -1528,29 +1464,20 @@ var SIIRAHForms = (function(){
     F.clearAllErrors(form);
     F.setStatus(statusEl, null, '');
 
-    var name = document.getElementById('carName').value.trim();
+    var firstName = document.getElementById('carFirstName').value.trim();
+    var lastName = document.getElementById('carLastName').value.trim();
     var email = document.getElementById('carEmail').value.trim();
     var phone = document.getElementById('carPhone').value.trim();
-    var field = document.getElementById('carField').value.trim();
-    var desiredPosition = positionSelect.value;
-    var desiredPositionOther = otherInput ? otherInput.value.trim() : '';
-    var experience = document.getElementById('carExperience').value.trim();
-    var bio = document.getElementById('carBio').value.trim();
-    var portfolio = document.getElementById('carPortfolio').value.trim();
+    var message = document.getElementById('carMessage').value.trim();
 
     var ok = true;
-    if (!name){ F.setFieldError('carName', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
+    if (!firstName){ F.setFieldError('carFirstName', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
+    if (!lastName){ F.setFieldError('carLastName', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
     if (!email){ F.setFieldError('carEmail', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
     else if (!F.isEmailValid(email)){ F.setFieldError('carEmail', F.t('يرجى إدخال بريد إلكتروني صحيح.', 'Please enter a valid email address.')); ok = false; }
     if (!phone){ F.setFieldError('carPhone', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
     else if (!F.isPhoneValid(phone)){ F.setFieldError('carPhone', F.t('يرجى إدخال رقم جوال صحيح.', 'Please enter a valid mobile number.')); ok = false; }
-    if (!field){ F.setFieldError('carField', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
-    if (!desiredPosition){ F.setFieldError('carPosition', F.t('يرجى اختيار المسمى الوظيفي.', 'Please select a position.')); ok = false; }
-    if (desiredPosition === 'Other' && !desiredPositionOther){ F.setFieldError('carPositionOther', F.t('يرجى تحديد المسمى الوظيفي.', 'Please specify the position.')); ok = false; }
-    if (!experience){ F.setFieldError('carExperience', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
-    if (!bio){ F.setFieldError('carBio', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
-    if (!portfolio){ F.setFieldError('carPortfolio', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
-    else if (!F.isUrlValid(portfolio)){ F.setFieldError('carPortfolio', F.t('يرجى إدخال رابط صحيح.', 'Please enter a valid URL.')); ok = false; }
+    if (!message){ F.setFieldError('carMessage', F.t('هذا الحقل مطلوب.', 'This field is required.')); ok = false; }
 
     if (!ok){
       F.focusFirstError(form);
@@ -1562,15 +1489,9 @@ var SIIRAHForms = (function(){
       formType: 'careers',
       hp: document.getElementById('carHp').value,
       renderedAt: document.getElementById('carRenderedAt').value,
-      fields: {
-        name: name, email: email, phone: phone,
-        gender: document.getElementById('carGender').value,
-        birthYear: document.getElementById('carBirthYear').value,
-        field: field,
-        desiredPosition: desiredPosition === 'Other' ? desiredPositionOther : desiredPosition,
-        experience: experience, bio: bio, portfolio: portfolio
-      },
-      files: []
+      firstName: firstName, lastName: lastName,
+      email: email, phone: phone, message: message,
+      cv: []
     };
 
     F.setSubmitting(submitBtn, true);
@@ -1581,7 +1502,7 @@ var SIIRAHForms = (function(){
       });
     }))
       .then(function(encoded){
-        payload.files = encoded;
+        payload.cv = encoded;
         return F.submitToEndpoint(payload);
       })
       .then(function(){
@@ -1590,12 +1511,194 @@ var SIIRAHForms = (function(){
       })
       .catch(function(){
         F.setStatus(statusEl, 'error', F.t(
-          'تعذر إرسال الطلب حاليًا.\nيرجى المحاولة مرة أخرى.',
-          'We couldn\'t submit your request right now.\nPlease try again.'
+          'حدث خطأ أثناء الإرسال. حاول مرة أخرى.',
+          'Something went wrong. Please try again.'
         ));
       })
       .finally(function(){
         F.setSubmitting(submitBtn, false);
       });
   });
+})();
+
+// ============================================================
+// Phase 3 — "Behind SIIRAH" animated team viewer
+// Single-person-at-a-time editorial carousel: one large portrait plus an
+// info panel, cross-fading between the three members (see the
+// .team-stage/.team-slide/.team-card markup in index.html #team and the
+// matching CSS in style.css). All three .team-slide images and
+// .team-card text blocks stay in the DOM at all times — this only ever
+// toggles which one carries .is-active — so js/i18n.js keeps translating
+// every data-en/data-en-alt element on them exactly like the rest of the
+// page, and switching language just changes what's already showing.
+// ============================================================
+(function(){
+  var stage = document.getElementById('teamStage');
+  if (!stage) return;
+
+  var visual = document.getElementById('teamVisual');
+  var cardsWrap = document.getElementById('teamCards');
+  if (!visual || !cardsWrap) return;
+
+  var slides = Array.prototype.slice.call(visual.querySelectorAll('.team-slide'));
+  var cards = Array.prototype.slice.call(cardsWrap.querySelectorAll('.team-card'));
+  var segs = Array.prototype.slice.call(document.querySelectorAll('#teamProgressBar .team-progress-seg'));
+  var curEl = document.getElementById('teamProgressCur');
+  var prevBtn = document.getElementById('teamPrev');
+  var nextBtn = document.getElementById('teamNext');
+  var total = slides.length;
+  if (!total) return;
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var AUTOPLAY_MS = 7000;
+  var current = 0;
+  var timer = null;
+  var isHovering = false;
+  var userInteracted = false;
+  var isVisible = true;
+
+  function pad(n){ return (n + 1) < 10 ? ('0' + (n + 1)) : ('' + (n + 1)); }
+
+  function measure(){
+    cards.forEach(function(c){ c.style.position = 'static'; });
+    var max = 0;
+    cards.forEach(function(c){ max = Math.max(max, c.offsetHeight); });
+    cards.forEach(function(c){ c.style.position = ''; });
+    if (max) cardsWrap.style.minHeight = max + 'px';
+  }
+
+  function render(autoFill){
+    slides.forEach(function(s, i){ s.classList.toggle('is-active', i === current); });
+    cards.forEach(function(c, i){ c.classList.toggle('is-active', i === current); });
+    segs.forEach(function(seg, i){
+      seg.classList.toggle('is-active', i === current);
+      seg.classList.toggle('is-done', i < current);
+      seg.setAttribute('aria-current', i === current ? 'true' : 'false');
+      var fill = seg.querySelector('.team-progress-fill');
+      if (!fill) return;
+      fill.style.transition = 'none';
+      fill.style.width = (i < current) ? '100%' : '0%';
+      if (i === current){
+        void fill.offsetWidth; // force reflow before enabling the transition below
+        if (autoFill && !reduceMotion){
+          fill.style.transition = 'width ' + AUTOPLAY_MS + 'ms linear';
+        } else {
+          fill.style.transition = 'width .35s ease';
+        }
+        fill.style.width = '100%';
+      }
+    });
+    if (curEl) curEl.textContent = pad(current);
+  }
+
+  function stopAutoplay(){
+    if (timer){ clearTimeout(timer); timer = null; }
+  }
+
+  function startAutoplay(){
+    stopAutoplay();
+    if (reduceMotion || userInteracted || isHovering || !isVisible) return;
+    render(true);
+    timer = setTimeout(function(){
+      current = (current + 1) % total;
+      startAutoplay();
+    }, AUTOPLAY_MS);
+  }
+
+  function goTo(index){
+    current = ((index % total) + total) % total;
+    userInteracted = true;
+    stopAutoplay();
+    render(false);
+  }
+
+  prevBtn && prevBtn.addEventListener('click', function(){ goTo(current - 1); });
+  nextBtn && nextBtn.addEventListener('click', function(){ goTo(current + 1); });
+  segs.forEach(function(seg, i){ seg.addEventListener('click', function(){ goTo(i); }); });
+
+  if (window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+    stage.addEventListener('mouseenter', function(){ isHovering = true; stopAutoplay(); });
+    stage.addEventListener('mouseleave', function(){ isHovering = false; startAutoplay(); });
+  }
+
+  // touch swipe anywhere on the stage — direction is mirrored under RTL so
+  // "forward" always means 01→02→03 regardless of language
+  (function(){
+    var startX = null, startY = null, tracking = false;
+    stage.addEventListener('touchstart', function(e){
+      if (!e.touches || e.touches.length !== 1) return;
+      startX = e.touches[0].clientX; startY = e.touches[0].clientY; tracking = true;
+    }, { passive: true });
+    stage.addEventListener('touchend', function(e){
+      if (!tracking || startX === null){ tracking = false; return; }
+      tracking = false;
+      var t = e.changedTouches && e.changedTouches[0];
+      if (!t) return;
+      var dx = t.clientX - startX, dy = t.clientY - startY;
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+      var isRtl = document.documentElement.dir === 'rtl';
+      var forward = isRtl ? (dx > 0) : (dx < 0);
+      goTo(forward ? current + 1 : current - 1);
+    }, { passive: true });
+  })();
+
+  // keyboard: arrow keys bubble up here from the prev/next buttons or a
+  // focused progress segment
+  stage.addEventListener('keydown', function(e){
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    var isRtl = document.documentElement.dir === 'rtl';
+    var isNext = isRtl ? (e.key === 'ArrowLeft') : (e.key === 'ArrowRight');
+    e.preventDefault();
+    goTo(isNext ? current + 1 : current - 1);
+  });
+
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        isVisible = entry.isIntersecting;
+        if (isVisible) startAutoplay(); else stopAutoplay();
+      });
+    }, { threshold: 0.35 });
+    io.observe(stage);
+  }
+
+  document.addEventListener('siirah:langchange', function(){ measure(); });
+  window.addEventListener('resize', (function(){
+    var t;
+    return function(){ clearTimeout(t); t = setTimeout(measure, 150); };
+  })());
+  window.addEventListener('load', measure);
+  setTimeout(measure, 60);
+
+  render(false);
+  if (!reduceMotion) startAutoplay();
+})();
+
+// ============================================================
+// Phase 3 — clients logo marquee: subtle scroll speed-up only.
+// The marquee's actual motion is pure CSS `animation` on .marquee-track
+// (see style.css), always running on its own — this IIFE only ever
+// toggles one class on the container, it never touches transform,
+// position, or the animation itself, so it stays cheap even on a fast
+// scroll (rAF-throttled add, debounced remove).
+// ============================================================
+(function(){
+  var marquee = document.getElementById('clientsMarquee');
+  if (!marquee) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var scrollTimer = null;
+  var ticking = false;
+  function onScroll(){
+    if (!ticking){
+      ticking = true;
+      requestAnimationFrame(function(){
+        marquee.classList.add('is-scrolling');
+        ticking = false;
+      });
+    }
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function(){ marquee.classList.remove('is-scrolling'); }, 260);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
 })();
