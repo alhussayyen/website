@@ -178,10 +178,6 @@
   .header-socials{ display:flex; align-items:center; gap:1rem; }
   .header-socials-mobile{ margin-top:2.2rem; justify-content:center; gap:.9rem; }
   .header-socials-desktop{ display:none; }
-  /* groups the desktop social icons + AR/EN language switcher together at
-     the end of the bar, so they sit right next to each other instead of
-     floating apart under header.site-nav's own justify-content:space-between */
-  .site-nav-end{ display:flex; align-items:center; gap:1rem; }
 
   .header-icon-btn{
     display:flex; align-items:center; justify-content:center;
@@ -1820,7 +1816,7 @@
 
   /* ---- logo image ---- */
   .logo-img{ transition:filter .4s ease; }
-  .nav-logo{ height:34px; width:auto; filter:brightness(0) invert(1); }
+  .nav-logo{ height:30px; width:auto; filter:brightness(0) invert(1); }
   .nav-logo.inverted{ filter:brightness(0) invert(1); }
   header.site-nav nav{ color:#fff; }
 
@@ -1975,36 +1971,12 @@
   .lang-toggle-btn:hover{ background:#fff; color:var(--black); border-color:#fff; transform:scale(1.06); }
   .lang-toggle-btn:active{ transform:scale(.94); }
 
-  /* ---- AR / EN language switcher (main site header only) ----
-     Replaces the old single toggle button in the primary header with a
-     static two-label switch: both "AR" and "EN" stay visible at all times,
-     the active language is painted --accent (gold) via the body.lang-ar /
-     body.lang-en classes js/i18n.js already toggles on every language
-     change, and clicking either label sets that language directly
-     (window.siirahSetLang, see js/i18n.js) instead of toggling. The legal
-     pages and project brief keep their original .lang-toggle-btn — that
-     rule above is untouched. */
-  .lang-switch{
-    display:inline-flex; align-items:center; gap:.55rem;
-    padding:.5rem .9rem; border:1.5px solid rgba(255,255,255,.55); border-radius:var(--radius-pill);
-  }
-  .lang-switch-btn{
-    background:none; border:none; padding:0; font-family:var(--font-primary);
-    font-size:.78rem; font-weight:700; letter-spacing:.04em; line-height:1;
-    color:rgba(255,255,255,.55); cursor:pointer; transform:scale(1);
-    transition:color .3s var(--ease-soft), transform var(--dur-hover) var(--ease-scale);
-  }
-  .lang-switch-btn:hover{ color:#fff; transform:scale(1.06); }
-  .lang-switch-btn:active{ transform:scale(.94); }
-  body.lang-ar .lang-switch-btn[data-lang="ar"],
-  body.lang-en .lang-switch-btn[data-lang="en"]{ color:var(--accent); }
-
-  .lang-switch-desktop{ display:none; }
-  .lang-switch-mobile{ display:inline-flex; margin-top:1.6rem; align-self:center; }
+  .lang-toggle-desktop{ display:none; }
+  .lang-toggle-mobile{ display:inline-flex; margin-top:1.6rem; align-self:center; }
 
   @media (min-width:1025px){
-    .lang-switch-desktop{ display:inline-flex; margin-inline-start:1.4rem; }
-    .lang-switch-mobile{ display:none; }
+    .lang-toggle-desktop{ display:inline-flex; margin-inline-start:1.4rem; }
+    .lang-toggle-mobile{ display:none; }
   }
 
   /* ---- LTR (English) support ----
@@ -2078,6 +2050,33 @@
     background:var(--bg-alt); display:flex; flex-direction:column; gap:.35rem; font-weight:400;
   }
   .legal-contact-block a{ color:var(--ink); text-decoration:underline; text-decoration-color:var(--accent-line); text-underline-offset:3px; }
+
+  /* ============================================================
+     PHASE 2 — brand story section ("لديك فكرة تستحق أن تُروى" /
+     "Your idea deserves to be told.")
+     Reuses the .statement / .statement.dark full-bleed band already
+     established by the video-production section (same dark canvas, same
+     centered rhythm — see "statement bands" further up this file) so this
+     reads as the same design language, not a bolted-on new pattern.
+     Only the blockquote's own scale/weight is bumped to the Display
+     token, since this is SIIRAH's central brand line, not a subordinate
+     caption. Deliberately no card, no icon, no badge — the line and the
+     space around it are the whole treatment. Reveal uses the sitewide
+     generic data-anim="line"/"fade" handlers already in js/script.js
+     (no new animation code), which also keeps this section a plain,
+     self-contained block a later motion phase can pin/scrub without any
+     restructuring here.
+     ============================================================ */
+  .brand-story{ padding:clamp(6.5rem,13vw,10rem) 0; }
+  .brand-story blockquote{
+    max-width:19ch; margin:0 auto; font-family:var(--font-primary); font-weight:800;
+    font-size:var(--fs-display); line-height:1.08; letter-spacing:var(--ls-display);
+    text-wrap:balance; color:#fff;
+  }
+  .brand-story-mark{
+    display:block; width:56px; height:2px; margin:clamp(2rem,4vw,2.8rem) auto 0;
+    background:var(--accent);
+  }
 
   /* ============================================================
      PHASE 9 — "ابدأ مشروعك مع سيرة" (project inquiry, inside #contact)

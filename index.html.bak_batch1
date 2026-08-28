@@ -142,10 +142,10 @@
 <header class="site-nav">
   <img src="assets/images/logo.png" alt="سيرة" data-en-alt="SIIRAH" class="logo-img nav-logo" id="navLogo">
   <nav id="siteNav">
-    <a href="#about" data-en="About">من نحن</a>
     <a href="#services" data-en="Services">الخدمات</a>
     <a href="#work" data-en="Work">الأعمال</a>
     <a href="#clients" data-en="Clients">العملاء</a>
+    <a href="#about" data-en="About">من نحن</a>
     <a href="#contact" data-en="Contact">التواصل</a>
     <!-- shown only inside the mobile fullscreen nav overlay; reuses the
          exact footer .icon-btn style/markup so it matches 1:1 -->
@@ -163,34 +163,26 @@
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5l13 13"/><path d="M18.5 5.5l-13 13"/></svg>
       </a>
     </div>
-    <div class="lang-switch lang-switch-mobile" role="group" aria-label="اختر اللغة" data-en-aria-label="Choose language">
-      <button type="button" class="lang-switch-btn" data-lang="ar" aria-label="التبديل إلى العربية">AR</button>
-      <button type="button" class="lang-switch-btn" data-lang="en" aria-label="Switch to English">EN</button>
-    </div>
+    <button type="button" class="lang-toggle-btn lang-toggle-mobile" aria-label="التبديل إلى الإنجليزية">English</button>
   </nav>
   <!-- desktop/tablet row, pinned to the left of the bar; same icon style,
        hover behavior, stroke weight and transition as the footer social
        icons, sized to sit comfortably within the header's height -->
-  <div class="site-nav-end">
-    <div class="header-socials header-socials-desktop">
-      <a class="header-icon-btn" href="https://instagram.com/siirah27" target="_blank" rel="noopener" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><rect x="9" y="9" width="6" height="6" rx="2"/><rect x="16.5" y="5.5" width="2" height="2" rx=".5" fill="currentColor" stroke="none"/></svg>
-      </a>
-      <a class="header-icon-btn" href="https://snapchat.com/add/siirah27" target="_blank" rel="noopener" aria-label="Snapchat">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.9 0 4.8 2.2 4.7 5.1l-.1 2c1 .5 1.7.3 2.1.1.3-.1.7 0 .7.4-.1.8-1 1.3-1.8 1.6.1.4.3 1 .9 1.5.6.5 1.4.6 1.4 1.1 0 .6-1.3.9-2.1 1-.1.3-.1.7-.3.9-.3.3-1.4 0-2.3.3-.8.3-1.3 1.4-3.2 1.4s-2.4-1.1-3.2-1.4c-.9-.3-2 0-2.3-.3-.2-.2-.2-.6-.3-.9-.8-.1-2.1-.4-2.1-1 0-.5.8-.6 1.4-1.1.6-.5.8-1.1.9-1.5-.8-.3-1.7-.8-1.8-1.6 0-.4.4-.5.7-.4.4.2 1.1.4 2.1-.1l-.1-2C7.2 5.2 9.1 3 12 3Z"/></svg>
-      </a>
-      <a class="header-icon-btn" href="https://tiktok.com/@siirah27" target="_blank" rel="noopener" aria-label="TikTok">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4v11.5a3.5 3.5 0 1 1-2-3.16"/><path d="M13 4a5 5 0 0 0 5 5"/></svg>
-      </a>
-      <a class="header-icon-btn" href="https://x.com/siirah27" target="_blank" rel="noopener" aria-label="X">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5l13 13"/><path d="M18.5 5.5l-13 13"/></svg>
-      </a>
-    </div>
-    <div class="lang-switch lang-switch-desktop" role="group" aria-label="اختر اللغة" data-en-aria-label="Choose language">
-      <button type="button" class="lang-switch-btn" data-lang="ar" aria-label="التبديل إلى العربية">AR</button>
-      <button type="button" class="lang-switch-btn" data-lang="en" aria-label="Switch to English">EN</button>
-    </div>
+  <div class="header-socials header-socials-desktop">
+    <a class="header-icon-btn" href="https://instagram.com/siirah27" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><rect x="9" y="9" width="6" height="6" rx="2"/><rect x="16.5" y="5.5" width="2" height="2" rx=".5" fill="currentColor" stroke="none"/></svg>
+    </a>
+    <a class="header-icon-btn" href="https://snapchat.com/add/siirah27" target="_blank" rel="noopener" aria-label="Snapchat">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.9 0 4.8 2.2 4.7 5.1l-.1 2c1 .5 1.7.3 2.1.1.3-.1.7 0 .7.4-.1.8-1 1.3-1.8 1.6.1.4.3 1 .9 1.5.6.5 1.4.6 1.4 1.1 0 .6-1.3.9-2.1 1-.1.3-.1.7-.3.9-.3.3-1.4 0-2.3.3-.8.3-1.3 1.4-3.2 1.4s-2.4-1.1-3.2-1.4c-.9-.3-2 0-2.3-.3-.2-.2-.2-.6-.3-.9-.8-.1-2.1-.4-2.1-1 0-.5.8-.6 1.4-1.1.6-.5.8-1.1.9-1.5-.8-.3-1.7-.8-1.8-1.6 0-.4.4-.5.7-.4.4.2 1.1.4 2.1-.1l-.1-2C7.2 5.2 9.1 3 12 3Z"/></svg>
+    </a>
+    <a class="header-icon-btn" href="https://tiktok.com/@siirah27" target="_blank" rel="noopener" aria-label="TikTok">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4v11.5a3.5 3.5 0 1 1-2-3.16"/><path d="M13 4a5 5 0 0 0 5 5"/></svg>
+    </a>
+    <a class="header-icon-btn" href="https://x.com/siirah27" target="_blank" rel="noopener" aria-label="X">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5l13 13"/><path d="M18.5 5.5l-13 13"/></svg>
+    </a>
   </div>
+  <button type="button" class="lang-toggle-btn lang-toggle-desktop" aria-label="التبديل إلى الإنجليزية">English</button>
   <button class="nav-toggle" id="navToggle" type="button" data-label-open-ar="فتح القائمة" data-label-close-ar="إغلاق القائمة" data-label-open-en="Open menu" data-label-close-en="Close menu" aria-label="فتح القائمة" aria-expanded="false" aria-controls="siteNav">
     <span class="nav-toggle-bars"></span>
   </button>
@@ -241,6 +233,14 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- brand story (Phase 2) -->
+<section class="statement dark brand-story" id="brand-story">
+  <div class="wrap">
+    <blockquote class="brand-story-line" data-anim="line" data-en="Your idea deserves to be told.">لديك فكرة تستحق أن تُروى</blockquote>
+    <span class="brand-story-mark" aria-hidden="true" data-anim="fade"></span>
   </div>
 </section>
 
@@ -373,17 +373,7 @@
   </div>
 </section>
 
-<!-- 03 -->
-<section class="stats" id="stats">
-  <div class="wrap stats-grid">
-    <div class="stat"><div class="sicon"><svg class="icon" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 9.5h17"/><path d="M8.5 3.5v6"/></svg></div><div class="num" data-count="300" data-suffix="+">0</div><div class="lbl" data-en="Projects">مشروع</div></div>
-    <div class="stat"><div class="sicon"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 8.8a3 3 0 1 1 1.2 5.7"/><path d="M15.5 14.7c2.7.3 4.5 2.3 4.5 5.3"/></svg></div><div class="num" data-count="20" data-suffix="+">0</div><div class="lbl" data-en="Clients">عميل</div></div>
-    <div class="stat"><div class="sicon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><div class="num" data-count="13">0</div><div class="lbl" data-en="Years of experience">سنة خبرة</div></div>
-    <div class="stat"><div class="sicon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-11.2A6.5 6.5 0 0 0 5.5 9.8C5.5 15 12 21 12 21Z"/><circle cx="12" cy="9.6" r="2.3"/></svg></div><div class="num" data-count="13">0</div><div class="lbl" data-en="Cities">مدينة</div></div>
-  </div>
-</section>
-
-<!-- 02.75 (moved after stats) -->
+<!-- 02.75 -->
 <section class="sec-pad diff-section" id="differentiators">
   <div class="wrap diff-head">
     <h2 class="diff-title" data-en="What makes SIIRAH different?">وش اللي يميز سيرة؟</h2>
@@ -442,6 +432,16 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="stats" id="stats">
+  <div class="wrap stats-grid">
+    <div class="stat"><div class="sicon"><svg class="icon" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 9.5h17"/><path d="M8.5 3.5v6"/></svg></div><div class="num" data-count="300" data-suffix="+">0</div><div class="lbl" data-en="Projects">مشروع</div></div>
+    <div class="stat"><div class="sicon"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 8.8a3 3 0 1 1 1.2 5.7"/><path d="M15.5 14.7c2.7.3 4.5 2.3 4.5 5.3"/></svg></div><div class="num" data-count="20" data-suffix="+">0</div><div class="lbl" data-en="Clients">عميل</div></div>
+    <div class="stat"><div class="sicon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><div class="num" data-count="13">0</div><div class="lbl" data-en="Years of experience">سنة خبرة</div></div>
+    <div class="stat"><div class="sicon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-11.2A6.5 6.5 0 0 0 5.5 9.8C5.5 15 12 21 12 21Z"/><circle cx="12" cy="9.6" r="2.3"/></svg></div><div class="num" data-count="13">0</div><div class="lbl" data-en="Cities">مدينة</div></div>
   </div>
 </section>
 

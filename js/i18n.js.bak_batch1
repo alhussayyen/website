@@ -106,16 +106,4 @@
   Array.prototype.forEach.call(btns, function (btn) {
     btn.addEventListener('click', window.siirahToggleLang);
   });
-
-  // New header AR/EN switch (index.html only — legal pages and the project
-  // brief keep the single .lang-toggle-btn above, untouched). Each label
-  // sets its own language directly instead of toggling; the gold "active"
-  // color is handled purely in CSS via the body.lang-ar/body.lang-en
-  // classes applyLang() already sets above, so no per-click styling here.
-  var switchBtns = document.querySelectorAll('.lang-switch-btn[data-lang]');
-  Array.prototype.forEach.call(switchBtns, function (btn) {
-    btn.addEventListener('click', function () {
-      window.siirahSetLang(btn.getAttribute('data-lang'));
-    });
-  });
 })();
