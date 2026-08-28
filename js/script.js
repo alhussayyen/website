@@ -1183,23 +1183,20 @@ var SIIRAHForms = (function(){
     btn.classList.toggle('is-loading', isSubmitting);
   }
 
-  // FIX (found while rewriting the Career/Project forms for Phase 5):
-  // this used to check `json.ok !== true`, but google-apps-script/Code.gs
-  // never returns an `ok` field — every handler in it (project inquiry,
-  // careers, project brief) returns `{status:'success', ...}` or
-  // `{status:'error', message:...}` (see jsonResponse() there), exactly
-  // like js/project-brief.js's own submit handler already checks
-  // (`result.status === 'success'`). With the old check, a genuinely
-  // successful Code.gs write would still throw here and show the site's
-  // "something went wrong" error to the visitor even though their row
-  // was saved — so it's corrected to match Code.gs's real contract.
+  // The live SIIRAH_FORMS_ENDPOINT (verified by a real test POST for
+  // each of the three form types) replies `{success:true, message, type,
+  // sheet}` on success and `{success:false, error:'...'}` on failure —
+  // not the `{status:'success'|'error', message}` shape the older
+  // google-apps-script/Code.gs in this repo documents (that file is not
+  // what's behind this endpoint). Checked on `json.success`, not `json.status`,
+  // to match what the endpoint actually returns.
   function submitToEndpoint(payload){
     var endpoint = window.SIIRAH_FORMS_ENDPOINT;
     if (!endpoint) return Promise.reject(new Error('endpoint_not_configured'));
     return fetch(endpoint, { method: 'POST', body: JSON.stringify(payload) })
       .then(function(res){ return res.json(); })
       .then(function(json){
-        if (!json || json.status !== 'success') throw new Error(json && json.message || 'server_error');
+        if (!json || !json.success) throw new Error(json && json.error || 'server_error');
         return json;
       });
   }
@@ -1403,7 +1400,7 @@ var SIIRAHForms = (function(){
     }
 
     var payload = {
-      formType: 'project',
+      type: 'project',
       hp: document.getElementById('inqHp').value,
       renderedAt: document.getElementById('inqRenderedAt').value,
       firstName: firstName, lastName: lastName,
@@ -1486,7 +1483,7 @@ var SIIRAHForms = (function(){
     }
 
     var payload = {
-      formType: 'careers',
+      type: 'career',
       hp: document.getElementById('carHp').value,
       renderedAt: document.getElementById('carRenderedAt').value,
       firstName: firstName, lastName: lastName,

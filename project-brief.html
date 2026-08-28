@@ -32,8 +32,8 @@
      Reuses site-wide infrastructure so nothing is duplicated:
        - css/style.css       → design tokens, fonts, reset, .lang-toggle-btn, .hp-field
        - js/config.js        → window.SIIRAH_FORMS_ENDPOINT (same Apps Script
-                                Web App the two Phase 9 forms already use —
-                                Code.gs dispatches on formType, so one
+                                Web App the other two forms already use —
+                                the backend dispatches on `type`, so one
                                 deployment serves all three forms)
        - js/i18n.js           → the site's existing AR/EN engine (data-en /
                                 data-en-* attributes, .lang-toggle-btn)

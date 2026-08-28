@@ -12,7 +12,7 @@
 // both forms detect the empty value and show the site's own "couldn't
 // submit" error instead of attempting a request, so nothing breaks while
 // this is still unset.
-window.SIIRAH_FORMS_ENDPOINT = "";
+window.SIIRAH_FORMS_ENDPOINT = "https://script.google.com/macros/s/AKfycbzFcE_HHShH9aaGxeBsldakUvLX6pHpcoSiqvTWV-n1D9PhqRN1dMXKz2hI8Tv55VFJhQ/exec";
 
 // Must match MAX_FILE_MB in google-apps-script/Code.gs so the browser
 // rejects an oversized file before spending time base64-encoding and

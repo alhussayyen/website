@@ -6,10 +6,9 @@
 // drag-and-drop uploader, a read-only review screen built from live
 // field values, and submission to the same Google Apps Script Web
 // App the Phase 9 forms use (window.SIIRAH_FORMS_ENDPOINT, set in
-// js/config.js — empty until google-apps-script/SETUP.md is done).
-// Code.gs dispatches on `formType`, so this reuses that one
-// deployment ("projectBrief" alongside "project" and "careers") —
-// nothing new to configure beyond what Phase 9 already needs.
+// js/config.js). The backend dispatches on `type`, so this reuses that
+// one deployment ("project-brief" alongside "project" and "career") —
+// nothing new to configure beyond what the other two forms already need.
 //
 // No Google credential of any kind lives here — same as forms.js/
 // script.js, the endpoint is a public invocation URL, not a secret.
@@ -558,19 +557,58 @@
       submitBtn.disabled = true;
       submitBtn.classList.add('is-loading');
 
-      var payload = { formType: 'projectBrief', submittedAt: new Date().toISOString() };
-      ALL_FIELDS.forEach(function (f) { payload[f.key] = fieldValue(f.key); });
-      payload.services = getSelectedServices().map(function (s) { return s.value; });
+      // Wire field names required by the SIIRAH_FORMS_ENDPOINT Apps Script
+      // for a "project-brief" submission. This maps this file's internal
+      // field keys (STEP_FIELDS / LABELS / REVIEW_GROUPS above — left
+      // untouched, they only drive the step form / validation / review
+      // screen DOM) to the exact JSON keys the backend expects. Nothing
+      // about the form's fields, order, or UX changes here — only what
+      // the outgoing payload calls each value.
+      var WIRE_KEY = {
+        name: 'clientName',
+        company: 'companyName',
+        position: 'jobTitle',
+        deliverables: 'requiredDeliverables',
+        deadline: 'deliveryDate',
+        location: 'executionLocation',
+        budget: 'agreedBudget',
+        description: 'projectDescription',
+        goal: 'projectGoal',
+        message: 'keyMessage',
+        style: 'desiredStyle',
+        textsNeeded: 'requiredTexts',
+        contentReferences: 'references',
+        filesNeededFromClient: 'clientProvidedFiles',
+        additionalInfo: 'additionalInformation'
+      };
+
+      var payload = {
+        type: 'project-brief',
+        submittedAt: new Date().toISOString(),
+        // No dedicated input for this — it's a section heading (step 3)
+        // whose own fields (mainIdea, keyMessage, ...) already have their
+        // own columns, same as this project's Code.gs always treated it.
+        creativeDirection: ''
+      };
+      ALL_FIELDS.forEach(function (f) { payload[WIRE_KEY[f.key] || f.key] = fieldValue(f.key); });
+      payload.requiredServices = getSelectedServices().map(function (s) { return s.value; });
 
       var files = dropzone.getFiles();
       Promise.all(files.map(fileToBase64))
         .then(function (encoded) {
-          payload.files = encoded;
+          payload.attachedFiles = encoded;
           return fetch(endpoint, { method: 'POST', body: JSON.stringify(payload) });
         })
         .then(function (res) { return res.json(); })
         .then(function (result) {
-          if (result && result.status === 'success') {
+          // The live endpoint replies {success:true, ...} on success and
+          // {success:false, error:'...'} on failure (verified with a real
+          // test POST) — not {status:'success', projectId} like the
+          // repo's google-apps-script/Code.gs, which isn't what's behind
+          // this endpoint. It doesn't return a projectId, so the success
+          // screen's project-number line simply stays hidden (it already
+          // only shows when a truthy id comes back).
+          if (result && result.success) {
             showSuccess(result.projectId || '');
           } else {
             showError('errorGeneric');
