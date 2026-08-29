@@ -1687,30 +1687,14 @@ var SIIRAHForms = (function(){
 })();
 
 // ============================================================
-// Phase 3 — clients logo marquee: subtle scroll speed-up only.
-// The marquee's actual motion is pure CSS `animation` on .marquee-track
-// (see style.css), always running on its own — this IIFE only ever
-// toggles one class on the container, it never touches transform,
-// position, or the animation itself, so it stays cheap even on a fast
-// scroll (rAF-throttled add, debounced remove).
+// Fix (Aug 2026 visual-refinement pass) — this IIFE used to toggle
+// .is-scrolling on #clientsMarquee to shrink animation-duration on
+// scroll. Changing animation-duration on an already-running infinite
+// CSS animation forces the browser to re-time its current progress
+// against the new duration, which is what caused the marquee to visibly
+// speed up and jump at the loop point. The marquee's motion is (and
+// always was) pure CSS `animation` on .marquee-track — see the
+// .marquee-track / @keyframes marquee-slide rules in style.css — running
+// on its own at one constant duration, so this listener has nothing left
+// to do and has been removed rather than left toggling a now-unused class.
 // ============================================================
-(function(){
-  var marquee = document.getElementById('clientsMarquee');
-  if (!marquee) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  var scrollTimer = null;
-  var ticking = false;
-  function onScroll(){
-    if (!ticking){
-      ticking = true;
-      requestAnimationFrame(function(){
-        marquee.classList.add('is-scrolling');
-        ticking = false;
-      });
-    }
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(function(){ marquee.classList.remove('is-scrolling'); }, 260);
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-})();
