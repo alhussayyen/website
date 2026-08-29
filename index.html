@@ -1026,17 +1026,20 @@
   </div>
 
   <!-- Phase 4 — trimmed to exactly two real photos (was a 5-tile
-       placeholder mosaic). Both are existing project files, real unposed
-       moments from SIIRAH's own event coverage — nothing sourced online,
-       nothing invented. See the matching CSS comment in style.css for the
-       full rationale on the asymmetric two-up layout and the QR
-       placeholder below. -->
+       placeholder mosaic). Aug 2026 visual-refinement pass: swapped in
+       two client-supplied behind-the-scenes photos
+       (assets/images/behind-photo-01.jpg / behind-photo-02.jpg) in place
+       of the earlier work-* placeholders — files untouched (no crop/
+       filter/color edit), only object-fit:cover within each frame's
+       fixed box per the existing layout. See the matching CSS comment
+       in style.css for the full rationale on the asymmetric two-up
+       layout and the QR placeholder below. -->
   <div class="wrap behind-gallery" id="behindGallery">
     <div class="behind-item behind-item--a" data-anim="rise">
-      <img src="assets/images/work-19-business-meeting.jpg" alt="لقطة حقيقية من تغطية سيرة لإحدى الفعاليات" data-en-alt="A real moment from one of SIIRAH's event coverages" loading="lazy">
+      <img src="assets/images/behind-photo-01.jpg" alt="لقطة من كواليس جلسة تصوير رياضية لسيرة" data-en-alt="Behind the scenes from a SIIRAH sports photo shoot" loading="lazy">
     </div>
     <div class="behind-item behind-item--b" data-anim="rise">
-      <img src="assets/images/work-05-graduation-ceremony.jpg" alt="لقطة من كواليس تغطية سيرة لحفل تخرج" data-en-alt="Behind the scenes from a SIIRAH ceremony coverage" loading="lazy">
+      <img src="assets/images/behind-photo-02.jpg" alt="لقطة من كواليس جلسة تصوير لسيرة" data-en-alt="Behind the scenes from a SIIRAH photo shoot" loading="lazy">
     </div>
   </div>
 
@@ -1079,21 +1082,26 @@
        Every logo below is one of the project's real client PNGs
        (assets/images/client-01..10-*.png) — nothing sourced online,
        nothing invented. Each row's .marquee-track holds the same 10
-       logos twice back to back (a real, screen-reader-visible
-       .marquee-set plus an aria-hidden duplicate .marquee-set) — a plain
-       CSS animation slides the whole track exactly one set-width to the
+       logos four times back to back (Aug 2026: raised from 2 copies to 4
+       — a real, screen-reader-visible .marquee-set plus 3 aria-hidden
+       duplicates — so the track has enough length to never run out of
+       logos on very wide monitors) — a plain CSS animation slides the
+       whole track exactly one set-width (25% of the 4-set track) to the
        left (row 1) or plays that same animation in reverse, i.e. to the
-       right (row 2), so the instant it "resets" the duplicate set is
-       already sitting in the exact spot the first one started in and the
-       loop reads as continuous, never a jump cut. Every <img> keeps its
+       right (row 2), so the instant it "resets" the next identical set is
+       already sitting in the exact spot the previous one started in and
+       the loop reads as continuous, never a jump cut and never a gap. Every <img> keeps its
        original file and aspect ratio: each .marquee-logo is a fixed-size
        box and the image inside uses object-fit:contain, so nothing is
        ever stretched or cropped — the fixed box is what visually
        balances square vs. wide source logos, not the images themselves.
        prefers-reduced-motion freezes both tracks and hides the duplicate
-       set (see css/style.css); js/script.js only ever adds/removes one
-       "is-scrolling" class to nudge the speed up slightly while the page
-       is being scrolled — it never drives the motion itself. -->
+       set (see css/style.css). Logos render at full natural color at all
+       times (Aug 2026 fix — no grayscale-by-default/color-on-hover filter
+       any more), and each row's animation-duration is constant (never
+       changed at runtime, which used to cause a visible speed/jump glitch
+       at the loop point) — js/script.js doesn't touch this marquee at
+       all any more; the motion is plain CSS `animation`, nothing else. -->
   <div class="clients-marquee" id="clientsMarquee" data-anim="fade">
     <div class="marquee-row marquee-row-1">
       <div class="marquee-track" id="marqueeTrack1">
@@ -1108,6 +1116,30 @@
           <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="دوري روشن السعودي" data-en-alt="Roshn Saudi League"></div>
           <div class="marquee-logo"><img src="assets/images/client-09-fares-academy.png" alt="Fares Academy"></div>
           <div class="marquee-logo"><img src="assets/images/client-10-table-tennis-federation.png" alt="الاتحاد السعودي لكرة الطاولة" data-en-alt="Saudi Table Tennis Federation"></div>
+        </div>
+        <div class="marquee-set" aria-hidden="true">
+          <div class="marquee-logo"><img src="assets/images/client-01-al-faisaly.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-02-saudi-football-federation.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-03-florde.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-06-weco.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-09-fares-academy.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-10-table-tennis-federation.png" alt="" aria-hidden="true"></div>
+        </div>
+        <div class="marquee-set" aria-hidden="true">
+          <div class="marquee-logo"><img src="assets/images/client-01-al-faisaly.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-02-saudi-football-federation.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-03-florde.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-06-weco.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-09-fares-academy.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-10-table-tennis-federation.png" alt="" aria-hidden="true"></div>
         </div>
         <div class="marquee-set" aria-hidden="true">
           <div class="marquee-logo"><img src="assets/images/client-01-al-faisaly.png" alt="" aria-hidden="true"></div>
@@ -1137,6 +1169,30 @@
           <div class="marquee-logo"><img src="assets/images/client-03-florde.png" alt="فلورد" data-en-alt="Florde"></div>
           <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="دوري روشن السعودي" data-en-alt="Roshn Saudi League"></div>
           <div class="marquee-logo"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="الراجحي، السديس والسحيباني للاستشارات القانونية" data-en-alt="Alrajhi, Alsudais &amp; Alsuhaibani Legal Consultants"></div>
+        </div>
+        <div class="marquee-set" aria-hidden="true">
+          <div class="marquee-logo"><img src="assets/images/client-06-weco.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-09-fares-academy.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-02-saudi-football-federation.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-10-table-tennis-federation.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-01-al-faisaly.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-03-florde.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="" aria-hidden="true"></div>
+        </div>
+        <div class="marquee-set" aria-hidden="true">
+          <div class="marquee-logo"><img src="assets/images/client-06-weco.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-09-fares-academy.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-02-saudi-football-federation.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-10-table-tennis-federation.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-04-saleh-alghalib-law.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-01-al-faisaly.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-07-autha-coffee-roasters.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-03-florde.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-08-roshn-league.png" alt="" aria-hidden="true"></div>
+          <div class="marquee-logo"><img src="assets/images/client-05-alrajhi-alsudais-alsuhaibani.png" alt="" aria-hidden="true"></div>
         </div>
         <div class="marquee-set" aria-hidden="true">
           <div class="marquee-logo"><img src="assets/images/client-06-weco.png" alt="" aria-hidden="true"></div>

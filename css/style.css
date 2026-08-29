@@ -145,10 +145,19 @@
   #cursor-ring.on-dark{ border-color:var(--white); }
 
   /* ---------- nav ---------- */
+  /* Aug 2026 visual-refinement pass: header enlarged slightly (padding
+     1.4rem -> 1.5rem, logo 34px -> 38px below) so the bar and the SIIRAH
+     logo read with a bit more presence, per client request. Nav links,
+     language switch, social icons and the mobile hamburger are all
+     untouched in size — only the bar's own padding and the logo grew.
+     Every fixed offset that assumes the old header height (sticky
+     section titles, mobile anchor-scroll clearance) is bumped by the
+     same delta right where each is defined below, so nothing drifts out
+     of sync with the new, slightly taller bar. */
   header.site-nav{
     position:fixed; top:0; right:0; left:0; z-index:100;
     display:flex; align-items:center; justify-content:space-between;
-    padding:1.4rem clamp(1.25rem, 5vw, 5rem);
+    padding:1.5rem clamp(1.25rem, 5vw, 5rem);
     background:linear-gradient(rgba(5,5,5,.44), rgba(5,5,5,.3));
     -webkit-backdrop-filter:var(--glass-blur);
     backdrop-filter:var(--glass-blur);
@@ -722,27 +731,67 @@
     animation:marquee-slide 42s linear infinite;
   }
   .marquee-row-2 .marquee-track{ animation-direction:reverse; animation-duration:48s; }
-  .clients-marquee.is-scrolling .marquee-row-1 .marquee-track{ animation-duration:16s; }
-  .clients-marquee.is-scrolling .marquee-row-2 .marquee-track{ animation-duration:19s; }
+  /* Fix (Aug 2026 visual-refinement pass): this used to shrink
+     animation-duration to 16s/19s on scroll (via a .is-scrolling class —
+     see js/script.js, now removed). Changing animation-duration on an
+     already-running infinite CSS animation makes the browser re-time the
+     current progress against the new duration, which is exactly what
+     produced the reported "speeds up, then jumps at the repeat point"
+     glitch. The marquee itself was always seamless (identical
+     .marquee-set copies per track, translateX = exactly one set width —
+     a real infinite loop, nothing to fix there; copy count/percentage
+     since raised from 2/-50% to 4/-25%, see the keyframe comment below);
+     removing the
+     duration change makes the one already-constant, already-smooth speed
+     the only speed, so there's nothing left to jump. */
   .marquee-set{ display:flex; align-items:center; flex:none; }
   .marquee-logo{
     flex:none; display:flex; align-items:center; justify-content:center;
     width:clamp(96px,11vw,148px); height:clamp(42px,6vw,60px);
     margin:0 clamp(1rem,3vw,2.25rem);
   }
+  /* Fix (Aug 2026 visual-refinement pass): logos used to render
+     grayscale/dimmed by default (filter:grayscale(1) opacity(.8)) and
+     only regain their real color on hover — exactly the "colors get
+     removed/changed near the mouse" behavior asked to go. Logos now show
+     their natural color at all times; no filter added in its place, and
+     no other hover/animation existed on this element to preserve (the
+     marquee's own scroll motion is untouched, see .marquee-track below). */
   .marquee-logo img{
     width:100%; height:100%; object-fit:contain;
-    filter:grayscale(1) opacity(.8);
-    transition:filter .4s ease, opacity .4s ease;
   }
 
+  /* Aug 2026 visual-refinement pass: 2 copies per track (1 real +
+     1 aria-hidden duplicate) only ever covered ~2 set-widths, so on very
+     wide desktop monitors the track could run out of copies before the
+     next loop, showing a blank gap for an instant — exactly what "لا
+     أريد فراغ بعد آخر شعار" asks to avoid. Now 4 identical copies per
+     track (1 real + 3 aria-hidden), so translateX(-25%) — one quarter of
+     the total 4-set track width — still equals exactly one set's width,
+     keeping the same seamless reset point, but with 2 full extra set-
+     widths of margin before a gap could ever show, comfortably covering
+     any realistic desktop viewport. */
   @keyframes marquee-slide{
     from{ transform:translateX(0); }
-    to{ transform:translateX(-50%); }
+    to{ transform:translateX(-25%); }
   }
 
-  @media (hover:hover) and (pointer:fine){
-    .marquee-logo:hover img{ filter:grayscale(0) opacity(1); }
+  @media (min-width:761px){
+    /* Aug 2026 visual-refinement pass: #clients used to read as a minor
+       strip (~2.5-3.5rem padding, body-size heading) rather than a real
+       section — enlarged here to match the presence of the site's other
+       major sections (Behind SIIRAH, Differentiators), per client
+       request ("القسم حاليًا ضيق جدًا"). Two-row marquee mechanics, the
+       seamless loop, and the logo images themselves are all untouched —
+       sizing/spacing only. Mobile (<=760px block below) is untouched. */
+    .clients{ padding:clamp(6rem, 11vw, 10rem) 0; }
+    .clients-head h2{ font-size:var(--fs-display); }
+    .clients-head p{ margin-top:1rem; font-size:1.15rem; }
+    .clients-marquee{ margin-top:3.5rem; gap:1.5rem; }
+    .marquee-logo{
+      width:clamp(120px,13vw,180px); height:clamp(52px,7vw,72px);
+      margin:0 clamp(1.5rem,3.5vw,2.75rem);
+    }
   }
 
   @media (max-width:760px){
@@ -750,23 +799,24 @@
        clamp(...)} (above) overrides .sec-pad's own padding (same
        specificity, .clients declared later), so #clients only got a
        small top padding on phone widths — less than the fixed mobile
-       header's ~87.8px height. Reachable directly via the "العملاء" nav
+       header's ~91px height. Reachable directly via the "العملاء" nav
        link, so a click landed with "عملاؤنا" partly covered. padding-
        bottom is left exactly as authored; only padding-top is raised
        here, mobile-only, enough to clear the header with a small
        comfortable gap. */
-    .clients{ padding-top:calc(2.2rem + 43px + 1rem); }
+    .clients{ padding-top:calc(2.4rem + 43px + 1rem); }
     .clients-marquee{ margin-top:1.5rem; gap:.6rem; }
     .marquee-logo{ width:clamp(76px,22vw,108px); height:clamp(34px,9vw,46px); margin:0 clamp(.65rem,4vw,1.25rem); }
     .marquee-track{ animation-duration:34s; }
     .marquee-row-2 .marquee-track{ animation-duration:39s; }
+    /* .is-scrolling duration overrides removed here too — same reason as
+       the desktop rule above. */
   }
 
   @media (prefers-reduced-motion: reduce){
     .marquee-track{ animation:none !important; transform:none !important; }
     .marquee-set[aria-hidden="true"]{ display:none; }
     .marquee-row{ overflow-x:auto; -webkit-mask-image:none; mask-image:none; }
-    .marquee-logo img{ filter:grayscale(1) opacity(.9); }
   }
 
   /* ---------- 05.5 social proof: official channels showcase ---------- */
@@ -1042,13 +1092,14 @@
          around the 42px #navToggle button (the tallest thing in the bar
          at this breakpoint, shown <=1024px — comfortably covers every
          mobile width) plus its 1px bottom border, i.e. a constant
-         2*1.4rem + 42px + 1px tall, regardless of viewport width. Adding a
+         2*1.5rem + 42px + 1px tall, regardless of viewport width (Aug 2026
+         header-enlargement pass — was 2*1.4rem, i.e. 87.8px total, now 91px). Adding a
          comfortable extra gap on top of that guarantees the heading never
          touches the header and always renders fully on screen. Gap widened
          to ~40-60px (clamp(2.5rem,6vh,3.75rem), was clamp(1.25rem,4vh,2rem))
          per follow-up review — the smaller gap still occasionally read as
          too tight against the header on some phone heights. */
-      padding-top:calc(2.8rem + 43px + clamp(2.5rem, 6vh, 3.75rem));
+      padding-top:calc(3rem + 43px + clamp(2.5rem, 6vh, 3.75rem));
       /* justify-content:flex-start (not center) so the padding-top above is
          real reserved space at the very top of the pinned box, rather than
          being folded back into a vertical centering calculation — the card
@@ -1253,11 +1304,29 @@
     .behind-qr-frame{ width:104px; height:104px; align-self:flex-start; }
   }
 
-  .diff-head{ text-align:center; }
+  /* ---- Visual refinement pass (Aug 2026) — desktop-only enlargement of
+     #behind-siirah so it reads as a major editorial/cinematic section
+     rather than a compact card, per client request. Mobile (<=800px,
+     block above) is untouched. Sizing/spacing only: no new markup, no
+     new images, existing scroll/hover behavior kept as-is. */
+  @media (min-width:801px){
+    .behind-section{ padding:clamp(8rem, 13vw, 13rem) 0; }
+    .behind-title{ font-size:var(--fs-display); }
+    .behind-subtitle{ margin-top:1.1rem; font-size:1.2rem; max-width:46ch; margin-inline:auto; }
+    .behind-gallery{
+      margin-top:3.75rem; grid-auto-rows:clamp(380px, 40vw, 620px); gap:1.75rem;
+    }
+    .behind-snap{ margin-top:clamp(3rem,6vw,4.5rem); }
+    .behind-snap-text{ font-size:clamp(1.35rem,2.2vw,1.75rem); }
+    .behind-qr-frame{ width:152px; height:152px; }
+  }
+
+  .diff-head{ text-align:center; transition:padding .4s var(--ease-soft); }
   .diff-title{
     margin-top:1rem; max-width:20ch; margin-inline:auto;
     font-family:var(--font-primary); font-weight:800; font-size:var(--fs-display);
     line-height:1.05; letter-spacing:var(--ls-display); text-wrap:balance;
+    transition:font-size .4s var(--ease-soft);
   }
   .diff-mark{ display:block; width:56px; height:2px; margin:1.75rem auto 0; background:var(--accent); }
 
@@ -1284,6 +1353,32 @@
   .diff-panel-desc{ color:var(--ink-soft); font-weight:300; font-size:1.02rem; line-height:1.85; }
 
   @media (min-width:761px){
+    /* Fix (Aug 2026 visual-refinement pass): "وش اللي يميز سيرة؟" used to
+       scroll straight off the top of the viewport while .diff-stage was
+       pinned/scrubbing through the four points below it — the head is a
+       normal-flow sibling BEFORE .diff-track, so as the user kept
+       scrolling through .diff-track's tall (280vh) pinned range, ordinary
+       document scroll just carried the head away. Root cause is
+       positioning, not stacking, so the real fix is positioning: making
+       the head itself position:sticky gives it the same "hold in the
+       viewport while its tall sibling scrolls underneath" behavior as
+       .diff-stage, using .diff-section (their shared parent) as the
+       sticky containing block — no JS scroll logic needed, this is
+       native sticky behavior. top offset clears the fixed header
+       (~86px tall, Aug 2026 header-enlargement pass). z-index + an opaque bg are a safety net only (per
+       spec: don't rely on z-index alone) — the sticky offset below is
+       what actually keeps it from ever reaching .diff-stage's own
+       sticky box, so in practice the two never overlap. While pinned,
+       :has() condenses the head to a compact single-line label so it
+       reads as a running section label during the scrub rather than a
+       hero-sized title parked mid-page; it expands back to full size the
+       moment .is-pinned is removed (see the transition on .diff-title
+       and .diff-head below). */
+    .diff-head{ position:sticky; top:92px; z-index:5; background:var(--bg); }
+    .diff-section:has(.diff-track.is-pinned) .diff-head{ padding-block:.6rem; }
+    .diff-section:has(.diff-track.is-pinned) .diff-title{ font-size:clamp(1.3rem,2vw,1.6rem); }
+    .diff-section:has(.diff-track.is-pinned) .diff-mark{ display:none; }
+
     .diff-track.is-pinned{ height:280vh; }
     .diff-track.is-pinned .diff-triggers{ position:absolute; inset:0; display:flex; flex-direction:column; pointer-events:none; }
     .diff-track.is-pinned .diff-trigger{ flex:1 0 0; }
@@ -1328,11 +1423,12 @@
     .diff-panel-desc{ font-size:.94rem; }
   }
 
-  .process-head{ text-align:center; }
+  .process-head{ text-align:center; transition:padding .4s var(--ease-soft); }
   .process-title{
     margin-top:1rem; max-width:22ch; margin-inline:auto;
     font-family:var(--font-primary); font-weight:700; font-size:var(--fs-h1);
     line-height:var(--lh-heading); letter-spacing:var(--ls-heading); text-wrap:balance;
+    transition:font-size .4s var(--ease-soft);
   }
   .process-subtitle{ margin-top:1rem; color:var(--ink-soft); font-weight:300; font-size:1.05rem; letter-spacing:.02em; }
   .process-mark{ display:block; width:56px; height:2px; margin:1.75rem auto 0; background:var(--accent); }
@@ -1372,6 +1468,17 @@
   .process-progress-dots i.is-done{ background:var(--ink-faint); }
 
   @media (min-width:761px){
+    /* Fix (Aug 2026 visual-refinement pass): same root cause and same
+       fix as .diff-head above — see that comment for the full
+       explanation. "من الطلب إلى النسخة النهائية." was scrolling off the
+       top of the viewport while .process-stage pinned/scrubbed through
+       the six steps below it. */
+    .process-head{ position:sticky; top:92px; z-index:5; background:var(--bg); }
+    .process-section:has(.process-track.is-pinned) .process-head{ padding-block:.6rem; }
+    .process-section:has(.process-track.is-pinned) .process-title{ font-size:clamp(1.3rem,2vw,1.6rem); }
+    .process-section:has(.process-track.is-pinned) .process-subtitle,
+    .process-section:has(.process-track.is-pinned) .process-mark{ display:none; }
+
     .process-track.is-pinned{ height:420vh; }
     .process-track.is-pinned .process-triggers{ position:absolute; inset:0; display:flex; flex-direction:column; pointer-events:none; }
     .process-track.is-pinned .process-trigger{ flex:1 0 0; }
@@ -1798,7 +1905,7 @@
 
   /* ---- logo image ---- */
   .logo-img{ transition:filter .4s ease; }
-  .nav-logo{ height:34px; width:auto; filter:brightness(0) invert(1); }
+  .nav-logo{ height:38px; width:auto; filter:brightness(0) invert(1); }
   .nav-logo.inverted{ filter:brightness(0) invert(1); }
   header.site-nav nav{ color:#fff; }
 
@@ -1882,13 +1989,13 @@
   #profile{ padding-bottom:clamp(3rem, 6vw, 5rem); }
   #team{ padding-top:clamp(3rem, 6vw, 5rem); }
   /* Audit fix, mobile only: #team's own padding-top above (~48px on phone
-     widths) is less than the fixed mobile header's ~87.8px height — same
+     widths) is less than the fixed mobile header's ~91px height — same
      underlying issue as #clients further up this file. #team isn't a nav
      link, but it's still a real anchor id (direct URL / back-forward), so
      "من خلف سيرة؟!" could otherwise land partly covered. padding-bottom
      elsewhere on this section is untouched. */
   @media (max-width:760px){
-    #team{ padding-top:calc(2.8rem + 43px + 1rem); }
+    #team{ padding-top:calc(3rem + 43px + 1rem); }
   }
   .profile p{ max-width:52ch; margin:0 auto; color:var(--ink-soft); font-weight:300; font-size:1.08rem; line-height:1.95; }
   .profile-btn{
@@ -2206,6 +2313,19 @@
   }
   .req{ color:var(--accent); margin-inline-start:.15rem; }
 
+  /* Fix (Aug 2026 visual-refinement pass): fields used to be transparent
+     with only a faint bottom border, so on the contact section's near-black
+     background they read as bare text rather than fillable boxes. First
+     attempt reused the site's existing low-opacity "glass" fill
+     (--glass-bg, 6% white) — same family already used for play buttons/
+     showcase rings — but at 6% over #050505 it was still too close to
+     black to read clearly as a box at a glance, so the fields now use a
+     dedicated, slightly stronger neutral white overlay (10% default, 16%
+     hover/focus) plus a fuller border and radius: still calm/neutral and
+     unmistakably "glass", just opaque enough to be legible as an input
+     immediately. Labels, placeholder copy, tab order, field order and
+     form submission logic are all untouched below — only the box's own
+     paint changed. */
   .site-form input[type="text"],
   .site-form input[type="email"],
   .site-form input[type="tel"],
@@ -2215,25 +2335,25 @@
   .site-form select,
   .site-form textarea{
     width:100%; display:block; appearance:none; -webkit-appearance:none;
-    background:transparent; color:#fff;
-    border:none; border-bottom:1px solid rgba(255,255,255,.2);
-    border-radius:0;
-    padding:.8rem .1rem;
+    background:rgba(255,255,255,.1); color:#fff;
+    border:1px solid rgba(255,255,255,.24);
+    border-radius:var(--radius-sm);
+    padding:.85rem 1rem;
     font-family:var(--font-primary); font-size:1rem; font-weight:300;
     line-height:1.5;
-    transition:border-color .35s var(--ease-soft), box-shadow .35s var(--ease-soft);
+    transition:background .35s var(--ease-soft), border-color .35s var(--ease-soft), box-shadow .35s var(--ease-soft);
   }
   .site-form textarea{ resize:vertical; min-height:6.5rem; line-height:1.8; }
   .site-form input::placeholder,
-  .site-form textarea::placeholder{ color:rgba(255,255,255,.32); font-weight:300; }
+  .site-form textarea::placeholder{ color:rgba(255,255,255,.4); font-weight:300; }
   .site-form input:hover,
   .site-form select:hover,
-  .site-form textarea:hover{ border-bottom-color:rgba(255,255,255,.4); }
+  .site-form textarea:hover{ background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.4); }
   .site-form input:focus,
   .site-form select:focus,
   .site-form textarea:focus{
-    outline:none; border-bottom-color:var(--accent);
-    box-shadow:0 1px 0 0 var(--accent);
+    outline:none; background:rgba(255,255,255,.16); border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
   }
   .site-form input:focus-visible,
   .site-form select:focus-visible,
@@ -2245,13 +2365,13 @@
      closed-state control should still read as part of this dark, minimal
      system rather than a default browser widget) */
   .site-form select{
-    padding-inline-end:1.6rem;
+    padding-inline-end:2.4rem;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23B08D57' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 7.5 5 5 5-5'/%3E%3C/svg%3E");
     background-repeat:no-repeat;
-    background-position:left .1rem center;
+    background-position:left .9rem center;
     background-size:14px;
   }
-  [dir="ltr"] .site-form select{ background-position:right .1rem center; }
+  [dir="ltr"] .site-form select{ background-position:right .9rem center; }
   .site-form select option{ color:#111; }
 
   /* error state: never color-only — the visible .field-error text is the
@@ -2262,8 +2382,8 @@
   }
   .form-field.has-error input,
   .form-field.has-error select,
-  .form-field.has-error textarea{ border-bottom-color:#E8A398; }
-  .site-form [aria-invalid="true"]{ border-bottom-color:#E8A398; }
+  .form-field.has-error textarea{ border-color:#E8A398; }
+  .site-form [aria-invalid="true"]{ border-color:#E8A398; }
 
   /* ---- file dropzone (Careers CV) ---- */
   .dropzone{
