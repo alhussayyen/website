@@ -309,8 +309,18 @@
       if (h2.closest('.hero') || h2.querySelector('.reveal-line') || h2.dataset.anim === 'none') return;
       const words = h2.textContent.trim().split(/\s+/).filter(Boolean);
       if (!words.length) return;
+      // Fix (Aug 2026 visual-refinement pass): the outer word-mask span below
+      // needs real vertical breathing room, not just the heading's own tight
+      // line-height (1.05-1.2 depending on section) inherited by default —
+      // Arabic glyphs/diacritics on large headings were being permanently
+      // clipped at the bottom by this span's own overflow:hidden (this was
+      // NOT limited to the reveal animation: the clip is on the wrapper's
+      // static box, so it persisted forever after the reveal settled too).
+      // line-height:1.3 gives every wrapped word enough box height to avoid
+      // clipping while still reading as tight/editorial; text content is
+      // unchanged, only this per-word mask box got taller.
       h2.innerHTML = words.map(w =>
-        '<span style="display:inline-block;overflow:hidden;vertical-align:top">' +
+        '<span style="display:inline-block;overflow:hidden;vertical-align:top;line-height:1.3">' +
           '<span style="display:inline-block;will-change:transform">' + w + '</span>' +
         '</span>'
       ).join(' ');
