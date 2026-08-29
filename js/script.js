@@ -1488,18 +1488,23 @@ var SIIRAHForms = (function(){
       renderedAt: document.getElementById('carRenderedAt').value,
       firstName: firstName, lastName: lastName,
       email: email, phone: phone, message: message,
-      cv: []
+      // The live Apps Script's saveAttachments() only reads
+      // `attachedFiles` (array of {name, mimeType, data:<base64>}) —
+      // verified straight from its deployed source. It never looked at
+      // a `cv` field, which is why a CV was accepted by the form but
+      // never actually saved to Drive.
+      attachedFiles: []
     };
 
     F.setSubmitting(submitBtn, true);
     var selectedFiles = dropzone.getFiles();
     Promise.all(selectedFiles.map(function(file){
       return F.fileToBase64(file).then(function(base64){
-        return { name: file.name, mimeType: file.type, base64: base64 };
+        return { name: file.name, mimeType: file.type, data: base64 };
       });
     }))
       .then(function(encoded){
-        payload.cv = encoded;
+        payload.attachedFiles = encoded;
         return F.submitToEndpoint(payload);
       })
       .then(function(){
