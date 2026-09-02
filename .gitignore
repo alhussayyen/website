@@ -10,3 +10,10 @@ Thumbs.db
 # Local env files (none used by this static site, kept as a safety net)
 .env
 .env.*
+
+# Node / Playwright
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/

@@ -7,12 +7,12 @@
 // `siirah:langchange` event dispatched by js/i18n.js), and submission to
 // a Google Apps Script Web App that writes to Google Sheets + Drive.
 //
-// IMPORTANT — before these forms can actually submit anything:
-// paste your deployed Apps Script Web App URL into SIIRAH_FORMS_CONFIG
-// below. Until then, submissions safely show the "couldn't submit" error
-// state (nothing pretends to succeed, nothing is lost — see section 23 of
-// the Phase 9 brief). See google-apps-script/Code.gs for the backend and
-// its deployment steps.
+// The deployed Apps Script Web App URL lives in js/config.js
+// (window.SIIRAH_FORMS_ENDPOINT) and is read below. Until that's set,
+// submissions safely show the "couldn't submit" error state (nothing
+// pretends to succeed, nothing is lost — see section 23 of the Phase 9
+// brief). See google-apps-script/Code.gs for the backend and its
+// deployment steps.
 //
 // No credentials/secrets live in this file — the Apps Script Web App URL
 // is a public invocation endpoint, not a secret; the actual Sheet/Drive
@@ -20,7 +20,7 @@
 // account.
 // ============================================================
 window.SIIRAH_FORMS_CONFIG = {
-  endpoint: "" // TODO: paste the deployed Apps Script Web App URL here
+  endpoint: (window.SIIRAH_FORMS_ENDPOINT || "")
 };
 
 (function () {

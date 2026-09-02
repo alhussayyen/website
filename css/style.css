@@ -221,6 +221,19 @@
     }
     .header-socials-desktop{ display:flex; }
     .header-socials-mobile{ display:none; }
+
+    /* Sep 2026 visual-refinement pass: a further, desktop-only bump on
+       top of the Aug 2026 pass above (padding 1.5rem -> 1.65rem, logo
+       38px -> 42px) so the bar reads with a bit more presence on real
+       desktop screens specifically, per client request that desktop and
+       mobile each get their own appropriate size independently. Mobile
+       (<1025px) keeps the Aug 2026 sizing untouched — nav links, language
+       switch, social icons and the hamburger are unaffected everywhere.
+       The height delta here (~9px) is well inside the safety margin
+       already built into the sticky-head offsets in the process/diff
+       pinned-scroll sections, so nothing else needed to move. */
+    header.site-nav{ padding-block:1.65rem; }
+    .nav-logo{ height:42px; }
   }
 
   /* ---------- mobile nav toggle (hamburger) ----------
@@ -1239,23 +1252,16 @@
      whose title/description/mark cross-fade as the active point changes.
      If JS never runs, or reduced motion is on, the section simply stays in
      the plain static list — never a broken/half-pinned state. */
-  /* ---- 04.5 behind-siirah / "خلف سيرة" (Phase 4) ----
-     Trimmed from the original 5-tile placeholder mosaic down to exactly
-     two real photos, in a compact asymmetric editorial split (one wider
-     "lead" frame + one narrower companion, same row height) — see the
-     #behind-siirah markup in index.html. Both are existing project
-     photos (assets/images/work-19-business-meeting.jpg,
-     work-05-graduation-ceremony.jpg): real, unposed moments from
-     SIIRAH's own event coverage, not studio portraits, and nothing
-     sourced online. object-fit:cover only ever crops within each
-     frame's fixed box — the source files and their aspect ratio are
-     untouched, so nothing is stretched or distorted. The Snapchat QR is
-     still the "coming soon" placeholder frame below: a real QR image
-     has not been supplied yet, so per the no-fabricated-assets rule
-     this stays an honest placeholder rather than an invented code — the
-     frame is already a fixed 1:1 box sized correctly for one. The
-     Snapchat link/icon is the real one already used elsewhere on the
-     site (header, contact), copied verbatim, not guessed. */
+  /* ---- 04.5 behind-siirah / "خلف سيرة" ----
+     Two real behind-the-scenes photos + a caption/Snapchat-logo block
+     share one row (.behind-composition): the photos in their asymmetric
+     two-up grid, the caption after them in DOM order which — in this
+     RTL layout — lands it on the left, per client spec ("نفس الصف
+     وعلى اليسار"). Photo files are untouched (object-fit:cover only
+     crops within each frame's fixed box). QR code removed entirely
+     (Sep 2026 pass), no replacement. The Snapchat mark below the
+     caption is the exact same SVG path used elsewhere on the site
+     (header, contact) — copied verbatim, not a new logo. */
   .behind-head{ text-align:center; }
   .behind-title{
     margin-top:1rem; font-family:var(--font-primary); font-weight:800;
@@ -1264,44 +1270,47 @@
   .behind-subtitle{ margin-top:.85rem; color:var(--ink-soft); font-weight:300; font-size:1.05rem; }
   .behind-mark{ display:block; width:56px; height:2px; margin:1.5rem auto 0; background:var(--accent); }
 
+  .behind-composition{ margin-top:2.75rem; display:flex; align-items:stretch; gap:1.5rem; }
+
   .behind-gallery{
-    margin-top:2.75rem; display:grid; grid-template-columns:3fr 2fr;
+    flex:1 1 auto; min-width:0; display:grid; grid-template-columns:3fr 2fr;
     grid-template-areas:"a b"; grid-auto-rows:clamp(260px,30vw,440px); gap:1.25rem;
   }
   .behind-item--a{ grid-area:a; } .behind-item--b{ grid-area:b; }
   .behind-item{ position:relative; border-radius:var(--radius-lg); overflow:hidden; background:#141412; }
-  .behind-item img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  /* img is drawn 1px past each edge (instead of a flush inset:0) so no
+     sub-pixel rounding gap between the grid track's fractional height and
+     the image box can ever show the dark .behind-item background through
+     as a hairline — this was the cause of the black line under the photo.
+     The image file itself is never touched. */
+  .behind-item img{ position:absolute; inset:-1px; width:calc(100% + 2px); height:calc(100% + 2px); object-fit:cover; }
 
-  .behind-snap{
-    margin-top:clamp(2.5rem,5vw,3.5rem); display:flex; align-items:center; justify-content:space-between;
-    gap:2.5rem; flex-wrap:wrap; padding-top:clamp(2rem,4vw,2.75rem); border-top:1px solid var(--line);
+  .behind-caption{
+    flex:0 0 auto; width:clamp(180px,27%,260px);
+    display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+    gap:1.4rem;
   }
-  .behind-snap-text-wrap{ display:flex; flex-direction:column; align-items:flex-start; gap:1.4rem; flex:1 1 320px; }
-  .behind-snap-text{ font-family:var(--font-primary); font-weight:700; font-size:clamp(1.2rem,2vw,1.6rem); max-width:28ch; }
-  .behind-snap-btn{
-    display:inline-flex; align-items:center; gap:.7rem;
-    padding:.95rem 1.9rem; border:1.5px solid var(--ink); border-radius:var(--radius-pill);
-    font-family:var(--font-primary); font-weight:700; font-size:.9rem;
-    transition:background .4s var(--ease-soft), color .4s var(--ease-soft), border-color .4s var(--ease-soft);
+  .behind-snap-text{
+    font-family:var(--font-primary); font-weight:700; font-size:clamp(1.15rem,1.8vw,1.5rem);
+    line-height:1.5; text-wrap:balance;
   }
-  .behind-snap-btn svg{ width:18px; height:18px; }
-  .behind-snap-btn:hover{ background:var(--ink); color:var(--white); border-color:var(--ink); }
-
-  .behind-qr-frame{
-    position:relative; width:128px; height:128px; flex:none; padding:10px;
-    display:flex; align-items:center; justify-content:center;
-    background:#fff; border-radius:var(--radius-sm); box-shadow:var(--shadow-xs);
+  .behind-snap-logo{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:52px; height:52px; flex:none; border-radius:50%; border:1.5px solid var(--line);
+    color:var(--ink); transform:scale(1);
+    transition:transform var(--dur-hover) var(--ease-scale), border-color .4s var(--ease-soft), color .4s var(--ease-soft);
   }
-  .behind-qr-frame img{ width:100%; height:100%; object-fit:contain; }
+  .behind-snap-logo svg{ width:24px; height:24px; stroke:currentColor; display:block; }
+  .behind-snap-logo:hover{ transform:scale(1.08); border-color:var(--accent); color:var(--accent); }
 
   @media (max-width:800px){
+    .behind-composition{ flex-direction:column; gap:1.75rem; }
     .behind-gallery{
       grid-template-columns:1fr; grid-template-areas:"a" "b";
       grid-auto-rows:auto; gap:1rem;
     }
     .behind-item{ aspect-ratio:4/3; }
-    .behind-snap{ flex-direction:column; align-items:flex-start; }
-    .behind-qr-frame{ width:104px; height:104px; align-self:flex-start; }
+    .behind-caption{ width:auto; align-items:flex-start; justify-content:flex-start; gap:1.25rem; }
   }
 
   /* ---- Visual refinement pass (Aug 2026) — desktop-only enlargement of
@@ -1313,15 +1322,22 @@
     .behind-section{ padding:clamp(8rem, 13vw, 13rem) 0; }
     .behind-title{ font-size:var(--fs-display); }
     .behind-subtitle{ margin-top:1.1rem; font-size:1.2rem; max-width:46ch; margin-inline:auto; }
+    .behind-composition{ margin-top:3.75rem; gap:2.5rem; }
     .behind-gallery{
-      margin-top:3.75rem; grid-auto-rows:clamp(380px, 40vw, 620px); gap:1.75rem;
+      grid-auto-rows:clamp(380px, 40vw, 620px); gap:1.75rem;
     }
-    .behind-snap{ margin-top:clamp(3rem,6vw,4.5rem); }
-    .behind-snap-text{ font-size:clamp(1.35rem,2.2vw,1.75rem); }
-    .behind-qr-frame{ width:152px; height:152px; }
+    .behind-caption{ width:clamp(220px,24%,300px); gap:1.75rem; }
+    .behind-snap-text{ font-size:clamp(1.3rem,1.9vw,1.65rem); }
+    .behind-snap-logo{ width:60px; height:60px; }
+    .behind-snap-logo svg{ width:26px; height:26px; }
   }
 
-  .diff-head{ text-align:center; transition:padding .4s var(--ease-soft); }
+  /* .diff-head lives inside .diff-stage-inner now (see index.html) —
+     margin-bottom (not .diff-track's old margin-top) is what separates
+     it from the content below, in both the plain mobile list and the
+     desktop-pinned view (which sets its own tighter margin-bottom,
+     see the >=761px block below). */
+  .diff-head{ text-align:center; margin-bottom:clamp(2.5rem,5vw,4rem); }
   .diff-title{
     margin-top:1rem; max-width:20ch; margin-inline:auto;
     font-family:var(--font-primary); font-weight:800; font-size:var(--fs-display);
@@ -1330,7 +1346,7 @@
   }
   .diff-mark{ display:block; width:56px; height:2px; margin:1.75rem auto 0; background:var(--accent); }
 
-  .diff-track{ position:relative; margin-top:4rem; }
+  .diff-track{ position:relative; }
   .diff-triggers{ display:none; }
   .diff-index{ display:none; } /* only shown once pinned (desktop) */
   .diff-progress{ display:none; } /* only shown once pinned (desktop) */
@@ -1353,39 +1369,36 @@
   .diff-panel-desc{ color:var(--ink-soft); font-weight:300; font-size:1.02rem; line-height:1.85; }
 
   @media (min-width:761px){
-    /* Fix (Aug 2026 visual-refinement pass): "وش اللي يميز سيرة؟" used to
-       scroll straight off the top of the viewport while .diff-stage was
-       pinned/scrubbing through the four points below it — the head is a
-       normal-flow sibling BEFORE .diff-track, so as the user kept
-       scrolling through .diff-track's tall (280vh) pinned range, ordinary
-       document scroll just carried the head away. Root cause is
-       positioning, not stacking, so the real fix is positioning: making
-       the head itself position:sticky gives it the same "hold in the
-       viewport while its tall sibling scrolls underneath" behavior as
-       .diff-stage, using .diff-section (their shared parent) as the
-       sticky containing block — no JS scroll logic needed, this is
-       native sticky behavior. top offset clears the fixed header
-       (~86px tall, Aug 2026 header-enlargement pass). z-index + an opaque bg are a safety net only (per
-       spec: don't rely on z-index alone) — the sticky offset below is
-       what actually keeps it from ever reaching .diff-stage's own
-       sticky box, so in practice the two never overlap. While pinned,
-       :has() condenses the head to a compact single-line label so it
-       reads as a running section label during the scrub rather than a
-       hero-sized title parked mid-page; it expands back to full size the
-       moment .is-pinned is removed (see the transition on .diff-title
-       and .diff-head below). */
-    .diff-head{ position:sticky; top:92px; z-index:5; background:var(--bg); }
-    .diff-section:has(.diff-track.is-pinned) .diff-head{ padding-block:.6rem; }
-    .diff-section:has(.diff-track.is-pinned) .diff-title{ font-size:clamp(1.3rem,2vw,1.6rem); }
-    .diff-section:has(.diff-track.is-pinned) .diff-mark{ display:none; }
-
+    /* Fix (Sep 2026 visual-refinement pass): "وش اللي يميز سيرة؟" used to
+       be a SEPARATELY sticky sibling before .diff-track (top:92px),
+       independent from .diff-stage's own sticky box (top:0, height:100vh)
+       inside .diff-track — once .diff-stage pinned, its full-viewport-tall
+       sticky box sat directly under the head's, so the only way to keep
+       them from visually colliding was to shrink the head down to a
+       compact single-line label and hide its accent mark — exactly the
+       "shrunk the text, hid the phrase" regression the client flagged.
+       The real fix is architectural, not cosmetic: .diff-head now lives
+       INSIDE .diff-stage-inner (see index.html), as the first, constant
+       item of a flex column, with the two-column index+panel reading
+       (now .diff-body, previously the direct content of .diff-stage-inner)
+       filling the remaining height below it. .diff-stage is the only
+       sticky element left, so there is nothing for the head to collide
+       with — the title is never resized and the mark is never hidden;
+       only .diff-body updates as the active point changes. */
     .diff-track.is-pinned{ height:280vh; }
     .diff-track.is-pinned .diff-triggers{ position:absolute; inset:0; display:flex; flex-direction:column; pointer-events:none; }
     .diff-track.is-pinned .diff-trigger{ flex:1 0 0; }
-    .diff-track.is-pinned .diff-stage{ position:sticky; top:0; height:100vh; height:100dvh; display:flex; align-items:center; overflow:hidden; }
+    .diff-track.is-pinned .diff-stage{ position:sticky; top:0; height:100vh; height:100dvh; display:flex; align-items:stretch; overflow:hidden; }
     .diff-track.is-pinned .diff-stage-inner{
-      display:grid; grid-template-columns:minmax(120px,180px) 1fr;
-      align-items:center; column-gap:clamp(3rem,6vw,5rem); width:100%;
+      display:flex; flex-direction:column; align-items:center; width:100%; height:100%;
+      padding-block:clamp(7rem,11vw,9rem) 2.5rem;
+    }
+    .diff-track.is-pinned .diff-head{ flex:none; margin-bottom:clamp(2rem,4vw,3rem); }
+
+    .diff-track.is-pinned .diff-body{
+      flex:1 1 auto; min-height:0; width:100%; display:grid;
+      grid-template-columns:minmax(120px,180px) 1fr;
+      align-items:center; column-gap:clamp(3rem,6vw,5rem);
     }
     .diff-track.is-pinned .diff-index{
       display:flex; flex-direction:column; gap:1.4rem;
@@ -1416,14 +1429,19 @@
   }
 
   @media (max-width:800px){
-    .diff-track{ margin-top:2.5rem; }
+    .diff-head{ margin-bottom:2.5rem; }
     .diff-panels{ gap:2.75rem; }
     .diff-panel{ max-width:none; padding:0 .5rem clamp(2.25rem,6vw,3rem); }
     .diff-panel-title{ font-size:1.2rem; }
     .diff-panel-desc{ font-size:.94rem; }
   }
 
-  .process-head{ text-align:center; transition:padding .4s var(--ease-soft); }
+  /* .process-head lives inside .process-stage-inner now (see index.html)
+     — margin-bottom (not .process-track's old margin-top) is what
+     separates it from the content below, in both the plain mobile list
+     and the desktop-pinned view (tighter margin-bottom, see the
+     >=761px block below). */
+  .process-head{ text-align:center; margin-bottom:clamp(2.5rem,5vw,4rem); }
   .process-title{
     margin-top:1rem; max-width:22ch; margin-inline:auto;
     font-family:var(--font-primary); font-weight:700; font-size:var(--fs-h1);
@@ -1433,7 +1451,7 @@
   .process-subtitle{ margin-top:1rem; color:var(--ink-soft); font-weight:300; font-size:1.05rem; letter-spacing:.02em; }
   .process-mark{ display:block; width:56px; height:2px; margin:1.75rem auto 0; background:var(--accent); }
 
-  .process-track{ position:relative; margin-top:4rem; }
+  .process-track{ position:relative; }
   .process-triggers{ display:none; }
   .process-progress{ display:none; } /* only meaningful once pinned (desktop) */
 
@@ -1468,27 +1486,31 @@
   .process-progress-dots i.is-done{ background:var(--ink-faint); }
 
   @media (min-width:761px){
-    /* Fix (Aug 2026 visual-refinement pass): same root cause and same
-       fix as .diff-head above — see that comment for the full
-       explanation. "من الطلب إلى النسخة النهائية." was scrolling off the
-       top of the viewport while .process-stage pinned/scrubbed through
-       the six steps below it. */
-    .process-head{ position:sticky; top:92px; z-index:5; background:var(--bg); }
-    .process-section:has(.process-track.is-pinned) .process-head{ padding-block:.6rem; }
-    .process-section:has(.process-track.is-pinned) .process-title{ font-size:clamp(1.3rem,2vw,1.6rem); }
-    .process-section:has(.process-track.is-pinned) .process-subtitle,
-    .process-section:has(.process-track.is-pinned) .process-mark{ display:none; }
-
+    /* Fix (Sep 2026 visual-refinement pass): see the matching comment on
+       #differentiators above — same root cause, same fix. .process-head
+       now lives inside .process-stage-inner (see index.html) as the
+       first, constant item of a flex column, instead of being a
+       separately-sticky sibling that got shrunk/hidden to avoid
+       overlapping .process-stage's own sticky box. .process-stage is the
+       only sticky element now; only .process-progress + .process-steps
+       below the head update as the active step changes. */
     .process-track.is-pinned{ height:420vh; }
     .process-track.is-pinned .process-triggers{ position:absolute; inset:0; display:flex; flex-direction:column; pointer-events:none; }
     .process-track.is-pinned .process-trigger{ flex:1 0 0; }
-    .process-track.is-pinned .process-stage{ position:sticky; top:0; height:100vh; height:100dvh; display:flex; align-items:center; overflow:hidden; }
-    .process-track.is-pinned .process-stage-inner{ position:relative; width:100%; }
-    .process-track.is-pinned .process-progress{
-      display:flex; flex-direction:column; align-items:center; gap:.6rem;
-      position:absolute; top:0; inset-inline:0; margin:0 auto;
+    .process-track.is-pinned .process-stage{ position:sticky; top:0; height:100vh; height:100dvh; display:flex; align-items:stretch; overflow:hidden; }
+    .process-track.is-pinned .process-stage-inner{
+      display:flex; flex-direction:column; align-items:center; width:100%; height:100%;
+      padding-block:clamp(7rem,11vw,9rem) 2.5rem;
     }
-    .process-track.is-pinned .process-steps{ position:relative; min-height:1px; display:block; }
+    .process-track.is-pinned .process-head{ flex:none; margin-bottom:clamp(1.75rem,3.5vw,2.75rem); }
+    .process-track.is-pinned .process-progress{
+      flex:none; display:flex; flex-direction:column; align-items:center; gap:.6rem;
+      position:static; margin:0 0 clamp(1.5rem,3vw,2.25rem);
+    }
+    .process-track.is-pinned .process-steps{
+      flex:1 1 auto; min-height:0; position:relative;
+      display:flex; align-items:center; justify-content:center; width:100%;
+    }
     .process-track.is-pinned .process-step{
       position:absolute; inset:0; margin:auto; height:max-content; max-width:34ch;
       opacity:0; transform:translateY(28px) scale(.96); pointer-events:none;
@@ -1499,7 +1521,7 @@
   }
 
   @media (max-width:800px){
-    .process-track{ margin-top:2.5rem; }
+    .process-head{ margin-bottom:2.5rem; }
     .process-steps{ gap:2.75rem; }
     .process-step{ max-width:none; padding:0 .5rem; }
     .process-step-name{ font-size:1.15rem; }
@@ -1543,29 +1565,16 @@
     /* ---- restack the pinned stage: "06 / 01" + dots between the
        section title and the arrow, never overlapping the (now larger)
        icon ----
-       The progress readout moves out of position:absolute;top:0 (which
-       sat on the same centered point as the step card, and only avoided
-       visibly colliding with it by luck of the previous, smaller sizing)
-       and into normal flex flow, in its own reserved band above the step
-       card. The arrow moves — via flex `order`, no markup/JS change — to
-       sit right below the progress readout and above the step's own
-       content (number/icon/name/description), matching the requested
-       title -> progress+dots -> arrow -> step-content order exactly,
-       with each piece in its own flex slot instead of stacked absolute
-       layers. */
-    .process-track.is-pinned .process-stage-inner{
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:clamp(2rem, 3.5vw, 3.25rem); width:100%;
-    }
-    .process-track.is-pinned .process-progress{
-      position:static; margin:0; gap:.85rem;
-    }
+       Layout (head fixed at top, progress+steps below it) now comes from
+       the base >=761px rules above; this block only enlarges sizing for
+       true desktop and keeps the arrow ordered above the step's own
+       content (number/icon/name/description) via flex `order`, no
+       markup/JS change. */
+    .process-track.is-pinned .process-progress{ gap:.85rem; }
     .process-track.is-pinned .process-progress-count{ font-size:1.05rem; }
     .process-track.is-pinned .process-progress-dots i{ width:7px; height:7px; }
 
-    .process-track.is-pinned .process-steps{
-      position:relative; width:100%; min-height:32rem;
-    }
+    .process-track.is-pinned .process-steps{ min-height:32rem; }
     .process-track.is-pinned .process-step-arrow{
       order:-1; margin-top:0; margin-bottom:.5rem;
     }

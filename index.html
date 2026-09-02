@@ -295,12 +295,6 @@
 
 <!-- 02.5 -->
 <section class="sec-pad process-section" id="process">
-  <div class="wrap process-head">
-    <h2 class="process-title" data-en="From the first request to the final delivery.">من الطلب إلى النسخة النهائية.</h2>
-    <p class="process-subtitle" data-en="Six steps. No shortcuts.">ست خطوات، بلا اختصارات.</p>
-    <span class="process-mark" aria-hidden="true"></span>
-  </div>
-
   <div class="process-track" id="processTrack">
     <div class="process-triggers" aria-hidden="true">
       <span class="process-trigger" data-trigger-step="1"></span>
@@ -313,6 +307,23 @@
 
     <div class="process-stage" id="processStage">
       <div class="wrap process-stage-inner">
+        <!-- Aug 2026 visual-refinement pass: title+subtitle moved from a
+             separately-sticky sibling (.process-head used to be
+             position:sticky on its own, which overlapped the pinned
+             .process-stage below it — the old "fix" shrank the title and
+             hid the subtitle to hide the overlap, per client feedback the
+             wrong way to solve it) to living INSIDE the already-sticky
+             .process-stage itself, as the first, unchanging item in the
+             stage's flex column (see .process-track.is-pinned
+             .process-stage-inner in style.css). Only .process-steps below
+             it changes per step; the head never moves, never shrinks, and
+             the subtitle is always shown, at desktop and mobile alike. -->
+        <div class="process-head">
+          <h2 class="process-title" data-en="From the first request to the final delivery.">من الطلب إلى النسخة النهائية.</h2>
+          <p class="process-subtitle" data-en="Six steps. No shortcuts.">ست خطوات، بلا اختصارات.</p>
+          <span class="process-mark" aria-hidden="true"></span>
+        </div>
+
         <div class="process-progress" id="processProgress" aria-hidden="true">
           <span class="process-progress-count" id="processProgressCount">01 / 06</span>
           <span class="process-progress-dots">
@@ -385,11 +396,6 @@
 
 <!-- 02.75 (moved after stats) -->
 <section class="sec-pad diff-section" id="differentiators">
-  <div class="wrap diff-head">
-    <h2 class="diff-title" data-en="What makes SIIRAH different?">وش اللي يميز سيرة؟</h2>
-    <span class="diff-mark" aria-hidden="true"></span>
-  </div>
-
   <div class="diff-track" id="diffTrack">
     <div class="diff-triggers" aria-hidden="true">
       <span class="diff-trigger" data-trigger-step="1"></span>
@@ -400,6 +406,17 @@
 
     <div class="diff-stage" id="diffStage">
       <div class="wrap diff-stage-inner">
+        <!-- Aug 2026 visual-refinement pass: same fix as .process-head
+             (see the comment on #process above) — the title now lives
+             inside the already-sticky .diff-stage as a fixed top item,
+             instead of being separately sticky and getting shrunk/hidden
+             to avoid overlapping the pinned stage below it. -->
+        <div class="diff-head">
+          <h2 class="diff-title" data-en="What makes SIIRAH different?">وش اللي يميز سيرة؟</h2>
+          <span class="diff-mark" aria-hidden="true"></span>
+        </div>
+
+        <div class="diff-body">
         <div class="diff-index" aria-hidden="true">
           <span class="diff-index-item is-active" data-idx="1">01</span>
           <span class="diff-index-item" data-idx="2">02</span>
@@ -439,6 +456,7 @@
               <p class="diff-panel-desc" data-en="The smallest detail is what separates ordinary work from SIIRAH work.">أدق تفصيلة هي الفرق بين شغل عادي وشغل سيرة.</p>
             </article>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -1025,44 +1043,33 @@
     <span class="behind-mark" aria-hidden="true"></span>
   </div>
 
-  <!-- Phase 4 — trimmed to exactly two real photos (was a 5-tile
-       placeholder mosaic). Aug 2026 visual-refinement pass: swapped in
-       two client-supplied behind-the-scenes photos
-       (assets/images/behind-photo-01.jpg / behind-photo-02.jpg) in place
-       of the earlier work-* placeholders — files untouched (no crop/
-       filter/color edit), only object-fit:cover within each frame's
-       fixed box per the existing layout. See the matching CSS comment
-       in style.css for the full rationale on the asymmetric two-up
-       layout and the QR placeholder below. -->
-  <div class="wrap behind-gallery" id="behindGallery">
-    <div class="behind-item behind-item--a" data-anim="rise">
-      <img src="assets/images/behind-photo-01.jpg" alt="لقطة من كواليس جلسة تصوير رياضية لسيرة" data-en-alt="Behind the scenes from a SIIRAH sports photo shoot" loading="lazy">
-    </div>
-    <div class="behind-item behind-item--b" data-anim="rise">
-      <img src="assets/images/behind-photo-02.jpg" alt="لقطة من كواليس جلسة تصوير لسيرة" data-en-alt="Behind the scenes from a SIIRAH photo shoot" loading="lazy">
-    </div>
-  </div>
-
-  <div class="wrap behind-snap">
-    <div class="behind-snap-text-wrap">
-      <p class="behind-snap-text" data-en="See more behind the scenes on Snapchat">شاهد المزيد من كواليس سيرة على سناب شات</p>
-      <a class="behind-snap-btn" href="https://snapchat.com/add/siirah27" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c2.9 0 4.8 2.2 4.7 5.1l-.1 2c1 .5 1.7.3 2.1.1.3-.1.7 0 .7.4-.1.8-1 1.3-1.8 1.6.1.4.3 1 .9 1.5.6.5 1.4.6 1.4 1.1 0 .6-1.3.9-2.1 1-.1.3-.1.7-.3.9-.3.3-1.4 0-2.3.3-.8.3-1.3 1.4-3.2 1.4s-2.4-1.1-3.2-1.4c-.9-.3-2 0-2.3-.3-.2-.2-.2-.6-.3-.9-.8-.1-2.1-.4-2.1-1 0-.5.8-.6 1.4-1.1.6-.5.8-1.1.9-1.5-.8-.3-1.7-.8-1.8-1.6 0-.4.4-.5.7-.4.4.2 1.1.4 2.1-.1l-.1-2C7.2 5.2 9.1 3 12 3Z"/></svg>
-        <span data-en="View more">شاهد المزيد</span>
-      </a>
-    </div>
-    <!-- Phase 4 — real SIIRAH Snapchat QR code supplied by the client
-         (assets/images/behind-snapchat-qr.png, 645x645, transparent
-         rounded-corner PNG). Sits in the same fixed 1:1 .behind-qr-frame
-         box the placeholder used, so no layout change was needed:
-         object-fit:contain keeps it undistorted and fully scannable.
-         Marked aria-hidden because the adjacent "شاهد المزيد" / "View
-         more" button already provides the same Snapchat link to
-         assistive tech; the QR is a visual/camera-scan convenience. -->
-    <div class="behind-qr" aria-hidden="true">
-      <div class="behind-qr-frame">
-        <img src="assets/images/behind-snapchat-qr.png" alt="">
+  <!-- Sep 2026 visual-refinement pass: gallery + caption now share ONE
+       row (.behind-composition) instead of stacking as two separate
+       full-width blocks — the caption/Snapchat block sits beside the two
+       real photos (after them in DOM/reading order, which lands it on
+       the left in this RTL layout), matching "same row, on the left".
+       QR code removed entirely per client request, no replacement.
+       Photos are untouched (assets/images/behind-photo-01.jpg /
+       behind-photo-02.jpg, object-fit:cover only). The Snapchat icon
+       below the caption is the exact same SVG already used in the site
+       header/contact section, just restyled as a standalone logo link
+       instead of a bordered button (removes the duplicate "شاهد المزيد"
+       label already carried by the caption text above it). -->
+  <div class="wrap behind-composition">
+    <div class="behind-gallery" id="behindGallery">
+      <div class="behind-item behind-item--a" data-anim="rise">
+        <img src="assets/images/behind-photo-01.jpg" alt="لقطة من كواليس جلسة تصوير رياضية لسيرة" data-en-alt="Behind the scenes from a SIIRAH sports photo shoot" loading="lazy">
       </div>
+      <div class="behind-item behind-item--b" data-anim="rise">
+        <img src="assets/images/behind-photo-02.jpg" alt="لقطة من كواليس جلسة تصوير لسيرة" data-en-alt="Behind the scenes from a SIIRAH photo shoot" loading="lazy">
+      </div>
+    </div>
+
+    <div class="behind-caption" data-anim="rise">
+      <p class="behind-snap-text" data-en="See more behind the scenes on Snapchat">شاهد المزيد من كواليس سيرة على سناب شات</p>
+      <a class="behind-snap-logo" href="https://snapchat.com/add/siirah27" target="_blank" rel="noopener" aria-label="Snapchat">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c2.9 0 4.8 2.2 4.7 5.1l-.1 2c1 .5 1.7.3 2.1.1.3-.1.7 0 .7.4-.1.8-1 1.3-1.8 1.6.1.4.3 1 .9 1.5.6.5 1.4.6 1.4 1.1 0 .6-1.3.9-2.1 1-.1.3-.1.7-.3.9-.3.3-1.4 0-2.3.3-.8.3-1.3 1.4-3.2 1.4s-2.4-1.1-3.2-1.4c-.9-.3-2 0-2.3-.3-.2-.2-.2-.6-.3-.9-.8-.1-2.1-.4-2.1-1 0-.5.8-.6 1.4-1.1.6-.5.8-1.1.9-1.5-.8-.3-1.7-.8-1.8-1.6 0-.4.4-.5.7-.4.4.2 1.1.4 2.1-.1l-.1-2C7.2 5.2 9.1 3 12 3Z"/></svg>
+      </a>
     </div>
   </div>
 </section>
@@ -1806,6 +1813,7 @@
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" crossorigin="anonymous" defer></script>
 <script src="js/config.js" defer></script>
 <script src="js/i18n.js" defer></script>
+<script src="js/forms.js" defer></script>
 <script src="js/script.js" defer></script>
 </body>
 </html>
