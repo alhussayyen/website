@@ -289,6 +289,46 @@
     header.site-nav nav > a::after{ display:none; }
   }
 
+  /* ---------- viewport balancing (Sep 2026 pass) ----------
+     Shared infrastructure for the section-viewport-balancing pass: every
+     section this pass touches gets a clear start (its top settles right
+     below the fixed header, never hidden under it) and a clear end
+     (balanced with the bottom edge of the viewport), computed from the
+     header's REAL rendered height rather than a blind 100vh/vw guess —
+     see js/script.js, which measures header.site-nav's actual height via
+     ResizeObserver and writes it into --header-h below. The two static
+     values here are only the pre-JS fallback for the very first paint;
+     JS overwrites this custom property immediately with the exact
+     number, and it naturally differs between the mobile/tablet header
+     sizing and the >=1025px "true desktop" sizing already set above —
+     one variable, two breakpoints, no separate mobile/desktop copies of
+     the calc() rules that consume it below. */
+  :root{ --header-h:91px; }
+  @media (min-width:1025px){ :root{ --header-h:102px; } }
+
+  /* Anchor-jump correctness for every section this pass touches: without
+     this, a direct link / back-forward navigation to one of these ids
+     lands the section's top flush with the viewport's top edge, straight
+     under the fixed header. A scroll-target offset only — no visual or
+     layout change on its own. */
+  #services, #process, #differentiators, #behind-siirah, #team, #faq, #products{
+    scroll-margin-top: var(--header-h);
+  }
+
+  /* Non-pinned sections in the pass — the pinned #services/#process/
+     #differentiators stages are balanced separately, further down, via
+     their own sticky stage's top/height. Give each of these a floor of
+     exactly the visible area below the header, and center its content
+     inside that space. min-height is a FLOOR only: content taller than
+     one screen (#behind-siirah's photos, #team's viewer, a long FAQ
+     list) simply keeps flowing normally past it — never cropped or
+     shrunk to force a fit. */
+  #behind-siirah, #team, #faq, #products{
+    min-height: calc(100vh - var(--header-h));
+    min-height: calc(100dvh - var(--header-h));
+    display:flex; flex-direction:column; justify-content:center;
+  }
+
   /* ---------- 01 hero ---------- */
   .hero{
     position:relative; height:100svh; min-height:560px;
@@ -976,10 +1016,10 @@
   .svc-track.is-pinned{ height:280vh; }
   .svc-track.is-pinned .svc-triggers{ position:absolute; inset:0; display:flex; flex-direction:column; pointer-events:none; }
   .svc-track.is-pinned .svc-trigger{ flex:1 0 0; }
-  .svc-track.is-pinned .svc-stage{ position:sticky; top:0; height:100vh; height:100dvh; display:flex; align-items:stretch; overflow:hidden; }
+  .svc-track.is-pinned .svc-stage{ position:sticky; top:var(--header-h); height:calc(100vh - var(--header-h)); height:calc(100dvh - var(--header-h)); display:flex; align-items:stretch; overflow:hidden; }
   .svc-track.is-pinned .svc-stage-inner{
     display:flex; flex-direction:column; align-items:center; width:100%; height:100%;
-    padding-block:clamp(7rem,11vw,9rem) 2.5rem;
+    padding-block:clamp(1.75rem,3vw,2.5rem) 2.5rem;
   }
   .svc-track.is-pinned .svc-head{ flex:none; margin-bottom:clamp(1.5rem,3vw,2.25rem); }
   .svc-track.is-pinned .svc-body{
@@ -1158,13 +1198,22 @@
   .behind-snap-logo:hover{ transform:scale(1.08); border-color:var(--accent); color:var(--accent); }
 
   @media (max-width:800px){
-    .behind-composition{ flex-direction:column; gap:1.75rem; }
+    .behind-composition{ flex-direction:column; gap:1.25rem; }
+    /* Sep 2026 viewport-balancing pass: mobile-only spacing trim, now
+       that #behind-siirah's start/end are balanced via var(--header-h)
+       above -- the section no longer needs the full .sec-pad
+       clamp(6.5rem,12vw,11rem) on a phone screen. */
+    #behind-siirah{ padding-block:clamp(1.5rem,5vw,2.25rem); }
+    /* the two photos now sit side by side in one row (was stacked "a"
+       over "b") with the Snapchat caption below both, per spec -- keeps
+       everything inside one mobile screen instead of three stacked
+       blocks. */
     .behind-gallery{
-      grid-template-columns:1fr; grid-template-areas:"a" "b";
-      grid-auto-rows:auto; gap:1rem;
+      grid-template-columns:1fr 1fr; grid-template-areas:"a b";
+      grid-auto-rows:auto; gap:.75rem;
     }
-    .behind-item{ aspect-ratio:4/3; }
-    .behind-caption{ width:auto; align-items:center; justify-content:center; text-align:center; gap:1.25rem; }
+    .behind-item{ aspect-ratio:3/4; }
+    .behind-caption{ width:auto; align-items:center; justify-content:center; text-align:center; gap:1rem; }
     /* Sep 2026: enlarge the Snapchat icon on mobile for clarity -- same
        icon, same function, same position within .behind-caption, just
        bigger. Desktop's own (larger) 801px+ sizing below is untouched. */
@@ -1178,11 +1227,18 @@
      block above) is untouched. Sizing/spacing only: no new markup, no
      new images, existing scroll/hover behavior kept as-is. */
   @media (min-width:801px){
-    .behind-section{ padding:clamp(8rem, 13vw, 13rem) 0; }
+    /* Sep 2026 viewport-balancing pass: the photo grid is by far the
+       tallest thing in this section, so it's the one sized against the
+       actual available height (header-aware) instead of a flat vw guess
+       -- on a shorter desktop/laptop screen where padding + head +
+       gallery no longer fit one pass, the photos scale down to fit
+       (never cropped, per spec); on a tall screen the clamp ceiling
+       (620px) keeps them at the original size. */
+    .behind-section{ padding:clamp(3rem, calc((100dvh - var(--header-h)) * 0.1), 13rem) 0; }
     .behind-subtitle{ margin-top:1.1rem; font-size:1.2rem; max-width:46ch; margin-inline:auto; }
     .behind-composition{ margin-top:3.75rem; gap:2.5rem; }
     .behind-gallery{
-      grid-auto-rows:clamp(380px, 40vw, 620px); gap:1.75rem;
+      grid-auto-rows:clamp(220px, calc((100dvh - var(--header-h)) * 0.42), 620px); gap:1.75rem;
     }
     .behind-caption{ width:clamp(220px,24%,300px); gap:1.75rem; }
     .behind-snap-text{ font-size:clamp(1.3rem,1.9vw,1.65rem); }
@@ -1261,10 +1317,10 @@
   .diff-track.is-pinned{ height:280vh; }
   .diff-track.is-pinned .diff-triggers{ position:absolute; inset:0; display:flex; flex-direction:column; pointer-events:none; }
   .diff-track.is-pinned .diff-trigger{ flex:1 0 0; }
-  .diff-track.is-pinned .diff-stage{ position:sticky; top:0; height:100vh; height:100dvh; display:flex; align-items:stretch; overflow:hidden; }
+  .diff-track.is-pinned .diff-stage{ position:sticky; top:var(--header-h); height:calc(100vh - var(--header-h)); height:calc(100dvh - var(--header-h)); display:flex; align-items:stretch; overflow:hidden; }
   .diff-track.is-pinned .diff-stage-inner{
     display:flex; flex-direction:column; align-items:center; width:100%; height:100%;
-    padding-block:clamp(7rem,11vw,9rem) 2.5rem;
+    padding-block:clamp(1.75rem,3vw,2.5rem) 2.5rem;
   }
   .diff-track.is-pinned .diff-head{ flex:none; margin-bottom:clamp(1.5rem,3vw,2.25rem); }
 
@@ -1312,7 +1368,7 @@
     #differentiators{ padding-bottom:clamp(1.5rem,5vw,2.25rem); }
     #work{ padding-top:clamp(1.5rem,5vw,2.25rem); }
     .section-divider-mobile{ display:flex; }
-    .diff-track.is-pinned .diff-stage-inner{ padding-block:clamp(6.5rem,20vw,8rem) 1.5rem; }
+    .diff-track.is-pinned .diff-stage-inner{ padding-block:clamp(1.25rem,4vw,1.75rem) 1.5rem; }
     .diff-track.is-pinned .diff-head{ margin-bottom:1rem; }
     .diff-track.is-pinned .diff-body{ grid-template-columns:minmax(64px,86px) 1fr; column-gap:1.5rem; }
     .diff-track.is-pinned .diff-index{ gap:.9rem; padding-inline-end:1rem; }
@@ -1414,7 +1470,7 @@
   .process-track.is-pinned{ height:420vh; }
   .process-track.is-pinned .process-triggers{ position:absolute; inset:0; display:flex; flex-direction:column; pointer-events:none; }
   .process-track.is-pinned .process-trigger{ flex:1 0 0; }
-  .process-track.is-pinned .process-stage{ position:sticky; top:0; height:100vh; height:100dvh; display:flex; align-items:stretch; overflow:hidden; }
+  .process-track.is-pinned .process-stage{ position:sticky; top:var(--header-h); height:calc(100vh - var(--header-h)); height:calc(100dvh - var(--header-h)); display:flex; align-items:stretch; overflow:hidden; }
   .process-track.is-pinned .process-stage-inner{
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     width:100%; height:100%;
@@ -1446,20 +1502,22 @@
      overlapping the head above it or the progress dots/arrow below it. */
   @media (max-width:760px){
     /* Sep 2026 fix: #process itself still carries the shared .sec-pad
-       top padding (~6.5rem+), and the pinned stage below needs its own
-       top padding to clear the fixed mobile header (~91px) once it's
-       stuck -- those two used to simply add up (~13rem+ of blank space
-       before the title). #process's own top padding is reduced here
-       (mobile-only) since the stage-inner padding below already covers
-       header clearance + a comfortable margin on its own. */
+       top padding (~6.5rem+), which used to stack with the pinned
+       stage's own top padding (previously a second, separate header-
+       clearance guess) into ~13rem+ of blank space before the title.
+       #process's own top padding is reduced here (mobile-only) to a
+       comfortable margin; the stage's header clearance now comes
+       structurally from .process-stage's top:var(--header-h) (see
+       above), not from padding. */
     #process{ padding-top:clamp(1.25rem,4vw,1.75rem); }
     /* justify-content:center (base rule above) vertically centers the
-       head+steps+progress group within the full 100dvh stage -- on tall
-       phone screens that centering, not the padding, was the real source
-       of the large gap above the title (content group shorter than the
-       viewport, so centering pushed it down). flex-start anchors it right
-       under the padding instead, mobile-only; desktop keeps centering. */
-    .process-track.is-pinned .process-stage-inner{ justify-content:flex-start; padding-block:clamp(5.75rem,16vw,6.75rem) 1.5rem; }
+       head+steps+progress group within the stage's own (now header-
+       aware) height -- on tall phone screens that centering, not the
+       padding, was the real source of the large gap above the title
+       (content group shorter than the box, so centering pushed it
+       down). flex-start anchors it right under the padding instead,
+       mobile-only; desktop keeps centering. */
+    .process-track.is-pinned .process-stage-inner{ justify-content:flex-start; padding-block:clamp(1.25rem,4vw,1.75rem) 1.5rem; }
     .process-track.is-pinned .process-head{ margin-bottom:1rem; }
     .process-track.is-pinned .process-steps{ min-height:clamp(230px,58vw,300px); }
     .process-track.is-pinned .process-step{ max-width:30ch; gap:.65rem; }
@@ -1676,6 +1734,15 @@
   .faq-head h2{ font-size:var(--fs-h1); }
   .faq-list{
     margin-top:3rem; max-width:900px;
+  }
+  @media (min-width:1025px){
+    .faq-columns{
+      display:grid; grid-template-columns:minmax(220px,340px) 1fr;
+      align-items:start; gap:clamp(3rem,6vw,6rem);
+      max-width:1440px; margin:0 auto; padding:0 clamp(1.25rem,5vw,5rem);
+    }
+    .faq-columns .wrap{ max-width:none; margin:0; padding:0; }
+    .faq-head{ text-align:start; }
   }
   .faq-item{ border-bottom:1px solid var(--line); }
   .faq-item:first-child{ border-top:1px solid var(--line); }
@@ -1956,15 +2023,13 @@
   #profile{ padding-bottom:clamp(3rem, 6vw, 5rem); }
   #team{ padding-top:clamp(3rem, 6vw, 5rem); }
   .team-editorial h2{ font-size:var(--fs-h1); }
-  /* Audit fix, mobile only: #team's own padding-top above (~48px on phone
-     widths) is less than the fixed mobile header's ~91px height — same
-     underlying issue as #clients further up this file. #team isn't a nav
-     link, but it's still a real anchor id (direct URL / back-forward), so
-     "من خلف سيرة؟!" could otherwise land partly covered. padding-bottom
-     elsewhere on this section is untouched. */
-  @media (max-width:760px){
-    #team{ padding-top:calc(3rem + 43px + 1rem); }
-  }
+  /* Sep 2026 viewport-balancing pass: the mobile-only header-clearance
+     bump this comment used to describe (padding-top:calc(3rem + 43px +
+     1rem), a static guess) is superseded by var(--header-h) above —
+     #team now gets its header clearance structurally (scroll-margin-top
+     + the shared min-height/centering rule), not from extra padding, so
+     its own spacing goes back to the same clamp(3rem,6vw,5rem) used at
+     every width. */
   .profile p{ max-width:52ch; margin:0 auto; color:var(--ink-soft); font-weight:300; font-size:1.08rem; line-height:1.95; }
   .profile-btn{
     margin-top:2.6rem; display:inline-flex; align-items:center; gap:.9rem;

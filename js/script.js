@@ -74,6 +74,32 @@
     setTimeout(dismiss, MAX_DURATION);
   })();
 
+  // ---- header height (real, measured) -> --header-h ----
+  // Powers the viewport-balancing rules in css/style.css (pinned-stage
+  // sticky offsets, section min-heights/scroll-margin) and the "soft
+  // section-settle" nudge below: every section this pass touches must
+  // start BELOW the fixed header, never hidden under it. A clamp()/vw
+  // guess drifts at extreme viewport sizes and can't track the header's
+  // own >=1025px enlargement (see css/style.css); measuring the header's
+  // real rendered height is the only way to get this exact, at every
+  // width, automatically. ResizeObserver keeps it correct across that
+  // 1025px breakpoint, font-load reflow, and window resize/orientation
+  // change alike -- no separate mobile/desktop code path needed.
+  (function(){
+    const headerEl = document.querySelector('header.site-nav');
+    if (!headerEl) return;
+    function apply(){
+      const h = headerEl.getBoundingClientRect().height;
+      if (h > 0) document.documentElement.style.setProperty('--header-h', Math.round(h) + 'px');
+    }
+    apply();
+    if (window.ResizeObserver){
+      new ResizeObserver(apply).observe(headerEl);
+    } else {
+      window.addEventListener('resize', apply);
+    }
+  })();
+
   // ---- shared background video ----
   const bgVideoSrc = "assets/video/hero-bg.mp4";
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -223,11 +249,17 @@
       if (isSettling) return;
       const vh = window.innerHeight || document.documentElement.clientHeight;
       const threshold = Math.min(160, Math.max(60, vh * 0.18));
+      // Resting position is headerH below the viewport top now (not the
+      // literal top edge), so proximity has to be measured against that
+      // same offset -- otherwise this only ever fires right as a section
+      // crosses y=0, under the fixed header, instead of near where it
+      // will actually come to rest.
+      const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
       let target = null;
       let smallest = Infinity;
       for (const el of settleSections){
         const top = el.getBoundingClientRect().top;
-        const dist = Math.abs(top);
+        const dist = Math.abs(top - headerH);
         if (dist <= threshold && dist < smallest && dist > 2){
           smallest = dist;
           target = el;
@@ -236,7 +268,7 @@
       if (!target) return;
       isSettling = true;
       __lenis.scrollTo(target, {
-        offset: 0,
+        offset: -headerH,
         duration: 0.7,
         easing: (t) => 1 - Math.pow(1 - t, 3), // ease-out cubic, matches the site's soft-ease feel
         onComplete: () => { isSettling = false; }
