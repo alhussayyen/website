@@ -190,6 +190,66 @@
     if (window.ScrollTrigger) __lenis.on('scroll', ScrollTrigger.update);
   }
 
+  // ---- soft section-settle ----
+  // Gives every major section a gentle "it has arrived / settled into
+  // place" feeling right as its top edge nears the top of the viewport,
+  // without a hard CSS scroll-snap (which would fight Lenis's own
+  // RAF-driven smooth scroll and cause exactly the stutter/jump this is
+  // meant to avoid). Driven entirely through Lenis's own scrollTo, so the
+  // two motion systems never fight:
+  //   - only evaluated after scrolling has genuinely stopped (debounced
+  //     on Lenis's 'scroll' event, not on every frame)
+  //   - only nudges a section into place when it's already CLOSE to
+  //     aligned (a small proximity window, not a long-range pull) —
+  //     mirrors CSS scroll-snap:proximity, never :mandatory
+  //   - a short, soft easing tween (not instant, not slow/blocking)
+  //   - never locks input: the user can keep scrolling straight through
+  //     it, which simply cancels the in-flight settle (Lenis's own
+  //     scrollTo default; lock is left off on purpose)
+  //   - fires at most once per approach (isSettling guard) so it can
+  //     never loop/re-trigger itself
+  // Pinned scroll-story sections (#process/#differentiators/#services)
+  // are many viewport-heights tall; this only ever evaluates proximity
+  // to the SECTION's own top edge, which is crossed once, right as the
+  // sticky stage engages — their own IntersectionObserver step
+  // controllers keep driving the internal story untouched afterward.
+  if (!reduceMotion && __lenis) {
+    const settleSections = Array.from(document.querySelectorAll('body > section'))
+      .filter(el => el.offsetHeight > 200);
+    let settleTimer = null;
+    let isSettling = false;
+
+    function trySettle(){
+      if (isSettling) return;
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const threshold = Math.min(160, Math.max(60, vh * 0.18));
+      let target = null;
+      let smallest = Infinity;
+      for (const el of settleSections){
+        const top = el.getBoundingClientRect().top;
+        const dist = Math.abs(top);
+        if (dist <= threshold && dist < smallest && dist > 2){
+          smallest = dist;
+          target = el;
+        }
+      }
+      if (!target) return;
+      isSettling = true;
+      __lenis.scrollTo(target, {
+        offset: 0,
+        duration: 0.7,
+        easing: (t) => 1 - Math.pow(1 - t, 3), // ease-out cubic, matches the site's soft-ease feel
+        onComplete: () => { isSettling = false; }
+      });
+    }
+
+    __lenis.on('scroll', () => {
+      if (isSettling) return;
+      if (settleTimer) clearTimeout(settleTimer);
+      settleTimer = setTimeout(trySettle, 180);
+    });
+  }
+
   // ---- mobile nav toggle ----
   (function(){
     const toggle = document.getElementById('navToggle');
@@ -612,10 +672,13 @@
   // IntersectionObserver (rootMargin -50% top/bottom shrinks the viewport
   // to a 1px line at dead-center, so a trigger "intersects" exactly when it
   // crosses center) swaps which step is focused; every visual change is a
-  // plain CSS transition on opacity/transform, not per-frame JS. Below
-  // 761px, or with reduced motion on, or if IntersectionObserver is
-  // unsupported, the section is simply left in its default CSS state (see
-  // style.css) — a plain static list, already exactly the mobile layout.
+  // plain CSS transition on opacity/transform, not per-frame JS.
+  // Sep 2026: now runs at EVERY width, including mobile — same technique
+  // as #services (no more min-width:761px gate) — per spec, mobile uses
+  // the exact same navigation/interaction concept as desktop, just sized
+  // for a phone screen (see the max-width:760px rules in style.css). Only
+  // reduced motion or an unsupported IntersectionObserver leaves the
+  // section in its default CSS state (plain static list).
   (function(){
     const track = document.getElementById('processTrack');
     const steps = Array.from(document.querySelectorAll('.process-step'));
@@ -623,9 +686,6 @@
     const dots = Array.from(document.querySelectorAll('.process-progress-dots i'));
     const sharedArrow = document.getElementById('processSharedArrow');
     if (!track || !steps.length || !window.IntersectionObserver) return;
-
-    const mqProcessDesktop = window.matchMedia('(min-width:761px)');
-    let observer = null;
 
     function setActive(idx){
       steps.forEach((el, i)=>{
@@ -647,7 +707,7 @@
       if (track.classList.contains('is-pinned')) return;
       track.classList.add('is-pinned');
       setActive(0);
-      observer = new IntersectionObserver((entries)=>{
+      const observer = new IntersectionObserver((entries)=>{
         entries.forEach(entry=>{
           if (entry.isIntersecting){
             const idx = parseInt(entry.target.dataset.triggerStep, 10) - 1;
@@ -658,44 +718,23 @@
       track.querySelectorAll('.process-trigger').forEach(m => observer.observe(m));
     }
 
-    function disable(){
-      if (!track.classList.contains('is-pinned')) return;
-      track.classList.remove('is-pinned');
-      if (observer){ observer.disconnect(); observer = null; }
-      steps.forEach(el=>{
-        el.classList.remove('is-active', 'is-past');
-        el.removeAttribute('aria-hidden');
-      });
-      dots.forEach(d => d.classList.remove('is-active', 'is-done'));
-    }
-
-    function syncProcess(){
-      if (!reduceMotion && mqProcessDesktop.matches) enable(); else disable();
-    }
-    syncProcess();
-    if (mqProcessDesktop.addEventListener) mqProcessDesktop.addEventListener('change', syncProcess);
-    else mqProcessDesktop.addListener(syncProcess); // Safari <14 fallback
-    window.addEventListener('resize', syncProcess);
+    if (!reduceMotion) enable();
   })();
 
   // ---- Differentiators (Phase 5): "why SIIRAH" scroll story ----
   // Same lightweight-observer philosophy as Process: no GSAP, no scroll
-  // handler. Desktop pins the stage and an IntersectionObserver (rootMargin
-  // -50% top/bottom = fires exactly as a trigger crosses dead-center)
-  // swaps the active point. Below 761px (or wherever pinning is off) the
-  // section stays a plain static list, but still gets a much gentler
-  // "in view" emphasis via a second, independent observer, so the mobile
-  // experience keeps some interactive feel without ever hiding content.
+  // handler. Sep 2026: now pins and runs the same indexed panel story at
+  // EVERY width, including mobile — same technique as #services/#process
+  // (no more min-width:761px gate, no more separate "gentle emphasis"
+  // fallback) — per spec, mobile uses the exact same navigation/
+  // interaction concept as desktop, just sized for a phone screen (see
+  // the max-width:760px rules in style.css).
   (function(){
     const track = document.getElementById('diffTrack');
     const panels = Array.from(document.querySelectorAll('.diff-panel'));
     const indexItems = Array.from(document.querySelectorAll('.diff-index-item'));
     const progressEl = document.getElementById('diffProgress');
     if (!track || !panels.length || !window.IntersectionObserver) return;
-
-    const mqDiffDesktop = window.matchMedia('(min-width:761px)');
-    let pinObserver = null;
-    let viewObserver = null;
 
     function setActive(idx){
       panels.forEach((el, i)=>{
@@ -710,20 +749,11 @@
       if (progressEl) progressEl.textContent = String(idx + 1).padStart(2, '0') + ' / 04';
     }
 
-    function disableInView(){
-      if (!viewObserver) return;
-      viewObserver.disconnect();
-      viewObserver = null;
-      track.classList.remove('has-inview');
-      panels.forEach(p => p.classList.remove('is-in-view'));
-    }
-
-    function enablePinned(){
+    function enable(){
       if (track.classList.contains('is-pinned')) return;
-      disableInView();
       track.classList.add('is-pinned');
       setActive(0);
-      pinObserver = new IntersectionObserver((entries)=>{
+      const observer = new IntersectionObserver((entries)=>{
         entries.forEach(entry=>{
           if (entry.isIntersecting){
             const idx = parseInt(entry.target.dataset.triggerStep, 10) - 1;
@@ -731,40 +761,10 @@
           }
         });
       }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
-      track.querySelectorAll('.diff-trigger').forEach(m => pinObserver.observe(m));
+      track.querySelectorAll('.diff-trigger').forEach(m => observer.observe(m));
     }
 
-    function disablePinned(){
-      if (!track.classList.contains('is-pinned')) return;
-      track.classList.remove('is-pinned');
-      if (pinObserver){ pinObserver.disconnect(); pinObserver = null; }
-      panels.forEach(el=>{
-        el.classList.remove('is-active', 'is-past');
-        el.removeAttribute('aria-hidden');
-      });
-      indexItems.forEach(el => el.classList.remove('is-active', 'is-done'));
-    }
-
-    function enableInView(){
-      if (viewObserver) return;
-      track.classList.add('has-inview');
-      viewObserver = new IntersectionObserver((entries)=>{
-        entries.forEach(entry=>{
-          entry.target.classList.toggle('is-in-view', entry.isIntersecting);
-        });
-      }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
-      panels.forEach(p => viewObserver.observe(p));
-    }
-
-    function syncDiff(){
-      if (reduceMotion){ disablePinned(); disableInView(); return; }
-      if (mqDiffDesktop.matches){ enablePinned(); }
-      else { disablePinned(); enableInView(); }
-    }
-    syncDiff();
-    if (mqDiffDesktop.addEventListener) mqDiffDesktop.addEventListener('change', syncDiff);
-    else mqDiffDesktop.addListener(syncDiff); // Safari <14 fallback
-    window.addEventListener('resize', syncDiff);
+    if (!reduceMotion) enable();
   })();
 
   // ---- clients: infinite logo marquee (Phase 3 note: this comment
