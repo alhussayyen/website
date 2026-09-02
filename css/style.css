@@ -157,7 +157,7 @@
   header.site-nav{
     position:fixed; top:0; right:0; left:0; z-index:100;
     display:flex; align-items:center; justify-content:space-between;
-    padding:1.5rem clamp(1.25rem, 5vw, 5rem);
+    padding:1.6rem clamp(1.25rem, 5vw, 5rem);
     background:linear-gradient(rgba(5,5,5,.44), rgba(5,5,5,.3));
     -webkit-backdrop-filter:var(--glass-blur);
     backdrop-filter:var(--glass-blur);
@@ -232,8 +232,8 @@
        The height delta here (~9px) is well inside the safety margin
        already built into the sticky-head offsets in the process/diff
        pinned-scroll sections, so nothing else needed to move. */
-    header.site-nav{ padding-block:1.65rem; }
-    .nav-logo{ height:42px; }
+    header.site-nav{ padding-block:1.75rem; }
+    .nav-logo{ height:46px; }
   }
 
   /* ---------- mobile nav toggle (hamburger) ----------
@@ -724,7 +724,8 @@
   /* ---------- 05 clients ---------- */
   .clients{ padding:clamp(2.5rem, 5vw, 3.5rem) 0; }
   .clients-head{ text-align:center; margin:0 auto; }
-  .clients-head p{ margin-top:.6rem; font-size:.95rem; color:var(--ink-soft); font-weight:300; }
+  .clients-head h2{ font-size:var(--fs-h1); }
+  .clients-head p{ margin-top:.85rem; font-size:1.05rem; color:var(--ink-soft); font-weight:300; letter-spacing:.02em; }
 
   /* Phase 3 (Behind SIIRAH / Clients revamp) — infinite two-row logo
      marquee replacing the earlier hand-composed editorial mosaic (see
@@ -798,8 +799,7 @@
        seamless loop, and the logo images themselves are all untouched —
        sizing/spacing only. Mobile (<=760px block below) is untouched. */
     .clients{ padding:clamp(6rem, 11vw, 10rem) 0; }
-    .clients-head h2{ font-size:var(--fs-display); }
-    .clients-head p{ margin-top:1rem; font-size:1.15rem; }
+    .clients-head p{ margin-top:1rem; font-size:1.2rem; }
     .clients-marquee{ margin-top:3.5rem; gap:1.5rem; }
     .marquee-logo{
       width:clamp(120px,13vw,180px); height:clamp(52px,7vw,72px);
@@ -838,7 +838,11 @@
     border-top:1px solid rgba(255,255,255,.08);
   }
   .social-proof-head{ text-align:center; }
-  .social-proof-head p{ margin-top:.6rem; font-size:.95rem; color:rgba(255,255,255,.6); font-weight:300; }
+  .social-proof-head h2{ font-size:var(--fs-h1); }
+  .social-proof-head p{ margin-top:.85rem; font-size:1.05rem; color:rgba(255,255,255,.6); font-weight:300; letter-spacing:.02em; }
+  @media (min-width:1025px){
+    .social-proof-head p{ font-size:1.2rem; margin-top:1rem; }
+  }
   .social-proof-grid{
     margin-top:3rem;
     display:grid; grid-template-columns:1fr; gap:1.25rem;
@@ -915,269 +919,13 @@
      effect when an ancestor sets scroll-snap-type), left in place rather
      than torn out to keep this fix minimal. */
 
-  /* ---------- services showcase (full width, single row, scroll-linked drift) ---------- */
-  .services-showcase{
-    background:var(--black); color:#fff;
-    width:100%; min-height:100vh; min-height:100dvh;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    padding:clamp(5rem,9vw,7.5rem) 0;
-    overflow:hidden;
-    border-top:1px solid rgba(255,255,255,.08); border-bottom:1px solid rgba(255,255,255,.08);
-  }
-  /* Wrapper divs added for the mobile sticky-pin behavior (see below and
-     js/script.js). At this default/desktop level they are fully inert —
-     plain full-width blocks with no positioning — so desktop's layout is
-     pixel-identical to before they were introduced. */
-  .services-sticky-outer{ width:100%; }
-  .services-sticky-inner{ width:100%; }
-  /* Scroll-snap stop points (see markup in index.html) — inert on desktop,
-     exactly like the two wrappers above; only positioned/activated inside
-     the max-width:760px query below. */
-  .svc-snap-point{ display:none; }
-  .services-showcase h2{
-    width:100%; text-align:center; font-weight:900;
-    color:#fff; margin-bottom:clamp(3rem,6vw,5rem);
-    padding:0 clamp(1.25rem, 5vw, 5rem);
-  }
-  .showcase-wrap{ position:relative; width:100%; padding:0 clamp(1.25rem, 4vw, 4rem); }
-  .showcase-row{
-    display:flex; flex-wrap:nowrap; align-items:stretch;
-    gap:clamp(1.5rem,2.6vw,3rem);
-    width:100%;
-    will-change:transform;
-  }
-  .showcase-item{
-    flex:1 1 0; min-width:0; max-width:460px;
-    margin:0 auto;
-    text-align:center;
-    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-    padding:clamp(2.4rem,3.4vw,3.6rem) clamp(1.8rem,2.6vw,2.75rem);
-    border-radius:var(--radius-lg);
-    border:1px solid var(--glass-border);
-    background:var(--glass-bg);
-    -webkit-backdrop-filter:var(--glass-blur); backdrop-filter:var(--glass-blur);
-    box-shadow:var(--shadow-dark-sm);
-    transition:background .45s var(--ease-soft), border-color .45s var(--ease-soft), box-shadow var(--dur-hover) var(--ease-scale), transform var(--dur-hover) var(--ease-scale);
-  }
-  .showcase-item:hover{ transform:scale(1.03) translateY(-6px); box-shadow:var(--shadow-dark-md); }
-
-  /* ---- Mobile only (<=760px): scroll-driven STICKY pin, no buttons, no
-     touch-drag/swipe, no arrows. .services-sticky-outer becomes a tall
-     spacer (its height is set inline by js/script.js = number-of-services *
-     100dvh); .services-sticky-inner sticks to the top of the viewport for
-     the duration of that spacer. While pinned, js/script.js reads normal
-     page scroll position (the same gesture used to scroll the rest of the
-     site — never a horizontal drag on the row itself) and steps through
-     exactly one .showcase-item at a time: each item's horizontal position is
-     driven purely by an inline `transform:translateX()` that js/script.js
-     sets from (item index − active index) — see below — so scrolling down
-     slides the current card out to the left while the next one slides in
-     from the right, and scrolling up mirrors that in reverse (out to the
-     right / in from the left), entirely through normal CSS transitions on
-     `transform`/`opacity`. Once the user scrolls past the spacer's height
-     the section unpins on its own and the page continues normally — same
-     for scrolling back up past the first service.
-     .svc-snap-point elements (see markup) are inert leftovers from an
-     earlier native-scroll-snap "pause" — `html{scroll-snap-type:y
-     mandatory}` has been removed sitewide (it was fighting the Lenis
-     smooth-scroll library and breaking normal scrolling: the page not
-     starting at the top, sections becoming hard to reach), so nothing
-     forces a hard stop on any of these four points anymore. The crossfade
-     itself is untouched and still tracks scroll continuously — this is now
-     100% native, un-hijacked scroll from top to bottom of the page; the
-     only thing lost with the snap removal is the brief forced settle on
-     each service and the "can't skip ahead" behavior. ---- */
-  @media (max-width:760px){
-    /* ROOT CAUSE of the large empty gaps before/after the card on mobile:
-       .services-sticky-inner's `position:sticky` was being anchored to the
-       wrong ancestor instead of the real viewport, so it never actually
-       pinned — it just scrolled past like a normal static element, leaving
-       the card visible only briefly and the rest of the spacer's reserved
-       height (js/script.js) as plain empty section background before/after
-       it. Verified directly by rendering the page and reading
-       .services-sticky-inner's live getBoundingClientRect() mid-scroll:
-       its top was drifting to large negative values instead of staying
-       pinned at 0.
-       Both `html` and `body` (top of this file) set overflow-x:hidden
-       site-wide, with no overflow-y set. A previous attempt here tried
-       `html, body{ overflow-y:visible }` to undo that, but per the CSS
-       overflow spec you can't actually combine overflow-x:hidden with a
-       *used* overflow-y of visible on the same box — the engine silently
-       forces the visible axis back to auto no matter what's authored, so
-       that rule had no real effect (confirmed via getComputedStyle: both
-       still report overflow-y:auto even with that rule in place).
-       The part that matters is *which* element ends up establishing the
-       clipping/scroll box. Per spec, the root <html> element's overflow
-       propagates up to the viewport itself whenever html's own overflow
-       isn't visible (true here) — the viewport handling that hidden-x/
-       auto-y is completely normal and never breaks position:sticky. But
-       because html already claims that propagation, <body>'s own
-       overflow-x:hidden is NOT propagated anywhere — body is instead
-       treated as an ordinary element that establishes its own separate
-       (but non-scrolling, since it's just auto-height) clipping box, and
-       that's the box .services-sticky-inner was actually being anchored
-       to. Stripping body's overflow restriction on mobile removes that
-       stray box, so the sticky element resolves back to the viewport —
-       confirmed by re-rendering: .services-sticky-inner now stays at
-       top:0 for the full pinned duration instead of drifting negative.
-       html's overflow-x:hidden is left completely untouched (still
-       propagates to the viewport, still fully prevents horizontal
-       scroll/scrollbars), so this has zero effect on horizontal clipping.
-       This fix now lives unconditionally on the base `body{}` rule near
-       the top of this file, since the photography story gallery further
-       down needs the same fix at every breakpoint, not just mobile — kept
-       here only as the historical record of why it exists. */
-    /* .services-showcase itself (base rule above, line 592) also sets its own
-       overflow:hidden unconditionally — a second, closer ancestor between
-       .services-sticky-inner and the (now-fixed) html/body that independently
-       breaks position:sticky the exact same way: any ancestor with
-       overflow other than visible becomes the sticky element's containing
-       block for scroll purposes, and since this one doesn't actually scroll
-       internally either, the inner never pins — it was still scrolling past
-       normally even with the html/body fix above in place (confirmed by
-       rendering the page and reading .services-sticky-inner's live
-       getBoundingClientRect() mid-scroll: its top went negative instead of
-       staying pinned at 0). overflow:visible here only un-clips vertically;
-       the horizontal card-slide is still clipped by .showcase-wrap/
-       .showcase-row's own overflow:hidden a few rules down, so nothing
-       becomes visibly scrollable sideways. */
-    .services-showcase{ padding:0; min-height:auto; overflow:visible; }
-    /* Mobile-only nudge: push the section title ("أبرز خدماتنا الإعلامية")
-       down by ~20-30px (about one line) without moving anything else.
-       Deliberately done with position:relative + top (not margin/padding)
-       so the h2's box keeps its original size/place in the flex flow —
-       .services-sticky-inner's padding-top clearance (untouched, still
-       clears the fixed header on its own), the h2's own margin-bottom, and
-       therefore .showcase-wrap's height/position (and every icon/card
-       inside it) are completely unaffected; only the rendered text itself
-       shifts down. This is the ONLY property changed for this fix — no
-       padding/margin added anywhere else in the section, no scroll/offset/
-       anchor touched. Scoped strictly to this max-width:760px query, so
-       desktop is untouched. */
-    .services-showcase h2{ position:relative; top:clamp(20px, 3vh, 30px); }
-    .services-sticky-outer{ position:relative; }
-    /* Four stop points, one per service, positioned (not stacked in normal
-       flow — position:absolute) at the exact scroll offsets js/script.js's
-       targetIndex() already treats as "service N fully centered": with
-       PIN_BUDGET_VH=280 and 4 services, that's raw scroll progress
-       0 / 60 / 120 / 180dvh into .services-sticky-outer (three equal 60dvh
-       steps across its 180dvh of actual scrollable travel — the remaining
-       100dvh is .services-sticky-inner's own pinned viewport-height box).
-       Sized to a full 100dvh (rather than a 0/1px sliver) purely so every
-       engine reliably registers them as real, in-scope snap areas; they're
-       fully transparent and pointer-events:none, so nothing is ever visibly
-       or interactively affected by their presence — see markup comment in
-       index.html. If the number of services or PIN_BUDGET_VH ever changes,
-       these four offsets (and the number of .svc-snap-point elements) need
-       to be recalculated to match. scroll-snap-stop is deliberately left
-       at its default (not "always") — see the comment above this query —
-       so each service gets a short natural settle rather than a forced,
-       one-by-one hard stop. */
-    .svc-snap-point{
-      display:block;
-      position:absolute; left:0; width:100%; height:100dvh;
-      pointer-events:none;
-      scroll-snap-align:start;
-    }
-    .svc-snap-point[data-snap-step="0"]{ top:0; }
-    .svc-snap-point[data-snap-step="1"]{ top:60dvh; }
-    .svc-snap-point[data-snap-step="2"]{ top:120dvh; }
-    .svc-snap-point[data-snap-step="3"]{ top:180dvh; }
-    .services-sticky-inner{
-      position:sticky; top:0;
-      height:100vh; height:100dvh;
-      display:flex; flex-direction:column; align-items:center;
-      /* ---- h2/header clearance, as real section layout (not scroll offset) ----
-         .services-sticky-inner is what's actually pinned flush to the
-         viewport top (top:0, above) for the whole time this section is
-         being browsed — whether the user got here by clicking the
-         "الخدمات" nav link or by plain manual scrolling, since both paths
-         land on the exact same pinned state the moment #services reaches
-         the top of the viewport (a native anchor jump to #services simply
-         scrolls its top to y:0, which is precisely the position at which
-         .services-sticky-inner's sticky top:0 engages). So giving *this*
-         box a fixed padding-top big enough to clear the fixed mobile header
-         is a single, permanent fix for both entry paths — unlike the old
-         approach here (removed), which only patched the nav-link click via
-         a JS-computed scroll offset (and a scroll-margin-top fallback) and
-         still left manual scrolling with no clearance at all.
-         header.site-nav is position:fixed with 1.4rem top/bottom padding
-         around the 42px #navToggle button (the tallest thing in the bar
-         at this breakpoint, shown <=1024px — comfortably covers every
-         mobile width) plus its 1px bottom border, i.e. a constant
-         2*1.5rem + 42px + 1px tall, regardless of viewport width (Aug 2026
-         header-enlargement pass — was 2*1.4rem, i.e. 87.8px total, now 91px). Adding a
-         comfortable extra gap on top of that guarantees the heading never
-         touches the header and always renders fully on screen. Gap widened
-         to ~40-60px (clamp(2.5rem,6vh,3.75rem), was clamp(1.25rem,4vh,2rem))
-         per follow-up review — the smaller gap still occasionally read as
-         too tight against the header on some phone heights. */
-      padding-top:calc(3rem + 43px + clamp(2.5rem, 6vh, 3.75rem));
-      /* justify-content:flex-start (not center) so the padding-top above is
-         real reserved space at the very top of the pinned box, rather than
-         being folded back into a vertical centering calculation — the card
-         area right below (.showcase-wrap, flex:1 1 auto) still centers
-         itself within whatever room is left underneath, so the cards keep
-         reading as vertically centered on screen exactly as before. */
-      justify-content:flex-start;
-      padding-bottom:clamp(1.5rem, 4vh, 2.5rem);
-      overflow:hidden;
-    }
-
-    /* Wrap now stretches to fill whatever vertical space is left after the
-       h2 + inner padding above, so the card is vertically centered in the
-       actual remaining room on any iPhone/Android screen instead of being
-       sized off a fixed clamp() that could leave slack above or below it. */
-    .showcase-wrap{ overflow:hidden; padding:0 clamp(1.25rem, 6vw, 3rem); display:flex; align-items:center; justify-content:center; flex:1 1 auto; min-height:0; width:100%; }
-    .showcase-row{
-      position:relative; flex-wrap:wrap; gap:0;
-      width:100%; max-width:460px;
-      height:100%; min-height:0;
-      overflow:hidden; /* clips cards mid-slide to a clean carousel "stage" */
-    }
-    /* Every service sits absolutely in the same spot; js/script.js sets each
-       one's `transform:translateX()` AND `opacity` on every scroll-driven
-       animation frame, both as plain linear functions of that card's
-       distance from the current (fractional) scroll position — so the
-       whole slide is continuously scroll-scrubbed, never a discrete
-       jump-cut and never separately timed. No CSS transition on
-       transform/opacity here on purpose: this is deliberately re-set every
-       frame while scrolling, and a CSS transition would fight those
-       constant updates (each new inline value re-starting its own
-       transition from wherever the previous one had interpolated to),
-       producing laggy, rubber-banded motion instead of tight 1:1 scroll
-       tracking. opacity:0 below is just the pre-JS/no-JS fallback; the
-       moment the mobile controller activates it's overridden inline every
-       frame. */
-    /* mobile only: matches the desktop-only frameless-card / bare-icon look
-       (see the min-width:761px query below) instead of the bordered glass
-       card + icon circle used as the base (touch) styling above — merged
-       into one rule (was previously split into two identical selectors). */
-    .showcase-item{
-      position:absolute; inset:0; margin:0; max-width:none;
-      opacity:0; pointer-events:none;
-      /* Center content within the card's full-height stage instead of
-         flex-start, so any leftover vertical room is split evenly above/below
-         the icon+title+text instead of collecting as one large empty block
-         underneath (spec point 4). */
-      justify-content:center;
-      will-change:transform, opacity;
-      border:none; background:none; box-shadow:none;
-      -webkit-backdrop-filter:none; backdrop-filter:none;
-      border-radius:0;
-      padding:clamp(1rem,1.6vw,1.5rem) clamp(1.25rem,2vw,2rem);
-    }
-    .showcase-item.is-active{
-      pointer-events:auto;
-    }
-    .ring-icon{
-      width:auto; height:auto; border-radius:0;
-      border:none; background:none; box-shadow:none;
-      -webkit-backdrop-filter:none; backdrop-filter:none;
-    }
-    .ring-icon svg{ width:clamp(70px,6vw,96px); height:clamp(70px,6vw,96px); }
-    .showcase-item:hover .ring-icon{ background:none; border:none; box-shadow:none; }
-  }
+  /* ---------- services showcase — pinned scroll-through of the 4 services
+     ---------- */
+  /* .ring-icon is shared sitewide (also used by #process's steps): a
+     circular glass badge at narrow/mid widths, a bare frameless icon from
+     761px up (see the media query below) — unchanged by this rebuild,
+     kept exactly as it already was so #process keeps rendering
+     identically. */
   .ring-icon{
     width:clamp(100px,8.5vw,140px); height:clamp(100px,8.5vw,140px);
     margin:0 auto clamp(1.6rem,2.2vw,2.2rem); border-radius:50%;
@@ -1191,27 +939,127 @@
     will-change:transform;
   }
   .ring-icon svg{ width:clamp(44px,3.6vw,60px); height:clamp(44px,3.6vw,60px); }
-  .showcase-item:hover .ring-icon{ background:var(--glass-bg-hover); border-color:var(--accent-line); box-shadow:0 16px 32px -12px rgba(0,0,0,.55); }
-  .showcase-item h3{ font-family:var(--font-primary); font-weight:700; font-size:clamp(1.4rem,1.7vw,1.8rem); color:#fff; }
-  .showcase-item p{
-    margin-top:clamp(1rem,1.4vw,1.4rem); font-size:clamp(1rem,1.05vw,1.1rem); line-height:1.9; color:rgba(255,255,255,.6);
-    font-weight:300;
-  }
-  /* ---- Desktop-only: drop the card frame and icon circle, bigger bare icons ---- */
   @media (min-width:761px){
-    .showcase-item{
-      border:none; background:none; box-shadow:none;
-      -webkit-backdrop-filter:none; backdrop-filter:none;
-      border-radius:0;
-      padding:clamp(1rem,1.6vw,1.5rem) clamp(1.25rem,2vw,2rem);
-    }
     .ring-icon{
       width:auto; height:auto; border-radius:0;
       border:none; background:none; box-shadow:none;
       -webkit-backdrop-filter:none; backdrop-filter:none;
     }
     .ring-icon svg{ width:clamp(70px,6vw,96px); height:clamp(70px,6vw,96px); }
-    .showcase-item:hover .ring-icon{ background:none; border:none; box-shadow:none; }
+  }
+
+  /* Same pinned-stage architecture as #process / #differentiators (see
+     the "shared sticky-pin base" comment above in this file), extended to
+     run at EVERY width including mobile — not just >=761px — because here
+     the 4 services + their icon rail are themselves the point of the
+     scroll interaction on phones too, per spec ("نفس فكرة التنقل بالscroll
+     على الجوال"). Icons sit in a narrow rail; RTL places the first DOM
+     column on the right, so .svc-icons (first) lands on the right and
+     .svc-display (second) on the left — the exact same convention
+     #differentiators already uses for its numbered index. Un-pinned
+     (reduced motion / no IntersectionObserver) falls back to a plain
+     stacked list of all 4 services, icons hidden — same safety net as
+     #process/#differentiators. */
+  .services-showcase{
+    background:var(--black); color:#fff;
+    width:100%; padding:clamp(5rem,9vw,7.5rem) 0;
+    border-top:1px solid rgba(255,255,255,.08); border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .svc-track{ position:relative; }
+  .svc-triggers{ display:none; }
+
+  .svc-head{ text-align:center; margin-bottom:clamp(2rem,4vw,3rem); }
+  .svc-head h2{
+    font-family:var(--font-primary); font-weight:800; font-size:var(--fs-h1);
+    line-height:var(--lh-heading); letter-spacing:var(--ls-heading); color:#fff;
+  }
+
+  .svc-body{ display:flex; flex-direction:column; gap:2.5rem; width:100%; }
+  .svc-icons{ display:none; }
+  .svc-display{ width:100%; min-width:0; }
+  .svc-progress{ display:none; }
+  .svc-panels{ display:flex; flex-direction:column; gap:clamp(2.5rem,5vw,4rem); }
+  .svc-panel{
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    max-width:34ch; margin:0 auto;
+  }
+  .svc-panel .ring-icon{ margin-bottom:1.5rem; }
+  .svc-panel-title{ font-family:var(--font-primary); font-weight:700; font-size:clamp(1.3rem,2vw,1.6rem); color:#fff; }
+  .svc-panel-desc{ margin-top:1rem; color:rgba(255,255,255,.6); font-weight:300; font-size:1rem; line-height:1.9; }
+  .services-showcase .svc-scroll-hint{ display:none; margin-top:1.5rem; color:rgba(255,255,255,.4); }
+  .services-showcase .svc-scroll-hint svg{ width:22px; height:22px; }
+  @media (prefers-reduced-motion: no-preference){
+    .svc-track.is-pinned .svc-scroll-hint svg{ animation:process-arrow-bounce 1.8s ease-in-out infinite; }
+  }
+
+  /* ---- pinned state: same track/stage/stage-inner recipe as #process
+     and #differentiators, unscoped by width so it also runs on mobile
+     (js/script.js enables it everywhere, guarded only by reduced-motion /
+     IntersectionObserver support — see the dedicated controller). ---- */
+  .svc-track.is-pinned{ height:280vh; }
+  .svc-track.is-pinned .svc-triggers{ position:absolute; inset:0; display:flex; flex-direction:column; pointer-events:none; }
+  .svc-track.is-pinned .svc-trigger{ flex:1 0 0; }
+  .svc-track.is-pinned .svc-stage{ position:sticky; top:0; height:100vh; height:100dvh; display:flex; align-items:stretch; overflow:hidden; }
+  .svc-track.is-pinned .svc-stage-inner{
+    display:flex; flex-direction:column; align-items:center; width:100%; height:100%;
+    padding-block:clamp(7rem,11vw,9rem) 2.5rem;
+  }
+  .svc-track.is-pinned .svc-head{ flex:none; margin-bottom:clamp(1.5rem,3vw,2.25rem); }
+  .svc-track.is-pinned .svc-body{
+    flex:1 1 auto; min-height:0; width:100%; display:grid;
+    grid-template-columns:minmax(52px,72px) 1fr;
+    align-items:center; column-gap:1.25rem;
+  }
+  .svc-track.is-pinned .svc-icons{
+    display:flex; flex-direction:column; align-items:center; gap:.9rem;
+  }
+  .svc-track.is-pinned .svc-icon{
+    display:flex; align-items:center; justify-content:center;
+    opacity:.35; transform:scale(.85);
+    transition:opacity .5s var(--ease-soft), transform .5s var(--ease-soft), color .5s var(--ease-soft);
+  }
+  .svc-track.is-pinned .svc-icon .ring-icon{ margin:0; }
+  .svc-track.is-pinned .svc-icon .ring-icon svg{ width:22px; height:22px; }
+  .svc-track.is-pinned .svc-icon.is-active{ opacity:1; transform:scale(1); color:#fff; }
+  .svc-track.is-pinned .svc-display{ position:relative; min-width:0; }
+  .svc-track.is-pinned .svc-progress{
+    display:block; margin-bottom:1rem; text-align:start; font-family:var(--font-primary); font-weight:600;
+    font-size:.85rem; letter-spacing:var(--ls-meta); color:rgba(255,255,255,.45);
+  }
+  .svc-track.is-pinned .svc-panels{ position:relative; min-height:200px; display:block; }
+  .svc-track.is-pinned .svc-panel{
+    position:absolute; inset-inline-start:0; top:0; width:100%; max-width:40ch;
+    align-items:flex-start; text-align:start; margin:0;
+    opacity:0; transform:translateY(20px); pointer-events:none;
+    transition:opacity .6s var(--ease-soft), transform .6s var(--ease-soft);
+  }
+  .svc-track.is-pinned .svc-panel .ring-icon{ margin:0 0 1rem; }
+  .svc-track.is-pinned .svc-panel.is-active{ opacity:1; transform:none; pointer-events:auto; }
+  .svc-track.is-pinned .svc-panel.is-past{ transform:translateY(-20px); }
+  .svc-track.is-pinned .svc-scroll-hint{ display:block; text-align:start; }
+  .svc-track.is-pinned .svc-scroll-hint.is-hidden{ opacity:0; }
+
+  @media (min-width:761px){
+    .svc-track.is-pinned .svc-body{
+      grid-template-columns:minmax(84px,120px) 1fr; column-gap:clamp(3rem,5vw,4.5rem);
+    }
+    .svc-track.is-pinned .svc-icons{ gap:1.5rem; }
+    .svc-track.is-pinned .svc-icon .ring-icon svg{ width:30px; height:30px; }
+    .svc-panel-title{ font-size:clamp(1.6rem,2.2vw,2rem); }
+    .svc-panel-desc{ font-size:1.05rem; max-width:38ch; }
+    .svc-track.is-pinned .svc-panels{ min-height:240px; }
+  }
+
+  @media (min-width:1025px){
+    .svc-track.is-pinned .svc-body{
+      grid-template-columns:minmax(100px,150px) 1fr; column-gap:clamp(3.5rem,6vw,5.5rem);
+    }
+    .svc-track.is-pinned .svc-icons{ gap:2rem; }
+    .svc-track.is-pinned .svc-icon .ring-icon svg{ width:36px; height:36px; }
+    .svc-panel-title{ font-size:clamp(1.9rem,2.6vw,2.5rem); }
+    .svc-panel-desc{ font-size:1.2rem; line-height:1.85; max-width:42ch; }
+    .svc-track.is-pinned .svc-panels{ min-height:290px; }
+    .services-showcase .svc-scroll-hint svg{ width:26px; height:26px; }
   }
 
   /* ---- 06 team / "من خلف سيرة؟!" -- editorial redesign (Phase 3) ----
@@ -1320,7 +1168,6 @@
      new images, existing scroll/hover behavior kept as-is. */
   @media (min-width:801px){
     .behind-section{ padding:clamp(8rem, 13vw, 13rem) 0; }
-    .behind-title{ font-size:var(--fs-display); }
     .behind-subtitle{ margin-top:1.1rem; font-size:1.2rem; max-width:46ch; margin-inline:auto; }
     .behind-composition{ margin-top:3.75rem; gap:2.5rem; }
     .behind-gallery{
@@ -1340,7 +1187,7 @@
   .diff-head{ text-align:center; margin-bottom:clamp(2.5rem,5vw,4rem); }
   .diff-title{
     margin-top:1rem; max-width:20ch; margin-inline:auto;
-    font-family:var(--font-primary); font-weight:800; font-size:var(--fs-display);
+    font-family:var(--font-primary); font-weight:800; font-size:var(--fs-h1);
     line-height:1.05; letter-spacing:var(--ls-display); text-wrap:balance;
     transition:font-size .4s var(--ease-soft);
   }
@@ -1393,7 +1240,7 @@
       display:flex; flex-direction:column; align-items:center; width:100%; height:100%;
       padding-block:clamp(7rem,11vw,9rem) 2.5rem;
     }
-    .diff-track.is-pinned .diff-head{ flex:none; margin-bottom:clamp(2rem,4vw,3rem); }
+    .diff-track.is-pinned .diff-head{ flex:none; margin-bottom:clamp(1.5rem,3vw,2.25rem); }
 
     .diff-track.is-pinned .diff-body{
       flex:1 1 auto; min-height:0; width:100%; display:grid;
@@ -1434,6 +1281,27 @@
     .diff-panel{ max-width:none; padding:0 .5rem clamp(2.25rem,6vw,3rem); }
     .diff-panel-title{ font-size:1.2rem; }
     .diff-panel-desc{ font-size:.94rem; }
+  }
+
+  /* ============================================================
+     Desktop-only (>=1025px) enlargement of #differentiators content —
+     same "true desktop" cutoff and same additive-only approach as the
+     process section's own BATCH 2 pass above: sizing/spacing only, no
+     markup/JS change, nothing here touches tablet (761-1024px) or
+     mobile (<=800px, block above). min-height on .diff-panels grows
+     alongside the text so the larger title+description never gets
+     clipped by the pinned stage's fixed viewport height.
+     ============================================================ */
+  @media (min-width:1025px){
+    .diff-index-item{ font-size:1.6rem; }
+    .diff-track.is-pinned .diff-index{ gap:1.75rem; }
+    .diff-track.is-pinned .diff-index-item{ font-size:1.6rem; }
+    .diff-track.is-pinned .diff-index-item.is-active{ font-size:2.4rem; }
+    .diff-track.is-pinned .diff-body{ grid-template-columns:minmax(140px,200px) 1fr; column-gap:clamp(3.5rem,6vw,6rem); }
+    .diff-panel-mark svg{ width:46px; height:46px; }
+    .diff-panel-title{ font-size:clamp(1.9rem, 2.6vw, 2.5rem); }
+    .diff-panel-desc{ font-size:1.2rem; line-height:1.85; max-width:42ch; }
+    .diff-track.is-pinned .diff-panels{ min-height:290px; }
   }
 
   /* .process-head lives inside .process-stage-inner now (see index.html)
@@ -1484,6 +1352,7 @@
   }
   .process-progress-dots i.is-active{ background:var(--accent); transform:scale(1.5); }
   .process-progress-dots i.is-done{ background:var(--ink-faint); }
+  .process-shared-arrow{ display:none; }
 
   @media (min-width:761px){
     /* Fix (Sep 2026 visual-refinement pass): see the matching comment on
@@ -1502,15 +1371,18 @@
       display:flex; flex-direction:column; align-items:center; width:100%; height:100%;
       padding-block:clamp(7rem,11vw,9rem) 2.5rem;
     }
-    .process-track.is-pinned .process-head{ flex:none; margin-bottom:clamp(1.75rem,3.5vw,2.75rem); }
-    .process-track.is-pinned .process-progress{
-      flex:none; display:flex; flex-direction:column; align-items:center; gap:.6rem;
-      position:static; margin:0 0 clamp(1.5rem,3vw,2.25rem);
-    }
+    .process-track.is-pinned .process-head{ flex:none; margin-bottom:clamp(1.25rem,2.5vw,2rem); }
     .process-track.is-pinned .process-steps{
       flex:1 1 auto; min-height:0; position:relative;
       display:flex; align-items:center; justify-content:center; width:100%;
     }
+    .process-track.is-pinned .process-progress{
+      flex:none; display:flex; flex-direction:column; align-items:center; gap:.6rem;
+      position:static; margin:clamp(1.1rem,2.2vw,1.75rem) 0 0;
+    }
+    .process-track.is-pinned .process-step .process-step-arrow{ display:none; }
+    .process-track.is-pinned .process-shared-arrow{ display:block; margin-top:.6rem; transition:opacity .4s var(--ease-soft); }
+    .process-track.is-pinned .process-shared-arrow.is-hidden{ opacity:0; }
     .process-track.is-pinned .process-step{
       position:absolute; inset:0; margin:auto; height:max-content; max-width:34ch;
       opacity:0; transform:translateY(28px) scale(.96); pointer-events:none;
@@ -1548,7 +1420,7 @@
      .is-pinned because it depends on that layout's absolute-positioned
      architecture. */
   @media (min-width:1025px){
-    .process-title{ font-size:clamp(3rem, 4.2vw, 5.5rem); max-width:24ch; }
+    .process-title{ max-width:24ch; }
     .process-subtitle{ font-size:1.2rem; margin-top:1.25rem; }
 
     .process-step{ max-width:44ch; gap:1.75rem; }
@@ -1574,10 +1446,8 @@
     .process-track.is-pinned .process-progress-count{ font-size:1.05rem; }
     .process-track.is-pinned .process-progress-dots i{ width:7px; height:7px; }
 
-    .process-track.is-pinned .process-steps{ min-height:32rem; }
-    .process-track.is-pinned .process-step-arrow{
-      order:-1; margin-top:0; margin-bottom:.5rem;
-    }
+    .process-track.is-pinned .process-steps{ min-height:30rem; }
+    .process-track.is-pinned .process-shared-arrow svg{ width:30px; height:30px; }
   }
 
   /* ============================================================
@@ -1717,6 +1587,7 @@
      defined above in this file. */
   .faq-section{ border-top:1px solid var(--line); }
   .faq-head{ text-align:center; }
+  .faq-head h2{ font-size:var(--fs-h1); }
   .faq-list{
     margin-top:3rem; max-width:900px;
   }
@@ -1765,7 +1636,7 @@
   /* ---------- 07 contact ---------- */
   .contact{ background:var(--black); color:var(--white); }
   .contact h2{
-    max-width:14ch;
+    max-width:14ch; font-size:var(--fs-h1);
   }
   .contact-grid{
     margin-top:5rem; display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:3.5rem;
@@ -1914,7 +1785,7 @@
 
   /* ---- logo image ---- */
   .logo-img{ transition:filter .4s ease; }
-  .nav-logo{ height:38px; width:auto; filter:brightness(0) invert(1); }
+  .nav-logo{ height:40px; width:auto; filter:brightness(0) invert(1); }
   .nav-logo.inverted{ filter:brightness(0) invert(1); }
   header.site-nav nav{ color:#fff; }
 
@@ -1949,7 +1820,7 @@
   /* ---- products (coming soon) ---- */
   .products{ background:var(--bg-alt); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
   .products-inner{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:4rem; align-items:center; }
-  .products-text h2{}
+  .products-text h2{ font-size:var(--fs-h1); }
   .products-text p{ margin-top:1.3rem; max-width:42ch; color:var(--ink-soft); font-weight:300; line-height:1.9; }
   .coming-soon{
     position:relative; display:flex; align-items:center; justify-content:center;
@@ -1988,6 +1859,7 @@
 
   /* ---- company profile ---- */
   .profile{ text-align:center; }
+  .profile h2{ font-size:var(--fs-h1); }
   /* "تعرف على سيرة" → "من خلف سيرة": both sections use the shared .sec-pad
      rhythm (top+bottom padding on each), which stacks into a very large gap
      precisely because #profile's own content is so short (one line + one
@@ -1997,6 +1869,7 @@
      every other section pair keeps its normal spacing untouched. */
   #profile{ padding-bottom:clamp(3rem, 6vw, 5rem); }
   #team{ padding-top:clamp(3rem, 6vw, 5rem); }
+  .team-editorial h2{ font-size:var(--fs-h1); }
   /* Audit fix, mobile only: #team's own padding-top above (~48px on phone
      widths) is less than the fixed mobile header's ~91px height — same
      underlying issue as #clients further up this file. #team isn't a nav
@@ -2126,6 +1999,9 @@
     display:flex; flex-direction:column; align-items:center; gap:1rem;
     padding:2.8rem 0 2.4rem; font-size:.72rem; color:rgba(255,255,255,.4); letter-spacing:.02em;
     border-top:1px solid rgba(255,255,255,.08); margin-top:.5rem; text-align:center;
+  }
+  .footer-credit{
+    display:block; margin-top:.35rem; font-size:.64rem; color:rgba(255,255,255,.28); letter-spacing:.02em; font-weight:300;
   }
 
   /* ---- standalone legal pages (Privacy Policy / Terms & Conditions) ----

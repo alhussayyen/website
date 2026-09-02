@@ -337,16 +337,10 @@
     // element like every other "rise" card on the site)
     [
       { group:'.stats',            items:'.stat',            from:{opacity:0, y:26, scale:.95} },
-      // skipped entirely on mobile: below 760px the services section is a
-      // sticky/pinned, scroll-stepped single-card cross-fade (see the
-      // dedicated controller further down) which owns each .showcase-item's
-      // opacity/transform itself — this generic stagger reveal would
-      // otherwise force every card to opacity:1 via an inline style the
-      // moment the section scrolls into view, breaking the one-at-a-time
-      // effect. Desktop is unaffected and keeps this reveal exactly as before.
-      ...(mqServicesMobile.matches ? [] : [
-        { group:'.services-showcase',items:'.showcase-item',   from:{opacity:0, y:26, scale:.95} }
-      ]),
+      // #services is excluded here entirely: its pinned scroll controller
+      // (further down) owns every .svc-panel's opacity/transform itself at
+      // every width now, not just desktop — a generic stagger reveal here
+      // would fight that the same way it used to on mobile only.
       { group:'.socials',          items:'.icon-btn',        from:{opacity:0, y:16, scale:.95} },
       { group:'.contact-list',     items:'a, .contact-row',  from:{opacity:0, y:14, scale:.95} }
     ].forEach(cfg=>{
@@ -563,185 +557,54 @@
   }, {threshold:.6});
   counters.forEach(c=>io.observe(c));
 
-  // ---- services showcase: full-width single row, scroll-linked horizontal drift ----
-  // Vanilla implementation only (no GSAP/external libs, per spec): the row's
-  // horizontal position is driven by CSS transform, updated on a requestAnimationFrame
-  // loop that is only active while the section intersects the viewport
-  // (IntersectionObserver), so it stays lazy and never runs off-screen.
-  // Scrolling down moves the cards left; scrolling up eases them back right;
-  // motion is smoothed with a simple lerp so it always feels continuous, never abrupt.
-  //
-  // Desktop-only: on mobile (<=760px) the services section is instead a
-  // sticky, scroll-stepped pin (see the dedicated block further below), so
-  // this decorative row-drift is skipped there entirely — it would otherwise
-  // fight the single-card cross-fade with its own transform on #svcRow.
+  // ---- Services (Phase X): pinned scroll-through of the 4 services ----
+  // Same pinned-stage technique as #process / #differentiators — one
+  // IntersectionObserver over evenly-spaced trigger points swaps the
+  // active step — but running at EVERY width, not just desktop: the 4
+  // services and their icon rail are the point of the scroll interaction
+  // on phones too (see css/style.css, .svc-track.is-pinned is unscoped by
+  // width for the same reason). Falls back to a plain stacked list (all 4
+  // services, icons hidden) when reduced motion is set or
+  // IntersectionObserver is unsupported — same safety net already used by
+  // #process/#differentiators.
   (function(){
-    const section = document.querySelector('.services-showcase');
-    const row = document.getElementById('svcRow');
-    if (reduceMotion || !section || !row) return;
+    const track = document.getElementById('svcTrack');
+    const panels = Array.from(document.querySelectorAll('.svc-panel'));
+    const icons = Array.from(document.querySelectorAll('.svc-icon'));
+    const progressEl = document.getElementById('svcProgress');
+    const scrollHint = document.getElementById('svcScrollHint');
+    if (!track || !panels.length || !window.IntersectionObserver) return;
 
-    let current = 0;
-    let raf = null;
-
-    function computeTarget(){
-      const rect = section.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      // progress: 0 as the section arrives at the bottom of the viewport,
-      // 1 once it has fully passed the top of the viewport.
-      let progress = (vh - rect.top) / (vh + rect.height);
-      progress = Math.min(1, Math.max(0, progress));
-      const amp = Math.min(90, window.innerWidth * 0.05);
-      // starts shifted right (+amp), ends shifted left (-amp) as the user scrolls down
-      return amp * (1 - 2 * progress);
-    }
-
-    function loop(){
-      if (mqServicesMobile.matches){
-        // mobile: hand full control to the sticky-pin cross-fade below —
-        // make sure no leftover horizontal offset lingers on the row.
-        if (row.style.transform) row.style.transform = '';
-        current = 0;
-        raf = requestAnimationFrame(loop);
-        return;
-      }
-      const target = computeTarget();
-      current += (target - current) * 0.08;
-      row.style.transform = `translateX(${current.toFixed(2)}px)`;
-      raf = requestAnimationFrame(loop);
-    }
-
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting){
-          if (!raf) raf = requestAnimationFrame(loop);
-        } else if (raf){
-          cancelAnimationFrame(raf);
-          raf = null;
-        }
+    function setActive(idx){
+      panels.forEach((el, i)=>{
+        el.classList.toggle('is-active', i === idx);
+        el.classList.toggle('is-past', i < idx);
+        el.setAttribute('aria-hidden', i === idx ? 'false' : 'true');
       });
-    }, { threshold: 0 });
-    io.observe(section);
-  })();
-
-  // ---- mobile-only: services section as a sticky, SCROLL-DRIVEN (not
-  // timer-driven) HORIZONTAL SLIDE showcase ----
-  // No buttons, no arrows, no touch-drag/swipe on the row itself, no
-  // autoplay/timer of any kind — the ONLY input is the page's normal
-  // vertical scroll (the same finger-scroll used everywhere else on the
-  // site). targetIndex() is a fractional position (e.g. 1.35 = 35% of the
-  // way from card 1 to card 2) recomputed fresh from scroll progress every
-  // time; renderedIndex follows it with a per-frame lerp (see LERP below)
-  // for a smooth, slightly-weighted feel instead of a raw 1:1 snap to
-  // scroll pixels — but it can only ever move TOWARD wherever scroll
-  // currently points, and it stops completely (no more rAF requested) the
-  // moment it catches up, typically within a few hundred ms of the last
-  // scroll event. That's a bounded smoothing tail, not autoplay: verified
-  // by leaving the page scrolled mid-transition and idle for several
-  // seconds — the frame is identical throughout, nothing advances to a new
-  // card on its own. PIN_BUDGET_VH sets how much physical scrolling the
-  // full journey across all cards takes (increased — see git history — so
-  // a small scroll no longer sweeps past a card almost instantly). Once
-  // the user scrolls past the last service the section unpins on its own
-  // and the page continues normally — same in reverse past the first
-  // service. Fully inert on desktop widths.
-  (function(){
-    const outer = document.getElementById('svcStickyOuter');
-    const items = Array.from(document.querySelectorAll('.services-showcase .showcase-item'));
-    if (!outer || !items.length) return;
-
-    let active = false;
-    let raf = null;
-    let renderedIndex = 0;
-
-    // Fraction of the remaining distance closed per animation frame. Small
-    // enough to feel smooth/weighted rather than robotic, but converges
-    // within a handful of frames (~300-400ms) of the last scroll input, so
-    // it reads as "gentle inertia", never as content moving on its own.
-    var LERP = 0.16;
-    var SETTLE_EPSILON = 0.0015;
-
-    // Pure function of scroll position — no stored step, no timers.
-    function targetIndex(){
-      const rect = outer.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      const scrollable = rect.height - vh;
-      let progress = scrollable > 0 ? (-rect.top) / scrollable : 0;
-      progress = Math.min(1, Math.max(0, progress));
-      return progress * (items.length - 1);
-    }
-
-    function paint(continuousIndex){
-      const nearest = Math.round(continuousIndex);
-      items.forEach((el, idx) => {
-        const delta = idx - continuousIndex; // signed distance from centered, in "card widths"
-        el.style.transform = 'translateX(' + (delta * 100) + '%)';
-        // Linear cross-fade tied to the same distance, so the outgoing card
-        // fades out and the incoming one fades in at exactly the rate the
-        // (smoothed) position is moving — never a separate timed fade.
-        el.style.opacity = Math.max(0, 1 - Math.abs(delta));
-        const on = idx === nearest;
-        el.classList.toggle('is-active', on);
-        el.setAttribute('aria-hidden', on ? 'false' : 'true');
+      icons.forEach((el, i)=>{
+        el.classList.toggle('is-active', i === idx);
       });
-    }
-
-    function tick(){
-      raf = null;
-      if (!active) return;
-      const target = targetIndex();
-      renderedIndex += (target - renderedIndex) * LERP;
-      if (Math.abs(target - renderedIndex) < SETTLE_EPSILON) renderedIndex = target;
-      paint(renderedIndex);
-      if (renderedIndex !== target) raf = requestAnimationFrame(tick); // keep converging toward the current scroll target; stops on its own once caught up
-    }
-
-    function onScroll(){
-      if (!raf) raf = requestAnimationFrame(tick);
+      if (progressEl) progressEl.textContent = String(idx + 1).padStart(2, '0') + ' / 04';
+      // no "keep scrolling" hint once the last service is showing
+      if (scrollHint) scrollHint.classList.toggle('is-hidden', idx === panels.length - 1);
     }
 
     function enable(){
-      if (active) return;
-      active = true;
-      // dvh (not vh) so the spacer's height tracks the browser's actual
-      // visible viewport as mobile address/toolbar chrome shows/hides —
-      // matches the dvh unit already used for .services-sticky-inner below.
-      // PIN_BUDGET_VH is a fixed scroll budget (not scaled per item — see
-      // git history), raised from 160 to 280dvh so each card requires a
-      // deliberately larger scroll distance to traverse (roughly 60dvh per
-      // transition instead of ~20dvh) instead of transitioning on a small
-      // scroll nudge.
-      // NOTE: css/style.css's four `.svc-snap-point[data-snap-step]` scroll-
-      // snap targets are positioned at 0/60/120/180dvh — i.e. hand-derived
-      // from this exact value (280) and items.length (4). If either changes,
-      // those offsets (and the number of snap points) need updating too.
-      var PIN_BUDGET_VH = 280;
-      outer.style.height = PIN_BUDGET_VH + 'dvh';
-      renderedIndex = targetIndex();
-      paint(renderedIndex);
-      window.addEventListener('scroll', onScroll, { passive:true });
-      window.addEventListener('orientationchange', onScroll);
+      if (track.classList.contains('is-pinned')) return;
+      track.classList.add('is-pinned');
+      setActive(0);
+      const observer = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if (entry.isIntersecting){
+            const idx = parseInt(entry.target.dataset.triggerStep, 10) - 1;
+            setActive(idx);
+          }
+        });
+      }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+      track.querySelectorAll('.svc-trigger').forEach(m => observer.observe(m));
     }
 
-    function disable(){
-      if (!active) return;
-      active = false;
-      if (raf){ cancelAnimationFrame(raf); raf = null; }
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('orientationchange', onScroll);
-      outer.style.height = '';
-      items.forEach(el => {
-        el.classList.remove('is-active');
-        el.removeAttribute('aria-hidden');
-        el.style.transform = '';
-        el.style.opacity = '';
-      });
-    }
-
-    function sync(){ mqServicesMobile.matches ? enable() : disable(); }
-    sync();
-    if (mqServicesMobile.addEventListener) mqServicesMobile.addEventListener('change', sync);
-    else mqServicesMobile.addListener(sync); // Safari <14 fallback
-    window.addEventListener('resize', sync);
+    if (!reduceMotion) enable();
   })();
 
   // ---- Process (Phase 4): "how we work" scroll story ----
@@ -758,6 +621,7 @@
     const steps = Array.from(document.querySelectorAll('.process-step'));
     const countEl = document.getElementById('processProgressCount');
     const dots = Array.from(document.querySelectorAll('.process-progress-dots i'));
+    const sharedArrow = document.getElementById('processSharedArrow');
     if (!track || !steps.length || !window.IntersectionObserver) return;
 
     const mqProcessDesktop = window.matchMedia('(min-width:761px)');
@@ -774,6 +638,9 @@
         d.classList.toggle('is-active', i === idx);
         d.classList.toggle('is-done', i < idx);
       });
+      // no arrow after the last step ("تسليم") — matches the per-step
+      // markup, which never had a process-step-arrow on step 6 either.
+      if (sharedArrow) sharedArrow.classList.toggle('is-hidden', idx === steps.length - 1);
     }
 
     function enable(){

@@ -146,6 +146,7 @@
     <a href="#services" data-en="Services">الخدمات</a>
     <a href="#work" data-en="Work">الأعمال</a>
     <a href="#clients" data-en="Clients">العملاء</a>
+    <a href="#products" data-en="Products">منتجاتنا</a>
     <a href="#contact" data-en="Contact">التواصل</a>
     <!-- shown only inside the mobile fullscreen nav overlay; reuses the
          exact footer .icon-btn style/markup so it matches 1:1 -->
@@ -246,50 +247,62 @@
 
 <!-- services -->
 <section class="services-showcase" id="services">
-  <!-- Mobile-only sticky/pinned wrapper (see css/style.css and js/script.js).
-       These two wrapper divs are inert on desktop (plain, full-width block
-       elements with no positioning of their own — the h2 + .showcase-wrap
-       inside them lay out exactly as before), and only gain height/position
-       rules inside the max-width:760px query, where they drive the
-       scroll-stepped, no-buttons/no-swipe service pin described in spec. -->
-  <div class="services-sticky-outer" id="svcStickyOuter">
-    <div class="services-sticky-inner" id="svcStickyInner">
-      <h2 data-en="Our Media Services">أبرز خدماتنا الإعلامية</h2>
-      <div class="showcase-wrap">
-        <div class="showcase-row" id="svcRow">
-          <div class="showcase-item" data-svc-index="0">
-            <div class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="1.5"/><path d="m16 10 5-3v10l-5-3"/></svg></div>
-            <h3 data-en="Video &amp; Editing">تصوير الفيديو والمونتاج</h3>
-            <p data-en="Commercial production — documentaries — media coverage — conferences &amp; events — aerial filming — editing">تصوير الإعلانات - تصوير الأفلام الوثائقية - التغطيات الإعلامية - المؤتمرات والمناسبات - التصوير الجوي - المونتاج</p>
+  <div class="svc-track" id="svcTrack">
+    <div class="svc-triggers" aria-hidden="true">
+      <span class="svc-trigger" data-trigger-step="1"></span>
+      <span class="svc-trigger" data-trigger-step="2"></span>
+      <span class="svc-trigger" data-trigger-step="3"></span>
+      <span class="svc-trigger" data-trigger-step="4"></span>
+    </div>
+
+    <div class="svc-stage" id="svcStage">
+      <div class="wrap svc-stage-inner">
+        <div class="svc-head">
+          <h2 data-en="Our Media Services">أبرز خدماتنا الإعلامية</h2>
+        </div>
+
+        <div class="svc-body">
+          <div class="svc-icons" id="svcIcons" aria-hidden="true">
+            <span class="svc-icon is-active" data-svc-index="0"><span class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="1.5"/><path d="m16 10 5-3v10l-5-3"/></svg></span></span>
+            <span class="svc-icon" data-svc-index="1"><span class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span></span>
+            <span class="svc-icon" data-svc-index="2"><span class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.5-.7 1.5-1.4 0-.4-.2-.7-.4-1-.3-.3-.4-.6-.4-1 0-.8.6-1.4 1.4-1.4H16a4 4 0 0 0 4-4c0-4.4-3.6-9.2-8-9.2Z"/><circle cx="7.5" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="8" r="1" fill="currentColor" stroke="none"/></svg></span></span>
+            <span class="svc-icon" data-svc-index="3"><span class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M15 7h6v6"/></svg></span></span>
           </div>
-          <div class="showcase-item" data-svc-index="1">
-            <div class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
-            <h3 data-en="Photography">التصوير الفوتوغرافي</h3>
-            <p data-en="Private sessions — product photography — celebrations &amp; events — custom shoots">جلسات تصوير خاصة - تصوير المنتجات - تصوير الاحتفالات والمناسبات - التصوير المخصص</p>
-          </div>
-          <div class="showcase-item" data-svc-index="2">
-            <div class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.5-.7 1.5-1.4 0-.4-.2-.7-.4-1-.3-.3-.4-.6-.4-1 0-.8.6-1.4 1.4-1.4H16a4 4 0 0 0 4-4c0-4.4-3.6-9.2-8-9.2Z"/><circle cx="7.5" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="8" r="1" fill="currentColor" stroke="none"/></svg></div>
-            <h3 data-en="Design">التصميم</h3>
-            <p data-en="Brand identity — advertising design — social media posts — print design">تصميم الهويات البصرية - تصميم الإعلانات - تصميم المنشورات - تصميم المطبوعات</p>
-          </div>
-          <div class="showcase-item" data-svc-index="3">
-            <div class="ring-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
-            <h3 data-en="Marketing">التسويق</h3>
-            <p data-en="Digital marketing — ad content creation — social media management">التسويق الإلكتروني - صناعة المحتوى الإعلاني - إدارة حسابات التواصل الاجتماعي</p>
+
+          <div class="svc-display">
+            <span class="svc-progress" id="svcProgress" aria-hidden="true">01 / 04</span>
+
+            <div class="svc-panels" id="svcPanels">
+              <article class="svc-panel is-active" data-step="1">
+                <span class="svc-panel-mark ring-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="1.5"/><path d="m16 10 5-3v10l-5-3"/></svg></span>
+                <h3 class="svc-panel-title" data-en="Video &amp; Editing">تصوير الفيديو والمونتاج</h3>
+                <p class="svc-panel-desc" data-en="Commercial production — documentaries — media coverage — conferences &amp; events — aerial filming — editing">تصوير الإعلانات - تصوير الأفلام الوثائقية - التغطيات الإعلامية - المؤتمرات والمناسبات - التصوير الجوي - المونتاج</p>
+              </article>
+
+              <article class="svc-panel" data-step="2">
+                <span class="svc-panel-mark ring-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+                <h3 class="svc-panel-title" data-en="Photography">التصوير الفوتوغرافي</h3>
+                <p class="svc-panel-desc" data-en="Private sessions — product photography — celebrations &amp; events — custom shoots">جلسات تصوير خاصة - تصوير المنتجات - تصوير الاحتفالات والمناسبات - التصوير المخصص</p>
+              </article>
+
+              <article class="svc-panel" data-step="3">
+                <span class="svc-panel-mark ring-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.5-.7 1.5-1.4 0-.4-.2-.7-.4-1-.3-.3-.4-.6-.4-1 0-.8.6-1.4 1.4-1.4H16a4 4 0 0 0 4-4c0-4.4-3.6-9.2-8-9.2Z"/><circle cx="7.5" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="8" r="1" fill="currentColor" stroke="none"/></svg></span>
+                <h3 class="svc-panel-title" data-en="Design">التصميم</h3>
+                <p class="svc-panel-desc" data-en="Brand identity — advertising design — social media posts — print design">تصميم الهويات البصرية - تصميم الإعلانات - تصميم المنشورات - تصميم المطبوعات</p>
+              </article>
+
+              <article class="svc-panel" data-step="4">
+                <span class="svc-panel-mark ring-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M15 7h6v6"/></svg></span>
+                <h3 class="svc-panel-title" data-en="Marketing">التسويق</h3>
+                <p class="svc-panel-desc" data-en="Digital marketing — ad content creation — social media management">التسويق الإلكتروني - صناعة المحتوى الإعلاني - إدارة حسابات التواصل الاجتماعي</p>
+              </article>
+            </div>
+
+            <span class="svc-scroll-hint process-step-arrow" id="svcScrollHint" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16"/><path d="M6 14l6 6 6-6"/></svg></span>
           </div>
         </div>
       </div>
     </div>
-    <!-- Inert markers left over from a removed native-scroll-snap "pause"
-         (see css/style.css — `scroll-snap-type` was fighting the Lenis
-         smooth-scroll library and breaking normal page scroll, so it's been
-         removed sitewide). Scrolling through this section is now 100%
-         native/free; the crossfade in js/script.js still tracks scroll
-         continuously regardless. Desktop-inert either way. -->
-    <div class="svc-snap-point" data-snap-step="0" aria-hidden="true"></div>
-    <div class="svc-snap-point" data-snap-step="1" aria-hidden="true"></div>
-    <div class="svc-snap-point" data-snap-step="2" aria-hidden="true"></div>
-    <div class="svc-snap-point" data-snap-step="3" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -322,13 +335,6 @@
           <h2 class="process-title" data-en="From the first request to the final delivery.">من الطلب إلى النسخة النهائية.</h2>
           <p class="process-subtitle" data-en="Six steps. No shortcuts.">ست خطوات، بلا اختصارات.</p>
           <span class="process-mark" aria-hidden="true"></span>
-        </div>
-
-        <div class="process-progress" id="processProgress" aria-hidden="true">
-          <span class="process-progress-count" id="processProgressCount">01 / 06</span>
-          <span class="process-progress-dots">
-            <i data-dot="1" class="is-active"></i><i data-dot="2"></i><i data-dot="3"></i><i data-dot="4"></i><i data-dot="5"></i><i data-dot="6"></i>
-          </span>
         </div>
 
         <div class="process-steps">
@@ -379,6 +385,15 @@
             <p class="process-step-desc" data-en="The work reaches you, ready to launch.">يصلكم العمل جاهزًا للانطلاق.</p>
           </article>
         </div>
+
+        <div class="process-progress" id="processProgress" aria-hidden="true">
+          <span class="process-progress-count" id="processProgressCount">01 / 06</span>
+          <span class="process-progress-dots">
+            <i data-dot="1" class="is-active"></i><i data-dot="2"></i><i data-dot="3"></i><i data-dot="4"></i><i data-dot="5"></i><i data-dot="6"></i>
+          </span>
+        </div>
+
+        <div class="process-shared-arrow process-step-arrow" id="processSharedArrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16"/><path d="M6 14l6 6 6-6"/></svg></div>
       </div>
     </div>
   </div>
@@ -998,6 +1013,59 @@
   </div>
 </section>
 
+<!-- 04.5 -->
+<section class="sec-pad behind-section" id="behind-siirah">
+  <div class="wrap behind-head">
+    <h2 class="behind-title" data-en="Beyond The Work">ما وراء العمل</h2>
+    <p class="behind-subtitle" data-en="Behind the Scenes at SIIRAH">لمحة حقيقية من كواليس أعمال سيرة</p>
+    <span class="behind-mark" aria-hidden="true"></span>
+  </div>
+
+  <!-- Sep 2026 visual-refinement pass: gallery + caption now share ONE
+       row (.behind-composition) instead of stacking as two separate
+       full-width blocks — the caption/Snapchat block sits beside the two
+       real photos (after them in DOM/reading order, which lands it on
+       the left in this RTL layout), matching "same row, on the left".
+       QR code removed entirely per client request, no replacement.
+       Photos are untouched (assets/images/behind-photo-01.jpg /
+       behind-photo-02.jpg, object-fit:cover only). The Snapchat icon
+       below the caption is the exact same SVG already used in the site
+       header/contact section, just restyled as a standalone logo link
+       instead of a bordered button (removes the duplicate "شاهد المزيد"
+       label already carried by the caption text above it). -->
+  <div class="wrap behind-composition">
+    <div class="behind-gallery" id="behindGallery">
+      <div class="behind-item behind-item--a" data-anim="rise">
+        <img src="assets/images/behind-photo-01.jpg" alt="لقطة من كواليس جلسة تصوير رياضية لسيرة" data-en-alt="Behind the scenes from a SIIRAH sports photo shoot" loading="lazy">
+      </div>
+      <div class="behind-item behind-item--b" data-anim="rise">
+        <img src="assets/images/behind-photo-02.jpg" alt="لقطة من كواليس جلسة تصوير لسيرة" data-en-alt="Behind the scenes from a SIIRAH photo shoot" loading="lazy">
+      </div>
+    </div>
+
+    <div class="behind-caption" data-anim="rise">
+      <p class="behind-snap-text" data-en="See more behind the scenes on Snapchat">شاهد المزيد من كواليس سيرة على سناب شات</p>
+      <a class="behind-snap-logo" href="https://snapchat.com/add/siirah27" target="_blank" rel="noopener" aria-label="Snapchat">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c2.9 0 4.8 2.2 4.7 5.1l-.1 2c1 .5 1.7.3 2.1.1.3-.1.7 0 .7.4-.1.8-1 1.3-1.8 1.6.1.4.3 1 .9 1.5.6.5 1.4.6 1.4 1.1 0 .6-1.3.9-2.1 1-.1.3-.1.7-.3.9-.3.3-1.4 0-2.3.3-.8.3-1.3 1.4-3.2 1.4s-2.4-1.1-3.2-1.4c-.9-.3-2 0-2.3-.3-.2-.2-.2-.6-.3-.9-.8-.1-2.1-.4-2.1-1 0-.5.8-.6 1.4-1.1.6-.5.8-1.1.9-1.5-.8-.3-1.7-.8-1.8-1.6 0-.4.4-.5.7-.4.4.2 1.1.4 2.1-.1l-.1-2C7.2 5.2 9.1 3 12 3Z"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- products -->
+<section class="products sec-pad" id="products">
+  <div class="wrap products-inner">
+    <div class="products-text">
+      <h2 style="margin-top:1rem" class="products-heading-desktop" data-en="New Products Launching Soon">قريبًا نطلق منتجاتنا الجديدة</h2>
+      <h2 style="margin-top:1rem" class="products-heading-mobile" data-anim="none" data-en="New Products Launching Soon">قريبًا<br>ونطلق منتجاتنا الجديدة</h2>
+      <p data-anim="fade" data-en="We&#39;re currently putting together a new lineup of creative products. Stay tuned for details.">نعمل حاليًا على تجهيز باقة من المنتجات الإبداعية الجديدة. ترقّبوا التفاصيل قريبًا.</p>
+    </div>
+    <div class="coming-soon" data-anim="fade">
+      <span class="cs-label" data-en="Coming Soon">قريبًا</span>
+    </div>
+  </div>
+</section>
+
 <!-- statement: video production -->
 <section class="statement dark video-section" id="video-production" style="text-align:start">
   <div class="wrap">
@@ -1031,45 +1099,6 @@
         <button class="play-ring" type="button" data-label-play-ar="تشغيل — فيديو ٠٤" data-label-pause-ar="إيقاف — فيديو ٠٤" data-label-play-en="Play — Video 04" data-label-pause-en="Pause — Video 04" aria-label="تشغيل — فيديو ٠٤" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg></button>
         <span class="v-label" data-en="Video 04">فيديو ٠٤</span>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- 04.5 -->
-<section class="sec-pad behind-section" id="behind-siirah">
-  <div class="wrap behind-head">
-    <h2 class="behind-title" data-en="Behind SIIRAH">خلف سيرة</h2>
-    <p class="behind-subtitle" data-en="Behind the Scenes at SIIRAH">لمحة حقيقية من كواليس أعمال سيرة</p>
-    <span class="behind-mark" aria-hidden="true"></span>
-  </div>
-
-  <!-- Sep 2026 visual-refinement pass: gallery + caption now share ONE
-       row (.behind-composition) instead of stacking as two separate
-       full-width blocks — the caption/Snapchat block sits beside the two
-       real photos (after them in DOM/reading order, which lands it on
-       the left in this RTL layout), matching "same row, on the left".
-       QR code removed entirely per client request, no replacement.
-       Photos are untouched (assets/images/behind-photo-01.jpg /
-       behind-photo-02.jpg, object-fit:cover only). The Snapchat icon
-       below the caption is the exact same SVG already used in the site
-       header/contact section, just restyled as a standalone logo link
-       instead of a bordered button (removes the duplicate "شاهد المزيد"
-       label already carried by the caption text above it). -->
-  <div class="wrap behind-composition">
-    <div class="behind-gallery" id="behindGallery">
-      <div class="behind-item behind-item--a" data-anim="rise">
-        <img src="assets/images/behind-photo-01.jpg" alt="لقطة من كواليس جلسة تصوير رياضية لسيرة" data-en-alt="Behind the scenes from a SIIRAH sports photo shoot" loading="lazy">
-      </div>
-      <div class="behind-item behind-item--b" data-anim="rise">
-        <img src="assets/images/behind-photo-02.jpg" alt="لقطة من كواليس جلسة تصوير لسيرة" data-en-alt="Behind the scenes from a SIIRAH photo shoot" loading="lazy">
-      </div>
-    </div>
-
-    <div class="behind-caption" data-anim="rise">
-      <p class="behind-snap-text" data-en="See more behind the scenes on Snapchat">شاهد المزيد من كواليس سيرة على سناب شات</p>
-      <a class="behind-snap-logo" href="https://snapchat.com/add/siirah27" target="_blank" rel="noopener" aria-label="Snapchat">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c2.9 0 4.8 2.2 4.7 5.1l-.1 2c1 .5 1.7.3 2.1.1.3-.1.7 0 .7.4-.1.8-1 1.3-1.8 1.6.1.4.3 1 .9 1.5.6.5 1.4.6 1.4 1.1 0 .6-1.3.9-2.1 1-.1.3-.1.7-.3.9-.3.3-1.4 0-2.3.3-.8.3-1.3 1.4-3.2 1.4s-2.4-1.1-3.2-1.4c-.9-.3-2 0-2.3-.3-.2-.2-.2-.6-.3-.9-.8-.1-2.1-.4-2.1-1 0-.5.8-.6 1.4-1.1.6-.5.8-1.1.9-1.5-.8-.3-1.7-.8-1.8-1.6 0-.4.4-.5.7-.4.4.2 1.1.4 2.1-.1l-.1-2C7.2 5.2 9.1 3 12 3Z"/></svg>
-      </a>
     </div>
   </div>
 </section>
@@ -1221,7 +1250,7 @@
 <!-- 05.5 -->
 <section class="sec-pad social-proof" id="social-posts">
   <div class="wrap social-proof-head" data-anim="fade">
-    <h2 style="margin-top:0" data-en="SIIRAH On Social">من أعمال سيرة</h2>
+    <h2 style="margin-top:0" data-en="Featured On">منصات احتفت بأعمالنا</h2>
     <p data-en="Follow our latest work across our official accounts">تابع آخر أعمالنا على حساباتنا الرسمية</p>
   </div>
 
@@ -1300,20 +1329,6 @@
         <span class="sp-cta"><span data-en="Visit account">زيارة الحساب</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg></span>
       </div>
     </a>
-  </div>
-</section>
-
-<!-- products -->
-<section class="products sec-pad" id="products">
-  <div class="wrap products-inner">
-    <div class="products-text">
-      <h2 style="margin-top:1rem" class="products-heading-desktop" data-en="New Products Launching Soon">قريبًا نطلق منتجاتنا الجديدة</h2>
-      <h2 style="margin-top:1rem" class="products-heading-mobile" data-anim="none" data-en="New Products Launching Soon">قريبًا<br>ونطلق منتجاتنا الجديدة</h2>
-      <p data-anim="fade" data-en="We&#39;re currently putting together a new lineup of creative products. Stay tuned for details.">نعمل حاليًا على تجهيز باقة من المنتجات الإبداعية الجديدة. ترقّبوا التفاصيل قريبًا.</p>
-    </div>
-    <div class="coming-soon" data-anim="fade">
-      <span class="cs-label" data-en="Coming Soon">قريبًا</span>
-    </div>
   </div>
 </section>
 
@@ -1792,6 +1807,7 @@
       <span style="display:flex;flex-direction:column;align-items:center;gap:.5rem">
         <img id="footerLogo" class="footer-logo" alt="سيرة" data-en-alt="SIIRAH" style="margin:0 auto">
         <span data-en="All rights reserved — SIIRAH Media Production">جميع الحقوق محفوظة لمؤسسة سيرة للإنتاج الإعلامي</span>
+        <span class="footer-credit" data-en="Developed &amp; maintained by Ishaarat">تم التطوير والصيانة بواسطة إشعارات</span>
       </span>
       <nav class="footer-legal" aria-label="روابط قانونية" data-en-aria-label="Legal links">
         <a href="privacy-policy.html" data-en="Privacy Policy">سياسة الخصوصية</a>
