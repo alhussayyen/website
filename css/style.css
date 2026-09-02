@@ -441,6 +441,15 @@
     -webkit-user-select:none; user-select:none;
     pointer-events:none;
   }
+
+  /* Sep 2026: small, quiet label above the company-profile download
+     button (mobile-only per spec -- hidden here so Desktop is untouched;
+     shown by the #about mobile block above). Order in the DOM is text
+     then button, matching the requested visual order. */
+  .profile-cta-label{
+    display:none; margin:0 0 .6rem; font-size:.8rem; font-weight:500;
+    letter-spacing:.02em; color:var(--ink-soft);
+  }
   @media (max-width:900px){
     .about-intro{ grid-template-columns:1fr; gap:0; }
     .about-intro-visual{
@@ -449,6 +458,24 @@
     }
     .about-mark{ width:min(340px,70vw); margin-inline-start:0; }
     .about-intro-text{ padding-inline-end:clamp(1.25rem, 5vw, 5rem); }
+  }
+
+  /* Sep 2026 mobile-only pass: center all #about content horizontally
+     (intro paragraphs + the three "triptych" columns + values row)
+     instead of the default RTL start/right alignment. Desktop (>760px)
+     keeps its original right-aligned layout untouched -- nothing here is
+     unscoped from this media query. */
+  @media (max-width:760px){
+    #about .about-intro-text{ text-align:center; }
+    #about .about-intro-text p{ margin-inline:auto; }
+    #about .triptych .tcol{ text-align:center; }
+    #about .triptych .tcol h3::after{ right:0; left:0; margin-inline:auto; }
+    #about .triptych .tcol p{ margin-inline:auto; }
+    #about .values-row{ justify-content:center; }
+    /* small quiet label above the PDF button, mobile-only (see
+       .profile-cta-label base rule near .profile-btn, which hides it
+       on desktop so Desktop's visual is 100% unchanged). */
+    .profile-cta-label{ display:block; }
   }
 
   /* ---------- 03 stats ---------- */
@@ -772,8 +799,12 @@
        here, mobile-only, enough to clear the header with a small
        comfortable gap. */
     .clients{ padding-top:calc(2.4rem + 43px + 1rem); }
-    .clients-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.5rem .75rem; margin-top:1.75rem; }
-    .clients-logo{ height:clamp(38px,10vw,50px); }
+    /* Sep 2026: 4 logos per row on mobile (was 3) per client request --
+       gap and logo height trimmed slightly so 4 columns stay clean and
+       non-overlapping on narrow phones; still centered in each cell via
+       .clients-grid's own align-items/justify-items:center. */
+    .clients-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:1.1rem .55rem; margin-top:1.75rem; }
+    .clients-logo{ height:clamp(30px,8vw,40px); }
   }
 
   /* ---------- 05.5 social proof: official channels showcase ---------- */
@@ -1022,6 +1053,14 @@
   @media (max-width:760px){
     .svc-track.is-pinned .svc-icons{ display:none; }
     .svc-track.is-pinned .svc-body{ grid-template-columns:1fr; }
+    /* Sep 2026 mobile-only pass: center the moving panel content
+       (icon/title/description) instead of start-aligned, and nudge just
+       the section title down a touch via relative positioning -- that
+       doesn't affect normal flow, so the content below never moves.
+       Nav/interaction and Desktop are both untouched. */
+    .svc-track.is-pinned .svc-panel{ align-items:center; text-align:center; margin-inline:auto; }
+    .svc-track.is-pinned .svc-scroll-hint{ text-align:center; }
+    .svc-track.is-pinned .svc-head{ position:relative; top:.6rem; }
   }
 
   /* ---- 06 team / "من خلف سيرة؟!" -- editorial redesign (Phase 3) ----
@@ -1126,6 +1165,11 @@
     }
     .behind-item{ aspect-ratio:4/3; }
     .behind-caption{ width:auto; align-items:center; justify-content:center; text-align:center; gap:1.25rem; }
+    /* Sep 2026: enlarge the Snapchat icon on mobile for clarity -- same
+       icon, same function, same position within .behind-caption, just
+       bigger. Desktop's own (larger) 801px+ sizing below is untouched. */
+    .behind-snap-logo{ width:64px; height:64px; }
+    .behind-snap-logo svg{ width:28px; height:28px; }
   }
 
   /* ---- Visual refinement pass (Aug 2026) — desktop-only enlargement of
@@ -1159,6 +1203,17 @@
     transition:font-size .4s var(--ease-soft);
   }
   .diff-mark{ display:block; width:56px; height:2px; margin:1.75rem auto 0; background:var(--accent); }
+
+  /* Sep 2026: minimal, brand-consistent divider between #differentiators
+     and #work, mobile-only (hidden on desktop, where the original larger
+     .sec-pad rhythm is untouched and unnecessary here). Reuses the same
+     small accent-line convention as .diff-mark/.process-mark/.behind-mark
+     above, just as a standalone element between the two sections. */
+  .section-divider-mobile{ display:none; }
+  @media (max-width:760px){
+    .section-divider-mobile{ justify-content:center; margin:1.5rem 0; }
+    .section-divider-mobile .section-divider-mark{ display:block; width:40px; height:2px; background:var(--accent); opacity:.55; }
+  }
 
   .diff-track{ position:relative; }
   .diff-triggers{ display:none; }
@@ -1249,6 +1304,14 @@
      type, lower min-height so it fits a phone screen without overlap or
      clipping. */
   @media (max-width:760px){
+    /* Sep 2026 fix: #differentiators and #work each carry the shared
+       .sec-pad top/bottom padding, which stacks into a very large gap
+       between them on mobile. Reduced here (mobile-only, both sides) to
+       a comfortable but much smaller gap; a small divider (below) keeps
+       the transition from feeling abrupt. Desktop untouched. */
+    #differentiators{ padding-bottom:clamp(1.5rem,5vw,2.25rem); }
+    #work{ padding-top:clamp(1.5rem,5vw,2.25rem); }
+    .section-divider-mobile{ display:flex; }
     .diff-track.is-pinned .diff-stage-inner{ padding-block:clamp(6.5rem,20vw,8rem) 1.5rem; }
     .diff-track.is-pinned .diff-head{ margin-bottom:1rem; }
     .diff-track.is-pinned .diff-body{ grid-template-columns:minmax(64px,86px) 1fr; column-gap:1.5rem; }
@@ -1382,7 +1445,21 @@
      + description) always fits one small phone screen without
      overlapping the head above it or the progress dots/arrow below it. */
   @media (max-width:760px){
-    .process-track.is-pinned .process-stage-inner{ padding-block:clamp(6.5rem,20vw,8rem) 1.5rem; }
+    /* Sep 2026 fix: #process itself still carries the shared .sec-pad
+       top padding (~6.5rem+), and the pinned stage below needs its own
+       top padding to clear the fixed mobile header (~91px) once it's
+       stuck -- those two used to simply add up (~13rem+ of blank space
+       before the title). #process's own top padding is reduced here
+       (mobile-only) since the stage-inner padding below already covers
+       header clearance + a comfortable margin on its own. */
+    #process{ padding-top:clamp(1.25rem,4vw,1.75rem); }
+    /* justify-content:center (base rule above) vertically centers the
+       head+steps+progress group within the full 100dvh stage -- on tall
+       phone screens that centering, not the padding, was the real source
+       of the large gap above the title (content group shorter than the
+       viewport, so centering pushed it down). flex-start anchors it right
+       under the padding instead, mobile-only; desktop keeps centering. */
+    .process-track.is-pinned .process-stage-inner{ justify-content:flex-start; padding-block:clamp(5.75rem,16vw,6.75rem) 1.5rem; }
     .process-track.is-pinned .process-head{ margin-bottom:1rem; }
     .process-track.is-pinned .process-steps{ min-height:clamp(230px,58vw,300px); }
     .process-track.is-pinned .process-step{ max-width:30ch; gap:.65rem; }
@@ -2198,6 +2275,13 @@
   .form-field{ display:flex; flex-direction:column; min-width:0; }
   .form-field + .form-field{ margin-top:0; }
   .form-field--full{ grid-column:1 / -1; }
+  /* Sep 2026: wrapper for the first-name/last-name pair (see index.html,
+     careersForm + inquiryForm). display:contents makes the wrapper
+     invisible to layout on Desktop -- its two .form-field children keep
+     participating directly in .form-grid exactly as before, so Desktop
+     is completely unaffected. Mobile-only override below turns it into
+     an actual two-column row. */
+  .form-row-pair{ display:contents; }
   .form-grid + .form-field,
   .form-grid + .form-field--full{ margin-top:1.6rem; }
 
@@ -2359,6 +2443,9 @@
   @media (max-width:760px){
     .contact-options{ grid-template-columns:1fr; }
     .form-grid{ grid-template-columns:1fr; gap:1.4rem; }
+    /* Sep 2026: name/family fields share one balanced row on mobile only,
+       in both #careersForm and #inquiryForm. */
+    .form-row-pair{ display:grid; grid-template-columns:1fr 1fr; gap:0 .9rem; }
     .form-submit{ width:100%; }
     .form-actions{ flex-direction:column; align-items:stretch; }
   }

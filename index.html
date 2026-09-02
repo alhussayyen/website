@@ -247,6 +247,7 @@
          "تعرّف على سيرة عن قرب" section — same button/icon, same
          href/download attributes, function unchanged. -->
     <div class="about-profile-cta" style="text-align:center; margin-top:3rem;" data-anim="fade">
+      <p class="profile-cta-label" data-en="Company Profile">الملف التعريفي للشركة</p>
       <a class="profile-btn" href="assets/docs/company-profile.pdf" download="سيرة-الملف-التعريفي.pdf" data-en-download="SIIRAH-Company-Profile.pdf" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
         <span data-en="Download Company Profile (PDF)">تحميل الملف التعريفي (PDF)</span>
@@ -487,6 +488,11 @@
     </div>
   </div>
 </section>
+
+<!-- Sep 2026: minimal mobile-only divider between #differentiators and
+     #work (hidden on Desktop via .section-divider-mobile's base rule in
+     style.css). -->
+<div class="section-divider-mobile" aria-hidden="true"><span class="section-divider-mark"></span></div>
 
 <!-- 04 -->
 <section class="sec-pad" id="work">
@@ -1479,15 +1485,17 @@
         <input type="hidden" id="carRenderedAt">
 
         <div class="form-grid">
-          <div class="form-field">
-            <label for="carFirstName"><span data-en="First Name">الاسم الأول</span> <span class="req" aria-hidden="true">*</span></label>
-            <input type="text" id="carFirstName" name="firstName" required autocomplete="given-name" aria-describedby="carFirstName-error">
-            <span class="field-error" id="carFirstName-error" role="alert"></span>
-          </div>
-          <div class="form-field">
-            <label for="carLastName"><span data-en="Last Name">اسم العائلة</span> <span class="req" aria-hidden="true">*</span></label>
-            <input type="text" id="carLastName" name="lastName" required autocomplete="family-name" aria-describedby="carLastName-error">
-            <span class="field-error" id="carLastName-error" role="alert"></span>
+          <div class="form-row-pair">
+            <div class="form-field">
+              <label for="carFirstName"><span data-en="First Name">الاسم الأول</span> <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="carFirstName" name="firstName" required autocomplete="given-name" aria-describedby="carFirstName-error">
+              <span class="field-error" id="carFirstName-error" role="alert"></span>
+            </div>
+            <div class="form-field">
+              <label for="carLastName"><span data-en="Last Name">اسم العائلة</span> <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="carLastName" name="lastName" required autocomplete="family-name" aria-describedby="carLastName-error">
+              <span class="field-error" id="carLastName-error" role="alert"></span>
+            </div>
           </div>
           <div class="form-field">
             <label for="carEmail"><span data-en="Email">البريد الإلكتروني</span> <span class="req" aria-hidden="true">*</span></label>
@@ -1549,15 +1557,17 @@
         <input type="hidden" id="inqRenderedAt">
 
         <div class="form-grid">
-          <div class="form-field">
-            <label for="inqFirstName"><span data-en="First Name">الاسم الأول</span> <span class="req" aria-hidden="true">*</span></label>
-            <input type="text" id="inqFirstName" name="firstName" required autocomplete="given-name" aria-describedby="inqFirstName-error">
-            <span class="field-error" id="inqFirstName-error" role="alert"></span>
-          </div>
-          <div class="form-field">
-            <label for="inqLastName"><span data-en="Last Name">اسم العائلة</span> <span class="req" aria-hidden="true">*</span></label>
-            <input type="text" id="inqLastName" name="lastName" required autocomplete="family-name" aria-describedby="inqLastName-error">
-            <span class="field-error" id="inqLastName-error" role="alert"></span>
+          <div class="form-row-pair">
+            <div class="form-field">
+              <label for="inqFirstName"><span data-en="First Name">الاسم الأول</span> <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="inqFirstName" name="firstName" required autocomplete="given-name" aria-describedby="inqFirstName-error">
+              <span class="field-error" id="inqFirstName-error" role="alert"></span>
+            </div>
+            <div class="form-field">
+              <label for="inqLastName"><span data-en="Last Name">اسم العائلة</span> <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="inqLastName" name="lastName" required autocomplete="family-name" aria-describedby="inqLastName-error">
+              <span class="field-error" id="inqLastName-error" role="alert"></span>
+            </div>
           </div>
           <div class="form-field">
             <label for="inqEmail"><span data-en="Email">البريد الإلكتروني</span> <span class="req" aria-hidden="true">*</span></label>
