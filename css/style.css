@@ -306,12 +306,25 @@
   :root{ --header-h:91px; }
   @media (min-width:1025px){ :root{ --header-h:102px; } }
 
-  /* Anchor-jump correctness for every section this pass touches: without
-     this, a direct link / back-forward navigation to one of these ids
-     lands the section's top flush with the viewport's top edge, straight
-     under the fixed header. A scroll-target offset only — no visual or
+  /* Anchor-jump correctness for EVERY top-level section, not a
+     hand-picked subset: without this, a direct link / nav click / back-
+     forward navigation to a section id lands that section's top flush
+     with the viewport's top edge, straight under the fixed header —
+     hiding its heading behind the translucent bar (confirmed on mobile
+     for #work, whose own top padding is smaller than --header-h once
+     the diff→work gap was tightened below). The previous version of
+     this rule only listed #services/#process/#differentiators/
+     #behind-siirah/#team/#faq/#products — every section since added
+     (#about, #stats, #work, #video-production, #clients, #social-posts,
+     #contact) was silently missing this offset, which is exactly the
+     root cause of the "section starts under the header" bug. Listing
+     every real section id here (instead of relying on whoever adds the
+     next section to remember to add it to this rule too) removes that
+     whole class of bug. A scroll-target offset only — no visual or
      layout change on its own. */
-  #services, #process, #differentiators, #behind-siirah, #team, #faq, #products{
+  #about, #services, #process, #stats, #differentiators, #work,
+  #video-production, #behind-siirah, #products, #clients, #social-posts,
+  #team, #faq, #contact{
     scroll-margin-top: var(--header-h);
   }
 
@@ -1356,17 +1369,24 @@
   .diff-track.is-pinned .diff-panel.is-active{ opacity:1; transform:none; pointer-events:auto; }
   .diff-track.is-pinned .diff-panel.is-past{ transform:translateY(-24px); }
 
+  /* Sep 2026 fix, corrected: #differentiators and #work each carry the
+     shared .sec-pad top/bottom padding, which stacks into a very large
+     gap between them (~350px+ on desktop, since .sec-pad's own floor is
+     6.5rem=104px on EACH side). The original fix only scoped this
+     reduction to max-width:760px, so the gap was tightened on mobile but
+     left completely untouched on desktop/tablet, where it was reported
+     as "too large" all over again. A single clamp() that scales with
+     viewport width (instead of a hard mobile-only override) fixes it at
+     every breakpoint at once: ~24-36px on phones (same as before), up to
+     a comfortable ~48-56px on desktop — still a fraction of the old
+     176px-per-side default. */
+  #differentiators{ padding-bottom:clamp(1.5rem,4vw,3.5rem); }
+  #work{ padding-top:clamp(1.5rem,4vw,3.5rem); }
+
   /* Mobile sizing for the now-pinned story: narrower index rail, smaller
      type, lower min-height so it fits a phone screen without overlap or
      clipping. */
   @media (max-width:760px){
-    /* Sep 2026 fix: #differentiators and #work each carry the shared
-       .sec-pad top/bottom padding, which stacks into a very large gap
-       between them on mobile. Reduced here (mobile-only, both sides) to
-       a comfortable but much smaller gap; a small divider (below) keeps
-       the transition from feeling abrupt. Desktop untouched. */
-    #differentiators{ padding-bottom:clamp(1.5rem,5vw,2.25rem); }
-    #work{ padding-top:clamp(1.5rem,5vw,2.25rem); }
     .section-divider-mobile{ display:flex; }
     .diff-track.is-pinned .diff-stage-inner{ padding-block:clamp(1.25rem,4vw,1.75rem) 1.5rem; }
     .diff-track.is-pinned .diff-head{ margin-bottom:1rem; }
@@ -1401,13 +1421,24 @@
     .diff-track.is-pinned .diff-index-item{ font-size:1.7rem; }
     .diff-track.is-pinned .diff-index-item.is-active{ font-size:2.6rem; }
     .diff-track.is-pinned .diff-body{ grid-template-columns:minmax(150px,210px) 1fr; column-gap:clamp(3.5rem,6vw,6rem); }
-    /* Sep 2026 pass: content enlarged further per spec (icon/visual mark,
-       title and description all clearly bigger) — navigation idea and
-       order are unchanged, sizing only. */
-    .diff-panel-mark svg{ width:58px; height:58px; }
-    .diff-panel-title{ font-size:clamp(2.2rem, 2.9vw, 2.85rem); }
-    .diff-panel-desc{ font-size:1.32rem; line-height:1.85; max-width:44ch; }
-    .diff-track.is-pinned .diff-panels{ min-height:340px; }
+    /* Sep 2026 pass, take 2: the previous enlargement bumped the icon to
+       58px and the title/description modestly — reported as still not a
+       clearly-bigger read, and the fix must be the glyph/type sizes
+       themselves, not the surrounding box or gaps (the min-height bump
+       below exists ONLY to stop this bigger content clipping inside the
+       pinned stage's fixed viewport height, not to add breathing room on
+       its own). Icon, title and description all step up meaningfully
+       again here; the index rail's numbers grow with them so the "01-04"
+       markers stay in visual proportion to the now-larger panel text. */
+    .diff-index-item{ font-size:1.9rem; }
+    .diff-track.is-pinned .diff-index{ gap:2rem; }
+    .diff-track.is-pinned .diff-index-item{ font-size:1.9rem; }
+    .diff-track.is-pinned .diff-index-item.is-active{ font-size:3rem; }
+    .diff-track.is-pinned .diff-body{ grid-template-columns:minmax(160px,230px) 1fr; }
+    .diff-panel-mark svg{ width:82px; height:82px; }
+    .diff-panel-title{ font-size:clamp(2.7rem, 3.5vw, 3.6rem); }
+    .diff-panel-desc{ font-size:1.55rem; line-height:1.75; max-width:46ch; }
+    .diff-track.is-pinned .diff-panels{ min-height:420px; }
   }
 
   /* .process-head lives inside .process-stage-inner now (see index.html)
@@ -1555,23 +1586,22 @@
     .process-title{ max-width:24ch; }
     .process-subtitle{ font-size:1.2rem; margin-top:1.25rem; }
 
-    .process-step{ max-width:44ch; gap:1.75rem; }
-    /* Sep 2026 fix: the icon's own box used to be much bigger
-       (130-175px) than the glyph drawn inside it (58-76px), so the
-       visible icon floated in a large invisible box — read as "too much
-       empty space above/below the icon". The box now matches the glyph
-       size exactly (icon itself unchanged, per spec) and no longer adds
-       its own margin-bottom on top of the step's shared gap, which used
-       to double up the space below the icon. */
+    /* Sep 2026 fix, take 2: reported as still reading small, and the
+       generous 1.75rem gap between icon/number/name/description was
+       spreading the step out rather than reading as one compact block —
+       exactly the "enlarged the container, not the content" complaint.
+       The gap comes down (elements sit close together) while the icon
+       and both text sizes step up clearly beyond the previous pass. */
+    .process-step{ max-width:46ch; gap:1.1rem; }
     .process-step .ring-icon{
-      width:clamp(58px, 4.5vw, 76px); height:clamp(58px, 4.5vw, 76px);
+      width:clamp(80px, 6.2vw, 108px); height:clamp(80px, 6.2vw, 108px);
       margin-bottom:0;
     }
-    .process-step .ring-icon svg{ width:clamp(58px, 4.5vw, 76px); height:clamp(58px, 4.5vw, 76px); }
-    .process-step-num{ font-size:clamp(2rem, 2.8vw, 3.2rem); }
-    .process-step-name{ font-size:clamp(2.2rem, 2.8vw, 3.2rem); }
-    .process-step-desc{ font-size:clamp(1.1rem, 1.3vw, 1.35rem); line-height:1.8; max-width:40ch; }
-    .process-step-arrow svg{ width:30px; height:30px; }
+    .process-step .ring-icon svg{ width:clamp(80px, 6.2vw, 108px); height:clamp(80px, 6.2vw, 108px); }
+    .process-step-num{ font-size:clamp(2.3rem, 3.2vw, 3.6rem); }
+    .process-step-name{ font-size:clamp(2.6rem, 3.4vw, 3.8rem); }
+    .process-step-desc{ font-size:clamp(1.25rem, 1.5vw, 1.55rem); line-height:1.7; max-width:42ch; }
+    .process-step-arrow svg{ width:32px; height:32px; }
 
     /* ---- restack the pinned stage: "06 / 01" + dots between the
        section title and the arrow, never overlapping the (now larger)
@@ -1580,18 +1610,22 @@
        the base >=761px rules above; this block only enlarges sizing for
        true desktop and keeps the arrow ordered above the step's own
        content (number/icon/name/description) via flex `order`, no
-       markup/JS change. */
-    .process-track.is-pinned .process-progress{ gap:.85rem; }
+       markup/JS change. Head/steps/progress are also pulled visually
+       closer together here (tighter margins than the base >=761px
+       rules), same "close the gaps" request as the step's own internal
+       spacing above. */
+    .process-track.is-pinned .process-stage-inner{ padding-block:clamp(2rem,3.6vw,3.25rem); }
+    .process-track.is-pinned .process-head{ margin-bottom:clamp(1rem,1.8vw,1.5rem); }
+    .process-track.is-pinned .process-progress{ gap:.85rem; margin:clamp(.75rem,1.4vw,1.15rem) 0 0; }
     .process-track.is-pinned .process-progress-count{ font-size:1.05rem; }
     .process-track.is-pinned .process-progress-dots i{ width:7px; height:7px; }
 
-    /* Sep 2026 fix: raised so the tallest step (icon + number + name +
-       a multi-line description) always fits inside this box without
-       spilling into the head above or the progress/dots+arrow below —
-       that overflow, not any one element's own size, was the real cause
-       of the reported overlap. */
-    .process-track.is-pinned .process-steps{ min-height:clamp(24rem, 28vw, 28rem); }
-    .process-track.is-pinned .process-shared-arrow svg{ width:30px; height:30px; }
+    /* Raised again alongside the bigger icon/type above so the tallest
+       step (icon + number + name + a multi-line description) still
+       fits inside this box without spilling into the head above or the
+       progress/dots+arrow below. */
+    .process-track.is-pinned .process-steps{ min-height:clamp(27rem, 31vw, 32rem); }
+    .process-track.is-pinned .process-shared-arrow svg{ width:32px; height:32px; }
   }
 
   /* ============================================================
