@@ -424,9 +424,6 @@
     #about{ padding-bottom:clamp(2rem, 6vw, 3rem); }
   }
 
-  .reveal{ overflow:hidden; }
-  .reveal-line{ transform:translateY(110%); opacity:0; }
-
   /* ---------- 02 about ---------- */
   .about h2{
     max-width:18ch;
@@ -1416,11 +1413,6 @@
      clipped by the pinned stage's fixed viewport height.
      ============================================================ */
   @media (min-width:1025px){
-    .diff-index-item{ font-size:1.7rem; }
-    .diff-track.is-pinned .diff-index{ gap:1.85rem; }
-    .diff-track.is-pinned .diff-index-item{ font-size:1.7rem; }
-    .diff-track.is-pinned .diff-index-item.is-active{ font-size:2.6rem; }
-    .diff-track.is-pinned .diff-body{ grid-template-columns:minmax(150px,210px) 1fr; column-gap:clamp(3.5rem,6vw,6rem); }
     /* Sep 2026 pass, take 2: the previous enlargement bumped the icon to
        58px and the title/description modestly — reported as still not a
        clearly-bigger read, and the fix must be the glyph/type sizes
@@ -1434,7 +1426,7 @@
     .diff-track.is-pinned .diff-index{ gap:2rem; }
     .diff-track.is-pinned .diff-index-item{ font-size:1.9rem; }
     .diff-track.is-pinned .diff-index-item.is-active{ font-size:3rem; }
-    .diff-track.is-pinned .diff-body{ grid-template-columns:minmax(160px,230px) 1fr; }
+    .diff-track.is-pinned .diff-body{ grid-template-columns:minmax(160px,230px) 1fr; column-gap:clamp(3.5rem,6vw,6rem); }
     .diff-panel-mark svg{ width:82px; height:82px; }
     .diff-panel-title{ font-size:clamp(2.7rem, 3.5vw, 3.6rem); }
     .diff-panel-desc{ font-size:1.55rem; line-height:1.75; max-width:46ch; }
@@ -2045,8 +2037,6 @@
   }
 
   /* ---- company profile ---- */
-  .profile{ text-align:center; }
-  .profile h2{ font-size:var(--fs-h1); }
   /* "تعرف على سيرة" → "من خلف سيرة": both sections use the shared .sec-pad
      rhythm (top+bottom padding on each), which stacks into a very large gap
      precisely because #profile's own content is so short (one line + one
@@ -2054,7 +2044,6 @@
      scale already established by the .statement bands elsewhere on the
      site — tightens the transition without touching .sec-pad itself, so
      every other section pair keeps its normal spacing untouched. */
-  #profile{ padding-bottom:clamp(3rem, 6vw, 5rem); }
   #team{ padding-top:clamp(3rem, 6vw, 5rem); }
   .team-editorial h2{ font-size:var(--fs-h1); }
   /* Sep 2026 viewport-balancing pass: the mobile-only header-clearance
@@ -2064,7 +2053,6 @@
      + the shared min-height/centering rule), not from extra padding, so
      its own spacing goes back to the same clamp(3rem,6vw,5rem) used at
      every width. */
-  .profile p{ max-width:52ch; margin:0 auto; color:var(--ink-soft); font-weight:300; font-size:1.08rem; line-height:1.95; }
   .profile-btn{
     margin-top:2.6rem; display:inline-flex; align-items:center; gap:.9rem;
     padding:1.15rem 2.5rem; border:1.5px solid var(--ink); border-radius:var(--radius-pill);

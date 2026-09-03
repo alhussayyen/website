@@ -267,7 +267,6 @@ html[lang="ar"] .pb-header-copy p{ line-height:var(--lh-body-ar); }
 .pb-review-row{ display:flex; flex-wrap:wrap; gap:.3rem 1rem; }
 .pb-review-row dt{ flex:0 0 auto; min-width:11rem; font-size:.82rem; color:var(--ink-faint); }
 .pb-review-row dd{ flex:1 1 16rem; margin:0; font-size:.92rem; color:var(--ink); line-height:1.7; white-space:pre-wrap; word-break:break-word; }
-.pb-review-empty{ font-size:.86rem; color:var(--ink-faint); font-style:italic; }
 
 .pb-privacy{
   margin-top:clamp(2rem,3.5vw,2.6rem); padding-top:clamp(1.6rem,3vw,2rem); border-top:1px solid var(--line);

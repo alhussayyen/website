@@ -3,8 +3,9 @@
 // These are intentionally shallow "does it still work" checks, not a full
 // coverage suite: page loads, nav/anchors resolve, the language switch
 // flips lang/dir, and the contact form actually validates + submits
-// through js/forms.js (which used to not even be loaded — see the fix
-// alongside this test).
+// through js/script.js's own SIIRAHForms-based handler for #inquiryForm
+// (see TOOLING.md — js/forms.js was a dead, superseded file and has
+// been removed; it never drove this form).
 const { test, expect } = require('@playwright/test');
 
 test.describe('homepage', () => {
@@ -40,8 +41,9 @@ test.describe('contact form (#inquiryForm)', () => {
 
     await page.locator('#inqSubmitBtn').click();
 
-    // If js/forms.js isn't wired up, the native form would just navigate
-    // (GET to the current URL) instead of showing these JS-driven errors.
+    // If js/script.js's submit handler isn't wired up, the native form
+    // would just navigate (GET to the current URL) instead of showing
+    // these JS-driven errors.
     await expect(page.locator('#inqFirstName-error')).not.toBeEmpty();
     await expect(page.locator('#inqEmail-error')).not.toBeEmpty();
     await expect(page).toHaveURL(/\/$|index\.html$/);

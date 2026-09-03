@@ -103,11 +103,6 @@
   // ---- shared background video ----
   const bgVideoSrc = "assets/video/hero-bg.mp4";
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // shared with the services-showcase drift/pin blocks further below, and
-  // also used just below to keep the generic GSAP card-stagger reveal off
-  // .showcase-item on mobile (where its own dedicated sticky/cross-fade
-  // controller owns each item's opacity instead).
-  const mqServicesMobile = window.matchMedia('(max-width:760px)');
   ['heroVideo'].forEach(id => {
     const v = document.getElementById(id);
     if (v) {
